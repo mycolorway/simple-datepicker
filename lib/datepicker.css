@@ -1,0 +1,61 @@
+.simple-datepicker {
+  width: 168px;
+  background: #fff;
+  font-size: 12px;
+}
+.simple-datepicker table {
+  width: 100%;
+}
+.simple-datepicker table td {
+  width: 24px;
+  line-height: 24px;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+.simple-datepicker table .datepicker-prev a,
+.simple-datepicker table .datepicker-next a {
+  display: block;
+  height: 100%;
+  color: #444;
+}
+.simple-datepicker table .datepicker-prev a:hover,
+.simple-datepicker table .datepicker-next a:hover {
+  color: #999;
+}
+.simple-datepicker table .datepicker-title {
+  color: #333;
+  font-size: 14px;
+}
+.simple-datepicker table .datepicker-dow {
+  color: #999;
+}
+.simple-datepicker table .datepicker-day a {
+  display: block;
+  height: 100%;
+  background: #f3f3f3;
+  color: #333;
+  border-bottom: 2px solid #fff;
+  -webkit-text-shadow: 0 1px 0 white;
+  -moz-text-shadow: 0 1px 0 white;
+  text-shadow: 0 1px 0 white;
+}
+.simple-datepicker table .datepicker-day a.today {
+  background: #ffe451;
+}
+.simple-datepicker table .datepicker-day a.others {
+  background: #fff;
+  color: #cccccc;
+}
+.simple-datepicker table .datepicker-day a:hover {
+  background: #cbe0ff;
+}
+.simple-datepicker table .datepicker-day a.selected {
+  background: #cce5f1;
+}
+.simple-datepicker table .datepicker-day a.disabled {
+  background: #fff;
+  color: #ccc;
+  cursor: default;
+}

@@ -1,0 +1,22 @@
+{
+  "name": "simple-tree",
+  "version": "1.0.0",
+  "description": "a simple tree plugin",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:mycolorway/simple-tree.git"
+  },
+  "author": "kshift",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mycolorway/simple-tree/issues"
+  },
+  "homepage": "https://github.com/mycolorway/simple-tree",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-coffee": "~0.10.1",
+    "grunt-contrib-jasmine": "~0.6.1",
+    "grunt-contrib-sass": "~0.7.3"
+  }
+}
