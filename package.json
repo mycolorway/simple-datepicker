@@ -1,17 +1,20 @@
 {
-  "name": "simple-tree",
+  "name": "simple-datepicker",
   "version": "1.0.0",
-  "description": "a simple tree plugin",
+  "description": "A simple date picker plugin",
   "repository": {
     "type": "git",
-    "url": "git@github.com:mycolorway/simple-tree.git"
+    "url": "git@github.com:mycolorway/simple-datepicker.git"
   },
-  "author": "kshift",
+  "author": [
+    "farthinker <farthinker@gmail.com>",
+    "kshift <kshift.lv@gmail.com>"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mycolorway/simple-tree/issues"
+    "url": "https://github.com/mycolorway/simple-datepicker/issues"
   },
-  "homepage": "https://github.com/mycolorway/simple-tree",
+  "homepage": "https://github.com/mycolorway/simple-datepicker",
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-watch": "~0.5.3",
