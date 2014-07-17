@@ -7,6 +7,8 @@ class Datepicker extends Widget
     disableAfter: null
     format: "YYYY-MM-DD"
     width: null
+    monthCount: 1
+    onUpdate: $.noop
 
 
   _init: () ->
@@ -23,50 +25,113 @@ class Datepicker extends Widget
 
   _bind: () ->
     if @opts.inline
-      @show()
+      @_show()
     else
       # Bind click and focus event to show
       @el.focus (e) =>
-        @show()
+        @_show()
       .focus()
 
       # Bind click elsewhere to hide
       $(document).on "click.datepicker", (e) =>
-        @hide()
+        @_hide()
 
 
   # Show the calendar
-  show: ->
-    @update()
+  _show: ->
+    @_update()
 
 
   # Hide the calendar
-  hide: ->
+  _hide: ->
     if @cal
       @cal.remove()
       @cal = null
       $(document).off ".datepicker"
 
 
-  # Set a new selected date
-  setSelectedDate: (date) ->
-    unless date
-      @selectedDate = null
-      @el.val ""
-    else
-      @selectedDate = moment(date)
-      @el.val @selectedDate.format(@opts.format)
-      @el.removeData "theDate"
-
-    @cal and @update()
-
-
   # Render the calendar
-  update: ->
-    today = mcw.now().startOf("day")
+  _update: ->
+    today = moment().startOf("day")
 
     # Get the current date to render
     theDate = @el.data("theDate") or @selectedDate or today
+
+    # Save current date
+    @el.data "theDate", theDate
+
+    if @opts.monthCount > 1
+      for num in [@opts.monthCount..1]
+        newDate = theDate.clone().add("months", 1 - num)
+        calendar = if calendar then calendar + @_renderCal(newDate) else @_renderCal(newDate)
+    else
+      calendar = @_renderCal(theDate)
+
+    unless @cal
+      @cal = $("<div class='simple-datepicker'></div>").insertAfter @el
+      unless @opts.inline
+        offset = @el.offset()
+        @cal.css
+          position: "absolute"
+          "z-index": 100
+          left: offset.left
+          top: offset.top + @el.outerHeight(true)
+
+
+      # Handle previous/next clicks
+      @cal.on "mousedown", (e) ->
+        return false
+
+      .on "click", (e) ->
+        return false
+
+      .on "click", ".datepicker-prev a", (e) =>
+        btn = $(e.currentTarget)
+        date = @el.data("theDate")
+        newDate = date.clone().add("months", -1)
+
+        # Save the new date and render the change
+        @el.data "theDate", newDate
+        @_update()
+
+      .on "click", ".datepicker-next a", (e) =>
+        btn = $(e.currentTarget)
+        date = @el.data("theDate")
+        newDate = date.clone().add("months", 1)
+
+        # Save the new date and render the change
+        @el.data "theDate", newDate
+        @_update()
+
+      .on "click", ".datepicker-day a", (e) =>
+        e.preventDefault()
+        btn = $(e.currentTarget)
+        return  if btn.hasClass("disabled")
+        day = btn.text()
+        date = moment(btn.data("date"), "YYYY-MM-DD")
+
+        # Save the new date and update the target control
+        @el.data "theDate", date
+        @el.val date.format(@opts.format)
+
+        # Save selected
+        @selectedDate = date
+        @cal.find(".datepicker-day a.selected").removeClass "selected"
+        btn.addClass "selected"
+
+        # Hide calendar
+        @_hide()  unless @opts.inline
+
+        # Run callback to user-defined date change method
+        @opts.onSelect date  if @opts.onSelect
+
+    @cal.css "width", @opts.width  if @opts.width
+    @cal.html calendar
+    @opts.onUpdate(@cal)  if $.isFunction @opts.onUpdate
+
+
+  _renderCal: (theDate) ->
+    today = moment().startOf("day")
 
     # Calculate the first and last date in month being rendered.
     # Also calculate the weekday to start rendering on
@@ -91,9 +156,6 @@ class Datepicker extends Widget
       "11月"
       "12月"
     ]
-
-    # Save current date
-    @el.data "theDate", theDate
 
     # Render the cells as <TD>
     days = ""
@@ -125,7 +187,8 @@ class Datepicker extends Widget
             c += (if (date.diff(until_) > 0) then " disabled" else "")
 
           # Test against selected date
-          c += (if (date.diff(@selectedDate) is 0) then " selected" else "")  if @selectedDate
+          # c += (if (date.diff(@selectedDate) is 0) then " selected" else " ")  if @selectedDate
+          c += (if (date.diff(@selectedDate) is 0) then " selected" else " ")  if @selectedDate
         else if n > lastDate.date() and x is 0
           break
         else
@@ -149,67 +212,27 @@ class Datepicker extends Widget
 
     # Build the html for the control
     titleMonthYear = theDate.year() + "年" + monthNames[theDate.month()]
-    html = "<table>" + "<tr>" + "<td class='datepicker-prev'>" + ((if showP then "<a href='javascript:;' class='fa fa-chevron-left'></a>" else "")) + "</td>" + "<td class='datepicker-title' colspan='5'>" + titleMonthYear + "</td>" + "<td class='datepicker-next'>" + ((if showN then "<a href='javascript:;' class='fa fa-chevron-right'></a>" else "")) + "</td>" + "</tr>" + "<tr class='datepicker-dow'>" + "<td>一</td><td>二</td><td>三</td><td>四</td><td>五</td><td>六</td><td>日</td>" + "</tr>" + days + "</table>"
-    unless @cal
-      @cal = $("<div class='simple-datepicker'></div>").insertAfter @el
-      unless @opts.inline
-        offset = @el.offset()
-        @cal.css
-          position: "absolute"
-          "z-index": @opts.zIndex or 100
-          left: offset.left
-          top: offset.top + @el.outerHeight(true)
+    calendar = "<table class='calendar'>" + "<tr>" + "<td class='datepicker-prev'>" \
+      + ((if showP then "<a href='javascript:;' class='fa fa-chevron-left'></a>" else "")) \
+      + "</td>" + "<td class='datepicker-title' colspan='5'>" + titleMonthYear + "</td>" + "<td class='datepicker-next'>" \
+      + ((if showN then "<a href='javascript:;' class='fa fa-chevron-right'></a>" else "")) \
+      + "</td>" + "</tr>" + "<tr class='datepicker-dow'>" + "<td>一</td><td>二</td><td>三</td><td>四</td><td>五</td><td>六</td><td>日</td>" \
+      + "</tr>" + days + "</table>"
+
+    return calendar
 
 
-      # Handle previous/next clicks
-      @cal.on "mousedown", (e) ->
-        return false
+  # Set a new selected date
+  setSelectedDate: (date) ->
+    unless date
+      @selectedDate = null
+      @el.val ""
+    else
+      @selectedDate = moment(date)
+      @el.val @selectedDate.format(@opts.format)
+      @el.removeData "theDate"
 
-      .on "click", (e) ->
-        return false
-
-      .on "click", ".datepicker-prev a", (e) =>
-        btn = $(e.currentTarget)
-        date = @el.data("theDate")
-        newDate = date.clone().add("months", -1)
-
-        # Save the new date and render the change
-        @el.data "theDate", newDate
-        @update()
-
-      .on "click", ".datepicker-next a", (e) =>
-        btn = $(e.currentTarget)
-        date = @el.data("theDate")
-        newDate = date.clone().add("months", 1)
-
-        # Save the new date and render the change
-        @el.data "theDate", newDate
-        @update()
-
-      .on "click", ".datepicker-day a", (e) =>
-        e.preventDefault()
-        btn = $(e.currentTarget)
-        return  if btn.hasClass("disabled")
-        day = btn.text()
-        date = moment(btn.data("date"), "YYYY-MM-DD")
-
-        # Save the new date and update the target control
-        @el.data "theDate", date
-        @el.val date.format(@opts.format)
-
-        # Save selected
-        @selectedDate = date
-        @cal.find(".datepicker-day a.selected").removeClass "selected"
-        btn.addClass "selected"
-
-        # Hide calendar
-        @hide()  unless @opts.inline
-
-        # Run callback to user-defined date change method
-        @opts.onSelect date  if @opts.onSelect
-
-    @cal.css "width", @opts.width  if @opts.width
-    @cal.html html
+    @cal and @_update()
 
 
 
