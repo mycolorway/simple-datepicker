@@ -7,8 +7,7 @@ class Datepicker extends Widget
     disableAfter: null
     format: "YYYY-MM-DD"
     width: null
-    monthCount: 1
-    onUpdate: $.noop
+    initMonth: null
 
 
   _init: () ->
@@ -16,7 +15,7 @@ class Datepicker extends Widget
       throw "simple datepicker: option el is required"
       return
 
-    @el = @opts.el.data("datepicker", @)
+    @el = @opts.el
 
     val = @el.val()
     @selectedDate = moment(val, @opts.format)  if val
@@ -39,7 +38,7 @@ class Datepicker extends Widget
 
   # Show the calendar
   _show: ->
-    @_update()
+    @update @opts.initMonth
 
 
   # Hide the calendar
@@ -51,24 +50,20 @@ class Datepicker extends Widget
 
 
   # Render the calendar
-  _update: ->
+  update: (date) ->
     today = moment().startOf("day")
 
     # Get the current date to render
-    theDate = @el.data("theDate") or @selectedDate or today
+    theDate = date or @el.data("theDate") or @selectedDate or today
 
     # Save current date
     @el.data "theDate", theDate
 
-    if @opts.monthCount > 1
-      for num in [@opts.monthCount..1]
-        newDate = theDate.clone().add("months", 1 - num)
-        calendar = if calendar then calendar + @_renderCal(newDate) else @_renderCal(newDate)
-    else
-      calendar = @_renderCal(theDate)
+    calendar = @_renderCal(theDate)
 
     unless @cal
       @cal = $("<div class='simple-datepicker'></div>").insertAfter @el
+      @cal.data("datepicker", @)
       unless @opts.inline
         offset = @el.offset()
         @cal.css
@@ -92,7 +87,7 @@ class Datepicker extends Widget
 
         # Save the new date and render the change
         @el.data "theDate", newDate
-        @_update()
+        @update()
 
       .on "click", ".datepicker-next a", (e) =>
         btn = $(e.currentTarget)
@@ -101,7 +96,7 @@ class Datepicker extends Widget
 
         # Save the new date and render the change
         @el.data "theDate", newDate
-        @_update()
+        @update()
 
       .on "click", ".datepicker-day a", (e) =>
         e.preventDefault()
@@ -127,7 +122,8 @@ class Datepicker extends Widget
 
     @cal.css "width", @opts.width  if @opts.width
     @cal.html calendar
-    @opts.onUpdate(@cal)  if $.isFunction @opts.onUpdate
+    @cal.trigger "beforeUpdate.datepicker", [@cal]
+
 
 
   _renderCal: (theDate) ->
@@ -187,7 +183,6 @@ class Datepicker extends Widget
             c += (if (date.diff(until_) > 0) then " disabled" else "")
 
           # Test against selected date
-          # c += (if (date.diff(@selectedDate) is 0) then " selected" else " ")  if @selectedDate
           c += (if (date.diff(@selectedDate) is 0) then " selected" else " ")  if @selectedDate
         else if n > lastDate.date() and x is 0
           break
@@ -232,7 +227,7 @@ class Datepicker extends Widget
       @el.val @selectedDate.format(@opts.format)
       @el.removeData "theDate"
 
-    @cal and @_update()
+    @cal and @update()
 
 
 
