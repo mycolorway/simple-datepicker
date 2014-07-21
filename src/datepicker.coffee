@@ -7,7 +7,7 @@ class Datepicker extends Widget
     disableAfter: null
     format: "YYYY-MM-DD"
     width: null
-    initMonth: null
+    month: null
 
 
   _init: () ->
@@ -19,10 +19,10 @@ class Datepicker extends Widget
 
     val = @el.val()
     @selectedDate = moment(val, @opts.format)  if val
-    @_bind()
+    @_render()
 
 
-  _bind: () ->
+  _render: () ->
     if @opts.inline
       @_show()
     else
@@ -38,7 +38,7 @@ class Datepicker extends Widget
 
   # Show the calendar
   _show: ->
-    @update @opts.initMonth
+    @update @opts.month
 
 
   # Hide the calendar
@@ -117,8 +117,8 @@ class Datepicker extends Widget
         # Hide calendar
         @_hide()  unless @opts.inline
 
-        # Run callback to user-defined date change method
-        @opts.onSelect date  if @opts.onSelect
+        @cal.trigger "select.datepicker", [btn, date]
+
 
     @cal.css "width", @opts.width  if @opts.width
     @cal.html calendar
