@@ -117,7 +117,7 @@ class Datepicker extends Widget
         # Hide calendar
         @_hide()  unless @opts.inline
 
-        @cal.trigger "select.datepicker", [btn, date]
+        @cal.trigger "select.datepicker", [date, btn]
 
 
     @cal.css "width", @opts.width  if @opts.width
