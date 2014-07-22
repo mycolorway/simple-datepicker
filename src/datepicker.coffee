@@ -11,11 +11,11 @@ class Datepicker extends Widget
 
 
   _init: () ->
-    unless @opts.el
+    @el = $(@opts.el)
+
+    unless @el.length
       throw "simple datepicker: option el is required"
       return
-
-    @el = @opts.el
 
     val = @el.val()
     @selectedDate = moment(val, @opts.format)  if val
