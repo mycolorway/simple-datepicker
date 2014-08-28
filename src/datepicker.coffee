@@ -18,7 +18,7 @@ class Datepicker extends Widget
       return
 
     val = @el.val()
-    @selectedDate = moment(val, @opts.format)  if val
+    @selectedDate = moment.tz(val, @opts.format, simple.tz) if val
     @_render()
 
 
@@ -51,7 +51,7 @@ class Datepicker extends Widget
 
   # Render the calendar
   update: (date) ->
-    today = moment().startOf("day")
+    today = moment.tz(simple.tz).startOf("day")
 
     # Get the current date to render
     theDate = date or @el.data("theDate") or @selectedDate or today
@@ -103,7 +103,7 @@ class Datepicker extends Widget
         btn = $(e.currentTarget)
         return  if btn.hasClass("disabled")
         day = btn.text()
-        date = moment(btn.data("date"), "YYYY-MM-DD")
+        date = moment.tz(btn.data("date"), "YYYY-MM-DD", simple.tz)
 
         # Save the new date and update the target control
         @el.data "theDate", date
@@ -127,7 +127,7 @@ class Datepicker extends Widget
 
 
   _renderCal: (theDate) ->
-    today = moment().startOf("day")
+    today = moment.tz(simple.tz).startOf("day")
 
     # Calculate the first and last date in month being rendered.
     # Also calculate the weekday to start rendering on
@@ -175,11 +175,11 @@ class Datepicker extends Widget
           c += (if (today.diff(date) is 0) then " today" else "")
 
           if moment.isMoment(@opts.disableBefore)
-            until_ = moment(@opts.disableBefore, "YYYY-MM-DD")
+            until_ = moment.tz(@opts.disableBefore, "YYYY-MM-DD", simple.tz)
             c += (if (date.diff(until_) < 0) then " disabled" else "")
 
           if moment.isMoment(@opts.disableAfter)
-            until_ = moment(@opts.disableAfter, "YYYY-MM-DD")
+            until_ = moment.tz(@opts.disableAfter, "YYYY-MM-DD", simple.tz)
             c += (if (date.diff(until_) > 0) then " disabled" else "")
 
           # Test against selected date
@@ -223,7 +223,7 @@ class Datepicker extends Widget
       @selectedDate = null
       @el.val ""
     else
-      @selectedDate = moment(date)
+      @selectedDate = moment.tz(date, simple.tz)
       @el.val @selectedDate.format(@opts.format)
       @el.removeData "theDate"
 
