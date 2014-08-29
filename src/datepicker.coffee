@@ -18,7 +18,7 @@ class Datepicker extends Widget
       return
 
     val = @el.val()
-    @selectedDate = moment.tz(val, @opts.format, simple.tz) if val
+    @selectedDate = moment(val, @opts.format) if val
     @_render()
 
 
@@ -51,7 +51,7 @@ class Datepicker extends Widget
 
   # Render the calendar
   update: (date) ->
-    today = moment.tz(simple.tz).startOf("day")
+    today = moment().startOf("day")
 
     # Get the current date to render
     theDate = date or @el.data("theDate") or @selectedDate or today
@@ -103,7 +103,7 @@ class Datepicker extends Widget
         btn = $(e.currentTarget)
         return  if btn.hasClass("disabled")
         day = btn.text()
-        date = moment.tz(btn.data("date"), "YYYY-MM-DD", simple.tz)
+        date = moment(btn.data("date"), "YYYY-MM-DD")
 
         # Save the new date and update the target control
         @el.data "theDate", date
@@ -117,17 +117,17 @@ class Datepicker extends Widget
         # Hide calendar
         @_hide()  unless @opts.inline
 
-        @cal.trigger "select.datepicker", [date, btn]
+        @cal.trigger "select", [date.format(@opts.format), btn]
 
 
     @cal.css "width", @opts.width  if @opts.width
     @cal.html calendar
-    @cal.trigger "beforeUpdate.datepicker", [@cal]
+    @cal.trigger "beforeUpdate", [@cal]
 
 
 
   _renderCal: (theDate) ->
-    today = moment.tz(simple.tz).startOf("day")
+    today = moment().startOf("day")
 
     # Calculate the first and last date in month being rendered.
     # Also calculate the weekday to start rendering on
@@ -175,11 +175,11 @@ class Datepicker extends Widget
           c += (if (today.diff(date) is 0) then " today" else "")
 
           if moment.isMoment(@opts.disableBefore)
-            until_ = moment.tz(@opts.disableBefore, "YYYY-MM-DD", simple.tz)
+            until_ = moment(@opts.disableBefore, "YYYY-MM-DD")
             c += (if (date.diff(until_) < 0) then " disabled" else "")
 
           if moment.isMoment(@opts.disableAfter)
-            until_ = moment.tz(@opts.disableAfter, "YYYY-MM-DD", simple.tz)
+            until_ = moment(@opts.disableAfter, "YYYY-MM-DD")
             c += (if (date.diff(until_) > 0) then " disabled" else "")
 
           # Test against selected date
@@ -223,7 +223,7 @@ class Datepicker extends Widget
       @selectedDate = null
       @el.val ""
     else
-      @selectedDate = moment.tz(date, simple.tz)
+      @selectedDate = moment(date, @opts.format)
       @el.val @selectedDate.format(@opts.format)
       @el.removeData "theDate"
 
