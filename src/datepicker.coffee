@@ -1,4 +1,4 @@
-class Datepicker extends Widget
+class Datepicker extends SimpleModule
   opts:
     el: null
     inline: false
@@ -230,9 +230,5 @@ class Datepicker extends Widget
     @cal and @update()
 
 
-
-@simple ||= {}
-
-$.extend @simple,
-  datepicker: (opts) ->
-    return new Datepicker opts
+datepicker = (opts) ->
+  return new Datepicker opts
