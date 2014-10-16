@@ -83,7 +83,7 @@ class Datepicker extends SimpleModule
       .on "click", ".datepicker-prev a", (e) =>
         btn = $(e.currentTarget)
         date = @el.data("theDate")
-        newDate = date.clone().add("months", -1)
+        newDate = date.clone().add(-1, "months")
 
         # Save the new date and render the change
         @el.data "theDate", newDate
@@ -117,12 +117,12 @@ class Datepicker extends SimpleModule
         # Hide calendar
         @_hide()  unless @opts.inline
 
-        @cal.trigger "select", [date.format(@opts.format), btn]
+        @trigger "select", [date.format(@opts.format), btn]
 
 
     @cal.css "width", @opts.width  if @opts.width
     @cal.html calendar
-    @cal.trigger "beforeUpdate", [@cal]
+    @trigger "beforeUpdate", [@cal]
 
 
 
@@ -135,7 +135,7 @@ class Datepicker extends SimpleModule
     lastDate = theDate.clone().endOf("month")
 
     # Calculate the last day in previous month
-    prevLastDate = theDate.clone().add("months", -1).endOf("month")
+    prevLastDate = theDate.clone().add(-1, "months").endOf("month")
 
     # The month names to show in toolbar
     monthNames = [
