@@ -57,7 +57,10 @@ module.exports = (grunt) ->
         src: ['lib/**/*.js']
         options:
           outfile: 'spec/index.html'
-          styles: 'styles/datepicker.css'
+          styles: [
+            'vendor/bower/fontawesome/css/font-awesome.min.css',
+            'styles/datepicker.css'
+          ]
           specs: 'spec/datepicker-spec.js'
           vendor: [
             'vendor/bower/jquery/dist/jquery.min.js'
