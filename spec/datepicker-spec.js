@@ -41,7 +41,7 @@
       var date;
       date = null;
       beforeEach(function(done) {
-        var inline_datepicker, today;
+        var inline_datepicker, today, try_timeout;
         $('.simple-datepicker').remove();
         inline_datepicker = simple.datepicker({
           el: $("body"),
@@ -53,11 +53,14 @@
         });
         today = moment();
         $('.simple-datepicker .datepicker-title a').trigger('click');
-        while ($($('.simple-datepicker .datepicker-yearmonth .datepicker-year a').get(0)).text() * 1 > 1998) {
+        try_timeout = 0;
+        while ($($('.simple-datepicker .datepicker-yearmonth .datepicker-year a').get(0)).text() * 1 > 1998 && try_timeout < 1000) {
           $('.simple-datepicker .datepicker-yearmonth .datepicker-year-prev a').trigger('click');
+          try_timeout++;
         }
-        while ($($('.simple-datepicker .datepicker-yearmonth .datepicker-year a').get(-1)).text() * 1 < 1998) {
+        while ($($('.simple-datepicker .datepicker-yearmonth .datepicker-year a').get(-1)).text() * 1 < 1998 && try_timeout < 1000) {
           $('.simple-datepicker .datepicker-yearmonth .datepicker-year-next a').trigger('click');
+          try_timeout++;
         }
         $('.simple-datepicker .datepicker-yearmonth .datepicker-year a').each(function() {
           if ($(this).text() * 1 === 1998) {

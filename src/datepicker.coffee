@@ -159,6 +159,7 @@ class Datepicker extends SimpleModule
         e.preventDefault()
         currentYear = @cal.find('.datepicker-yearmonth').data('year')*1
         year = $(@cal.find('.datepicker-yearmonth .datepicker-year a').get(0)).data('year')*1 - 10
+        year = currentYear - 5 if isNaN year
         years = @_renderYearSelectors [year..year+9], currentYear
         @cal.find('.datepicker-yearmonth .datepicker-year-list').html years
 
@@ -166,7 +167,8 @@ class Datepicker extends SimpleModule
         e.preventDefault()
         currentYear = @cal.find('.datepicker-yearmonth').data('year')*1
         year = $(@cal.find('.datepicker-yearmonth .datepicker-year a').get(0)).data('year')*1 + 10
-        years = years = @_renderYearSelectors [year..year+9], currentYear
+        year = currentYear - 5 if isNaN year
+        years = @_renderYearSelectors [year..year+9], currentYear
         @cal.find('.datepicker-yearmonth .datepicker-year-list').html years
 
       .on "click", ".datepicker-yearmonth .datepicker-year a", (e) =>
@@ -176,11 +178,8 @@ class Datepicker extends SimpleModule
         @cal.find('.datepicker-yearmonth').data('year', year)
         @cal.find('.datepicker-yearmonth .datepicker-year a.selected').removeClass('selected')
         btn.addClass('selected')
-        title = @cal.find('.datepicker-yearmonth .datepicker-yearmonth-title a').text()
-        title = title.split('年')
-        title[0] = year
-        title = title.join('年')
-        @cal.find('.datepicker-yearmonth .datepicker-yearmonth-title a').html title
+        month = @cal.find('.datepicker-yearmonth').data('month')
+        @cal.find('.datepicker-yearmonth .datepicker-yearmonth-title a').html @_formatTitle year,month
 
       .on "click", ".datepicker-yearmonth .datepicker-month a", (e) =>
         e.preventDefault()
@@ -189,11 +188,8 @@ class Datepicker extends SimpleModule
         @cal.find('.datepicker-yearmonth').data('month', month)
         @cal.find('.datepicker-yearmonth .datepicker-month a.selected').removeClass('selected')
         btn.addClass('selected')
-        title = @cal.find('.datepicker-yearmonth .datepicker-yearmonth-title a').text()
-        title = title.split('年')
-        title[1] = Datepicker.monthNames[month]
-        title = title.join('年')
-        @cal.find('.datepicker-yearmonth .datepicker-yearmonth-title a').html title
+        year = @cal.find('.datepicker-yearmonth').data('year')
+        @cal.find('.datepicker-yearmonth .datepicker-yearmonth-title a').html @_formatTitle year,month
 
 
     @cal.css "width", @opts.width  if @opts.width
@@ -202,6 +198,94 @@ class Datepicker extends SimpleModule
 
 
   _renderCal: (theDate) ->
+    # Determine whether to show Previous arrow
+    showP = showN = true
+
+    # Force override to showPrevNext on false
+    showP = showN = false  unless @opts.showPrevNext
+
+    # Build the html for the control
+    calendar = """
+      <table class="calendar">
+        <tr>
+          <td class="datepicker-prev">
+            #{'<a href="javascript:;" class="fa fa-chevron-left"></a>' if showP}
+          </td>
+          <td class="datepicker-title" colspan="5">
+            <a href="javascript:;">#{@_formatTitle theDate.year(), theDate.month()}</a>
+          </td>
+          <td class="datepicker-next">
+            #{'<a href="javascript:;" class="fa fa-chevron-right"></a>' if showN}
+          </td>
+        </tr>
+        <tr class="datepicker-dow">
+          <td>一</td><td>二</td><td>三</td><td>四</td><td>五</td><td>六</td><td>日</td>
+        </tr>
+        #{@_renderDaySelectors theDate}
+      </table>
+      """
+
+    return calendar
+
+  # render the year&month selector
+  _renderYearMonthSelector: (theDate) ->
+    showP = showN = true
+    showP = showN = false  unless @opts.showYearPrevNext
+    currentYear = theDate.year()
+    currentMonth = theDate.month()
+
+    return """
+      <div class="datepicker-yearmonth" data-year="#{currentYear}" data-month="#{currentMonth}">
+        <div class='datepicker-yearmonth-title'>
+          <a href='javascript:;'>
+            #{@_formatTitle currentYear, currentMonth}
+          </a>
+        </div>
+        <div class="datepicker-year-container">
+          #{'<div class="datepicker-year-prev"><a href="javascript:;" class="fa fa-chevron-up"></a></div>' if showP}
+          <ul class="datepicker-year-list">#{@_renderYearSelectors [currentYear-5..currentYear+4], currentYear}</ul>
+          #{'<div class="datepicker-year-next"><a href="javascript:;" class="fa fa-chevron-down"></a></div>' if showN}
+        </div>
+        <div class="datepicker-month-container">
+          <ul class="datepicker-month-list">#{@_renderMonthSelectors currentMonth}</ul>
+        </div>
+        <div class="datepicker-yearmonth-confirm">
+          <a href="javascript:;" class="datepicker-yearmonth-cancel">取消</a>
+          <a href="javascript:;" class="datepicker-yearmonth-ok">确定</a>
+        </div>
+      </div>
+      """
+
+  # render year selector buttons of yearmonth
+  _renderYearSelectors: (range, theYear) ->
+    years = ''
+    for _year in range
+      years += 
+        """
+        <li class="datepicker-year">
+          <a href="javascript:;" class="#{'selected' if _year is theYear}" data-year="#{_year}">
+            #{_year}
+          </a>
+        </li>
+        """ 
+    return years
+
+  # render month selector buttons of yearmonth
+  _renderMonthSelectors: (theMonth) ->
+    months = ''
+    for _month in [0..11]
+      months += 
+        """
+        <li class="datepicker-month">
+          <a href="javascript:;" class="#{'selected' if _month is theMonth}" data-month="#{_month}">
+            #{Datepicker.monthNames[_month]}
+          </a>
+        </li>
+        """ 
+    return months
+
+  # render day selector buttons of calendar
+  _renderDaySelectors: (theDate) ->
     today = moment().startOf("day")
 
     # Calculate the first and last date in month being rendered.
@@ -250,73 +334,27 @@ class Datepicker extends SimpleModule
           n = (if (n <= 0) then p else ((p - lastDate.date()) - prevLastDate.date()))
 
         # Create the cell
-        row += "<td class='datepicker-day'><a href='javascript:;' class='" + c + "' data-date='" + date.format("YYYY-MM-DD") + "'>" + n + "</div></td>"
+        row += """
+          <td class='datepicker-day'>
+            <a href="javascript:;" class="#{c}" data-date="#{date.format('YYYY-MM-DD')}">
+              #{n}
+            </a>
+          </td>
+          """
         x++
         i++
 
       # Create the row
-      days += "<tr class='days'>" + row + "</tr>"  if row
+      if row
+        days += """
+          <tr class="days">#{row}</tr>
+          """
       y++
+    return days
 
-    # Determine whether to show Previous arrow
-    showP = showN = true
-
-    # Force override to showPrevNext on false
-    showP = showN = false  unless @opts.showPrevNext
-
-    # Build the html for the control
-    titleMonthYear = theDate.year() + "年" + Datepicker.monthNames[theDate.month()]
-    calendar = "<table class='calendar'>" + "<tr>" + "<td class='datepicker-prev'>" \
-      + ((if showP then "<a href='javascript:;' class='fa fa-chevron-left'></a>" else "")) \
-      + "</td>" + "<td class='datepicker-title' colspan='5'><a href='javascript:;'>" + titleMonthYear + "</a></td>" + "<td class='datepicker-next'>" \
-      + ((if showN then "<a href='javascript:;' class='fa fa-chevron-right'></a>" else "")) \
-      + "</td>" + "</tr>" + "<tr class='datepicker-dow'>" + "<td>一</td><td>二</td><td>三</td><td>四</td><td>五</td><td>六</td><td>日</td>" \
-      + "</tr>" + days + "</table>"
-
-    return calendar
-
-  # render the year&month selector
-  _renderYearMonthSelector: (theDate) ->
-    currentYear = theDate.year()
-    years = @_renderYearSelectors [currentYear-5..currentYear+4], currentYear
-    showP = showN = true
-    showP = showN = false  unless @opts.showYearPrevNext
-    year = '''
-      <div class="datepicker-year-container">
-        ''' + ((if showP then '<div class="datepicker-year-prev"><a href="javascript:;" class="fa fa-chevron-up"></a></div>' else '')) + '''
-        <ul class="datepicker-year-list">''' + years + '''</ul>
-        ''' + ((if showN then '<div class="datepicker-year-next"><a href="javascript:;" class="fa fa-chevron-down"></a></div>' else '')) + '''
-      </div>
-      '''
-
-    currentMonth = theDate.month()
-    months = @_renderMonthSelectors currentMonth
-    month = '''
-      <div class="datepicker-month-container">
-        <ul class="datepicker-month-list">''' + months + '''</ul>
-      </div>
-      '''
-
-    confirm = '''
-      <div class="datepicker-yearmonth-confirm">
-        <a href="javascript:;" class="datepicker-yearmonth-cancel">取消</a>
-        <a href="javascript:;" class="datepicker-yearmonth-ok">确定</a>
-      </div>
-      '''
-
-    title = "<div class='datepicker-yearmonth-title'><a href='javascript:;'>#{currentYear}年#{Datepicker.monthNames[currentMonth]}</a></div>"
-
-    return "<div class='datepicker-yearmonth' data-year='#{currentYear}' data-month='#{currentMonth}'>#{title}#{year}#{month}#{confirm}</div>"
-
-  _renderYearSelectors: (range, theYear) ->
-    years = ''
-    years += "<li class='datepicker-year'><a href='javascript:;' data-year='#{_year}' class='#{if _year is theYear then ' selected' else '' }'>#{_year}</a></li>" for _year in range
-    return years
-  _renderMonthSelectors: (theMonth) ->
-    today = moment()
-    months = ''
-    months += "<li class='datepicker-month'><a href='javascript:;' data-month='#{_month}' class='#{if _month is theMonth then ' selected' else ''}'>#{Datepicker.monthNames[_month]}</a></li>" for _month in [0..11]
-    return months
+  # format the title composed with year and month
+  _formatTitle: (year, month) ->
+    "#{year}年#{Datepicker.monthNames[month]}"
 
 
   # Set a new selected date

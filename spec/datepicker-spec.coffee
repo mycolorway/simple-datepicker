@@ -41,10 +41,13 @@ describe 'Simple Datepicker', ->
 				done()
 			today = moment()
 			$('.simple-datepicker .datepicker-title a').trigger('click')
-			while $($('.simple-datepicker .datepicker-yearmonth .datepicker-year a').get(0)).text()*1 > 1998
+			try_timeout = 0
+			while $($('.simple-datepicker .datepicker-yearmonth .datepicker-year a').get(0)).text()*1 > 1998 and try_timeout < 1000
 				$('.simple-datepicker .datepicker-yearmonth .datepicker-year-prev a').trigger('click')
-			while $($('.simple-datepicker .datepicker-yearmonth .datepicker-year a').get(-1)).text()*1 < 1998
+				try_timeout++
+			while $($('.simple-datepicker .datepicker-yearmonth .datepicker-year a').get(-1)).text()*1 < 1998 and try_timeout < 1000
 				$('.simple-datepicker .datepicker-yearmonth .datepicker-year-next a').trigger('click')
+				try_timeout++
 			$('.simple-datepicker .datepicker-yearmonth .datepicker-year a').each ->
 				if $(this).text()*1 is 1998
 					$(this).trigger('click')
