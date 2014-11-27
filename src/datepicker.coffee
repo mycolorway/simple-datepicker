@@ -48,20 +48,18 @@ class Datepicker extends SimpleModule
 
       # Bind click elsewhere to hide
       $(document).on "click.datepicker", (e) =>
-        @_hide()
+        @_hide() unless @el.is(e.target) or @el.has(e.target).length
 
 
   # Show the calendar
   _show: ->
     @update @opts.month
 
-
   # Hide the calendar
   _hide: ->
     if @cal
       @cal.remove()
       @cal = null
-      $(document).off ".datepicker"
 
 
   # Render the calendar

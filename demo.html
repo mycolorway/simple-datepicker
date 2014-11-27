@@ -49,6 +49,7 @@
   function generate() {
     if (datepicker && datepicker.cal) datepicker.cal.remove();
     if (inlineDatepicker && inlineDatepicker.cal) inlineDatepicker.cal.remove();
+    $date.off('focus');
     var options = {
       el: $date,
       showPrevNext: parseInt($('[name=showPrevNext]:checked').attr('value')) ? true : false,
@@ -61,7 +62,7 @@
     options.inline = true;
     options.el = $date_inline;
     inlineDatepicker = simple.datepicker(options);
-    $('body').focus();
+    $('#date-inline').focus();
   }
   </script>
 </body>
