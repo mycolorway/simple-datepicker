@@ -65,7 +65,7 @@ class Datepicker extends SimpleModule
 
 
   # Render the calendar
-  update: (date) ->
+  update: (date, usage) ->
     today = moment().startOf("day")
 
     # Get the current date to render
@@ -74,14 +74,9 @@ class Datepicker extends SimpleModule
     # Save current date
     @el.data "theDate", theDate
 
-    calendarHidden = false
-    yearmonthHidden = true
-    if @cal
-      calendarHidden = @cal.find('.calendar').is(':hidden')
-      yearmonthHidden = @cal.find('.datepicker-yearmonth').is(':hidden')
-
-    calendar = @_renderCal(theDate, calendarHidden)
-    yearmonth = @_renderYearMonthSelector(theDate, yearmonthHidden)
+    panel = switch usage
+      when 'yearmonth' then @_renderYearMonthSelector theDate
+      else @_renderCal theDate
 
     unless @cal
       @cal = $("<div class='simple-datepicker'></div>").insertAfter @el
@@ -103,8 +98,7 @@ class Datepicker extends SimpleModule
         return false
 
       .on "click", ".datepicker-title a", (e) =>
-        @cal.find('.datepicker-yearmonth').show()
-        @cal.find('.calendar').hide()
+        @update null, 'yearmonth'
 
       .on "click", ".datepicker-prev a", (e) =>
         btn = $(e.currentTarget)
@@ -146,8 +140,7 @@ class Datepicker extends SimpleModule
         @trigger "select", [date.format(@opts.format), btn]
 
       .on "click", ".datepicker-yearmonth-cancel,.datepicker-yearmonth-title a", (e) =>
-        @cal.find('.datepicker-yearmonth').hide()
-        @cal.find('.calendar').show()
+        @update()
 
       .on "click", ".datepicker-yearmonth-ok", (e) =>
         e.preventDefault()
@@ -157,9 +150,6 @@ class Datepicker extends SimpleModule
         selectedMonth = @cal.find('.datepicker-yearmonth').data('month')*1
         date.set('year', selectedYear)
         date.set('month', selectedMonth)
-
-        @cal.find('.datepicker-yearmonth').hide()
-        @cal.find('.calendar').show()
 
         # Save the new date and render the change
         @el.data "theDate", date
@@ -207,11 +197,11 @@ class Datepicker extends SimpleModule
 
 
     @cal.css "width", @opts.width  if @opts.width
-    @cal.html calendar + yearmonth
+    @cal.html panel
     @trigger "beforeUpdate", [@cal]
 
 
-  _renderCal: (theDate, hidden) ->
+  _renderCal: (theDate) ->
     today = moment().startOf("day")
 
     # Calculate the first and last date in month being rendered.
@@ -276,7 +266,7 @@ class Datepicker extends SimpleModule
 
     # Build the html for the control
     titleMonthYear = theDate.year() + "年" + Datepicker.monthNames[theDate.month()]
-    calendar = "<table class='calendar'" + ((if hidden then " style='display:none;'" else "")) + ">" + "<tr>" + "<td class='datepicker-prev'>" \
+    calendar = "<table class='calendar'>" + "<tr>" + "<td class='datepicker-prev'>" \
       + ((if showP then "<a href='javascript:;' class='fa fa-chevron-left'></a>" else "")) \
       + "</td>" + "<td class='datepicker-title' colspan='5'><a href='javascript:;'>" + titleMonthYear + "</a></td>" + "<td class='datepicker-next'>" \
       + ((if showN then "<a href='javascript:;' class='fa fa-chevron-right'></a>" else "")) \
@@ -286,7 +276,7 @@ class Datepicker extends SimpleModule
     return calendar
 
   # render the year&month selector
-  _renderYearMonthSelector: (theDate, hidden) ->
+  _renderYearMonthSelector: (theDate) ->
     currentYear = theDate.year()
     years = @_renderYearSelectors [currentYear-5..currentYear+4], currentYear
     showP = showN = true
@@ -316,7 +306,7 @@ class Datepicker extends SimpleModule
 
     title = "<div class='datepicker-yearmonth-title'><a href='javascript:;'>#{currentYear}年#{Datepicker.monthNames[currentMonth]}</a></div>"
 
-    return "<div class='datepicker-yearmonth' #{if hidden then ' style=\'display:none;\'' else ''} data-year='#{currentYear}' data-month='#{currentMonth}'>#{title}#{year}#{month}#{confirm}</div>"
+    return "<div class='datepicker-yearmonth' data-year='#{currentYear}' data-month='#{currentMonth}'>#{title}#{year}#{month}#{confirm}</div>"
 
   _renderYearSelectors: (range, theYear) ->
     years = ''
