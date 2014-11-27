@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Jasmine Spec Runner</title>
+  <link rel="stylesheet" type="text/css" href="./vendor/bower/fontawesome/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="./styles/datepicker.css">
+</head>
+<body>
+  <p>
+    <label><input type="radio" name="showPrevNext" checked value="1" />Show calendar nav buttons</label><br/>
+    <label><input type="radio" name="showPrevNext" value="0" />Hide calendar nav buttons</label>
+  </p>
+  <p>
+    <label><input type="radio" name="showYearPrevNext" checked value="1" />Show year-month panel nav buttons</label><br/>
+    <label><input type="radio" name="showYearPrevNext" value="0" />Hide year-month panel nav buttons</label>
+  </p>
+  <p>
+    <label>Earliest date</label>
+    <input type="text" name="disableBefore"><a href="javascript:;" onclick="document.getElementsByName('disableBefore')[0].value='';"><i class="fa fa-remove"></i></a>
+  </p>
+  <p>
+    <label>Latest date</label>
+    <input type="text" name="disableAfter"><a href="javascript:;" onclick="document.getElementsByName('disableAfter')[0].value='';"><i class="fa fa-remove"></i></a>
+  </p>
+  <p>
+    <button type="button" onclick="generate();">Generate</button>
+  </p>
+  <p>
+    <label>Format</label>
+    <input type="text" name="format" value="YYYY-MM-DD">
+  </p>
+  <p>
+    <label>A float one: </label><input type="text" name="date" id="date">
+  </p>
+  <p>
+    <label>An inline one: </label><input type="text" name="date-inline" id="date-inline">
+  </p>
+  <script src="./vendor/bower/jquery/dist/jquery.min.js"></script>
+  <script src="./vendor/bower/simple-module/lib/module.js"></script>
+  <script src="./vendor/bower/moment/moment.js"></script>
+  <script src="./lib/datepicker.js"></script>
+  <script type="text/javascript">
+  var inlineDatepicker = null,
+      datepicker = null;
+  var $date = $('#date'),
+      $date_inline = $('#date-inline');
+
+  function generate() {
+    if (datepicker && datepicker.cal) datepicker.cal.remove();
+    if (inlineDatepicker && inlineDatepicker.cal) inlineDatepicker.cal.remove();
+    var options = {
+      el: $date,
+      showPrevNext: parseInt($('[name=showPrevNext]:checked').attr('value')) ? true : false,
+      showYearPrevNext: parseInt($('[name=showYearPrevNext]:checked').attr('value')) ? true : false,
+      disableBefore: $('[name=disableBefore]').attr('value'),
+      disableAfter: $('[name=disableAfter]').attr('value'),
+      format: $('[name=format]').attr('value')
+    };
+    datepicker = simple.datepicker(options);
+    options.inline = true;
+    options.el = $date_inline;
+    inlineDatepicker = simple.datepicker(options);
+    $('body').focus();
+  }
+  </script>
+</body>
+</html>
