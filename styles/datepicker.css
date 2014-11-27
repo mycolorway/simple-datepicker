@@ -3,6 +3,9 @@
   background: #fff;
   font-size: 12px;
 }
+.simple-datepicker a {
+  text-decoration: none;
+}
 .simple-datepicker table.calendar {
   width: 100%;
 }

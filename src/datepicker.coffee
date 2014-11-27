@@ -146,8 +146,8 @@ class Datepicker extends SimpleModule
         e.preventDefault()
         date = @el.data("theDate") or @selectedDate or moment().startOf("day")
         date = date.clone()
-        selectedYear = @cal.find('.datepicker-yearmonth').data('year')*1
-        selectedMonth = @cal.find('.datepicker-yearmonth').data('month')*1
+        selectedYear = @_yearmonth.data('year')*1
+        selectedMonth = @_yearmonth.data('month')*1
         date.set('year', selectedYear)
         date.set('month', selectedMonth)
 
@@ -155,45 +155,42 @@ class Datepicker extends SimpleModule
         @el.data "theDate", date
         @update()
 
-      .on "click", ".datepicker-yearmonth .datepicker-year-prev a", (e) =>
+      .on "click", ".datepicker-yearmonth .datepicker-year-prev a,.datepicker-yearmonth .datepicker-year-next a", (e) =>
         e.preventDefault()
-        currentYear = @cal.find('.datepicker-yearmonth').data('year')*1
-        year = $(@cal.find('.datepicker-yearmonth .datepicker-year a').get(0)).data('year')*1 - 10
-        year = currentYear - 5 if isNaN year
+        currentYear = @_yearmonth.data('year')*1
+        btn = $(e.currentTarget)
+        year = $(@cal.find('.datepicker-yearmonth .datepicker-year a').get(0)).data('year')*1
+        if isNaN year
+          year = currentYear - 5 
+        else
+          if btn.parent().hasClass 'datepicker-year-prev'
+            year -= 10
+          else
+            year += 10
         years = @_renderYearSelectors [year..year+9], currentYear
         @cal.find('.datepicker-yearmonth .datepicker-year-list').html years
 
-      .on "click", ".datepicker-yearmonth .datepicker-year-next a", (e) =>
-        e.preventDefault()
-        currentYear = @cal.find('.datepicker-yearmonth').data('year')*1
-        year = $(@cal.find('.datepicker-yearmonth .datepicker-year a').get(0)).data('year')*1 + 10
-        year = currentYear - 5 if isNaN year
-        years = @_renderYearSelectors [year..year+9], currentYear
-        @cal.find('.datepicker-yearmonth .datepicker-year-list').html years
-
-      .on "click", ".datepicker-yearmonth .datepicker-year a", (e) =>
+      .on "click", ".datepicker-yearmonth .datepicker-year a,.datepicker-yearmonth .datepicker-month a", (e) =>
         e.preventDefault()
         btn = $(e.currentTarget)
-        year = btn.data('year')*1
-        @cal.find('.datepicker-yearmonth').data('year', year)
-        @cal.find('.datepicker-yearmonth .datepicker-year a.selected').removeClass('selected')
+        li = btn.parent()
+        if li.hasClass 'datepicker-year'
+          year = btn.data('year')*1
+          month = @_yearmonth.data('month')
+          @_yearmonth.data('year', year)
+        else
+          month = btn.data('month')*1
+          year = @_yearmonth.data('year')
+          @_yearmonth.data('month', month)
+        btn.parent().siblings().find('a.selected').removeClass('selected')
         btn.addClass('selected')
-        month = @cal.find('.datepicker-yearmonth').data('month')
-        @cal.find('.datepicker-yearmonth .datepicker-yearmonth-title a').html @_formatTitle year,month
-
-      .on "click", ".datepicker-yearmonth .datepicker-month a", (e) =>
-        e.preventDefault()
-        btn = $(e.currentTarget)
-        month = btn.data('month')*1
-        @cal.find('.datepicker-yearmonth').data('month', month)
-        @cal.find('.datepicker-yearmonth .datepicker-month a.selected').removeClass('selected')
-        btn.addClass('selected')
-        year = @cal.find('.datepicker-yearmonth').data('year')
         @cal.find('.datepicker-yearmonth .datepicker-yearmonth-title a').html @_formatTitle year,month
 
 
     @cal.css "width", @opts.width  if @opts.width
     @cal.html panel
+    @_calendar = @cal.find('.calendar')
+    @_yearmonth = @cal.find('.datepicker-yearmonth')
     @trigger "beforeUpdate", [@cal]
 
 
