@@ -8,17 +8,18 @@
       return expect(datepicker instanceof SimpleModule).toBe(true);
     });
     describe('Date selecting', function() {
-      var date, desiredDate;
+      var date, desiredDate, inlineDatepicker;
       date = null;
       desiredDate = null;
+      inlineDatepicker = null;
       beforeEach(function(done) {
-        var inline_datepicker, today;
+        var today;
         $('.simple-datepicker').remove();
-        inline_datepicker = simple.datepicker({
+        inlineDatepicker = simple.datepicker({
           el: $("body"),
           inline: true
         });
-        inline_datepicker.on('select', function(e, _date) {
+        inlineDatepicker.on('select', function(e, _date) {
           date = _date;
           return done();
         });
@@ -34,20 +35,23 @@
       });
       return it('should set date to 15th of last month', function(done) {
         expect(date).toEqual(desiredDate);
+        expect($('body').data('theDate').format('YYYY-MM-DD')).toEqual(desiredDate);
+        expect(inlineDatepicker.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate);
         return done();
       });
     });
     describe('Quick Year&Month selecting', function() {
-      var date;
+      var date, inlineDatepicker;
       date = null;
+      inlineDatepicker = null;
       beforeEach(function(done) {
-        var inline_datepicker, today, try_timeout;
+        var today, try_timeout;
         $('.simple-datepicker').remove();
-        inline_datepicker = simple.datepicker({
+        inlineDatepicker = simple.datepicker({
           el: $("body"),
           inline: true
         });
-        inline_datepicker.on('select', function(e, _date) {
+        inlineDatepicker.on('select', function(e, _date) {
           date = _date;
           return done();
         });
@@ -79,7 +83,25 @@
       });
       return it('should set date to March 15th, 1998', function(done) {
         expect(date).toEqual('1998-03-15');
+        expect($('body').data('theDate').format('YYYY-MM-DD')).toEqual('1998-03-15');
+        expect(inlineDatepicker.selectedDate.format('YYYY-MM-DD')).toEqual('1998-03-15');
         return done();
+      });
+    });
+    describe('Set date using setSelectedDate', function() {
+      var inlineDatepicker;
+      inlineDatepicker = null;
+      beforeEach(function() {
+        $('.simple-datepicker').remove();
+        inlineDatepicker = simple.datepicker({
+          el: $("body"),
+          inline: true
+        });
+        return inlineDatepicker.setSelectedDate('1998-03-15');
+      });
+      return it('should set date to March 15th, 1998', function() {
+        expect($('body').data('theDate').format('YYYY-MM-DD')).toEqual('1998-03-15');
+        return expect(inlineDatepicker.selectedDate.format('YYYY-MM-DD')).toEqual('1998-03-15');
       });
     });
     return afterEach(function() {
