@@ -58,28 +58,18 @@
         today = moment();
         $('.simple-datepicker .datepicker-title a').trigger('click');
         try_timeout = 0;
-        while ($($('.simple-datepicker .datepicker-yearmonth .datepicker-year a').get(0)).text() * 1 > 1998 && try_timeout < 1000) {
+        while ($('.simple-datepicker .datepicker-yearmonth .datepicker-year a:first').text() * 1 > 1998 && try_timeout < 1000) {
           $('.simple-datepicker .datepicker-yearmonth .datepicker-year-prev a').trigger('click');
           try_timeout++;
         }
-        while ($($('.simple-datepicker .datepicker-yearmonth .datepicker-year a').get(-1)).text() * 1 < 1998 && try_timeout < 1000) {
+        while ($('.simple-datepicker .datepicker-yearmonth .datepicker-year a:last').text() * 1 < 1998 && try_timeout < 1000) {
           $('.simple-datepicker .datepicker-yearmonth .datepicker-year-next a').trigger('click');
           try_timeout++;
         }
-        $('.simple-datepicker .datepicker-yearmonth .datepicker-year a').each(function() {
-          if ($(this).text() * 1 === 1998) {
-            $(this).trigger('click');
-            return false;
-          }
-        });
+        $('.simple-datepicker .datepicker-yearmonth .datepicker-year a:contains(1998)').trigger('click');
         $($('.simple-datepicker .datepicker-yearmonth .datepicker-month a').get(2)).trigger('click');
         $('.simple-datepicker .datepicker-yearmonth .datepicker-yearmonth-ok').trigger('click');
-        return $('.simple-datepicker .datepicker-day a').each(function() {
-          if ($(this).text() * 1 === 15) {
-            $(this).trigger('click');
-            return false;
-          }
-        });
+        return $('.simple-datepicker .datepicker-day a:contains(15)').trigger('click');
       });
       return it('should set date to March 15th, 1998', function(done) {
         expect(date).toEqual('1998-03-15');
