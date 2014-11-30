@@ -140,7 +140,7 @@ class Datepicker extends SimpleModule
         @trigger "select", [date.format(@opts.format), btn]
 
       .on "click", ".datepicker-yearmonth-cancel,.datepicker-yearmonth-title a", (e) =>
-        @update()
+        @update null, 'calendar'
 
       .on "click", ".datepicker-yearmonth-ok", (e) =>
         e.preventDefault()
@@ -153,7 +153,7 @@ class Datepicker extends SimpleModule
 
         # Save the new date and render the change
         @el.data "theDate", date
-        @update()
+        @update null, 'calendar'
 
       .on "click", ".datepicker-yearmonth .datepicker-year-prev a,.datepicker-yearmonth .datepicker-year-next a", (e) =>
         e.preventDefault()
@@ -208,13 +208,13 @@ class Datepicker extends SimpleModule
       <table class="calendar">
         <tr>
           <td class="datepicker-prev">
-            #{'<a href="javascript:;" class="fa fa-chevron-left"></a>' if showP}
+            #{if showP then '<a href="javascript:;" class="fa fa-chevron-left"></a>' else ''}
           </td>
           <td class="datepicker-title" colspan="5">
             <a href="javascript:;">#{@_formatTitle theDate.year(), theDate.month()}</a>
           </td>
           <td class="datepicker-next">
-            #{'<a href="javascript:;" class="fa fa-chevron-right"></a>' if showN}
+            #{if showN then '<a href="javascript:;" class="fa fa-chevron-right"></a>' else ''}
           </td>
         </tr>
         <tr class="datepicker-dow">
@@ -242,9 +242,9 @@ class Datepicker extends SimpleModule
           </a>
         </div>
         <div class="datepicker-year-container">
-          #{'<div class="datepicker-year-prev"><a href="javascript:;" class="fa fa-chevron-up"></a></div>' if showP}
+          #{if showP then '<div class="datepicker-year-prev"><a href="javascript:;" class="fa fa-chevron-up"></a></div>' else ''}
           <ul class="datepicker-year-list">#{@_renderYearSelectors [currentYear-5..currentYear+4], currentYear}</ul>
-          #{'<div class="datepicker-year-next"><a href="javascript:;" class="fa fa-chevron-down"></a></div>' if showN}
+          #{if showN then '<div class="datepicker-year-next"><a href="javascript:;" class="fa fa-chevron-down"></a></div>' else ''}
         </div>
         <div class="datepicker-month-container">
           <ul class="datepicker-month-list">#{@_renderMonthSelectors currentMonth}</ul>
@@ -263,7 +263,7 @@ class Datepicker extends SimpleModule
       years +=
         """
         <li class="datepicker-year">
-          <a href="javascript:;" class="#{'selected' if _year is theYear}" data-year="#{_year}">
+          <a href="javascript:;" class="#{if _year is theYear then 'selected' else ''}" data-year="#{_year}">
             #{_year}
           </a>
         </li>
@@ -277,7 +277,7 @@ class Datepicker extends SimpleModule
       months +=
         """
         <li class="datepicker-month">
-          <a href="javascript:;" class="#{'selected' if _month is theMonth}" data-month="#{_month}">
+          <a href="javascript:;" class="#{if _month is theMonth then 'selected' else ''}" data-month="#{_month}">
             #{Datepicker.monthNames[_month]}
           </a>
         </li>
