@@ -159,7 +159,7 @@ class Datepicker extends SimpleModule
         btn = $(e.currentTarget)
         year = $(@cal.find('.datepicker-yearmonth .datepicker-year a').get(0)).data('year')*1
         if isNaN year
-          year = currentYear - 5 
+          year = currentYear - 5
         else
           if btn.parent().hasClass 'datepicker-year-prev'
             year -= 10
@@ -255,28 +255,28 @@ class Datepicker extends SimpleModule
   _renderYearSelectors: (range, theYear) ->
     years = ''
     for _year in range
-      years += 
+      years +=
         """
         <li class="datepicker-year">
           <a href="javascript:;" class="#{'selected' if _year is theYear}" data-year="#{_year}">
             #{_year}
           </a>
         </li>
-        """ 
+        """
     return years
 
   # render month selector buttons of yearmonth
   _renderMonthSelectors: (theMonth) ->
     months = ''
     for _month in [0..11]
-      months += 
+      months +=
         """
         <li class="datepicker-month">
           <a href="javascript:;" class="#{'selected' if _month is theMonth}" data-month="#{_month}">
             #{Datepicker.monthNames[_month]}
           </a>
         </li>
-        """ 
+        """
     return months
 
   # render day selector buttons of calendar

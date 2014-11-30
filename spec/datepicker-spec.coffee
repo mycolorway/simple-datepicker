@@ -1,80 +1,111 @@
 
 describe 'Simple Datepicker', ->
-
   it 'should inherit from SimpleModule', ->
     datepicker = simple.datepicker
-      el: $("body")
+      el: $('body')
     expect(datepicker instanceof SimpleModule).toBe(true)
 
-  describe 'Date selecting', ->
+  describe 'select day', ->
     date = null
     desiredDate = null
-    inlineDatepicker = null
+    dp = null
+
     beforeEach (done)->
-      $('.simple-datepicker').remove()
-      inlineDatepicker = simple.datepicker
-        el: $("body")
+      dp = simple.datepicker
+        el: $('body')
         inline: true
-      inlineDatepicker.on 'select', (e,_date) ->
+
+      dp.on 'select', (e, _date) ->
         date = _date
         done()
-      today = moment()
-      desiredDate = today.clone().add('month', -1).set('date', 15).format('YYYY-MM-DD')
-      $('.simple-datepicker .datepicker-prev a').trigger('click')
-      $('.simple-datepicker .datepicker-day a').each ->
-        if $(this).text()*1 is 15
-          $(this).trigger('click')
-          return false
 
-    it 'should set date to 15th of last month', (done)->
+      today = moment()
+      desiredDate = today.clone().add('month', -1)
+                      .set('date', 15).format('YYYY-MM-DD')
+
+      dp.cal.find('.datepicker-prev a').click()
+      dp.cal.find('.datepicker-day a:contains(15)').click()
+
+    it 'should works all right', (done)->
       expect(date).toEqual(desiredDate)
-      expect($('body').data('theDate').format('YYYY-MM-DD')).toEqual(desiredDate)
-      expect(inlineDatepicker.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate)
+      expect(dp.el.data('theDate').format('YYYY-MM-DD')).toEqual(desiredDate)
+      expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate)
       done()
 
-  describe 'Quick Year&Month selecting', ->
+  describe 'select year/Month', ->
     date = null
-    inlineDatepicker = null
+    desiredDate = null
+    dp = null
+
     beforeEach (done)->
-      $('.simple-datepicker').remove()
-      inlineDatepicker = simple.datepicker
-        el: $("body")
+      dp = simple.datepicker
+        el: $('body')
         inline: true
-      inlineDatepicker.on 'select', (e,_date) ->
+
+      dp.on 'select', (e, _date) ->
         date = _date
         done()
-      today = moment()
-      $('.simple-datepicker .datepicker-title a').trigger('click')
-      try_timeout = 0
-      while $('.simple-datepicker .datepicker-yearmonth .datepicker-year a:first').text()*1 > 1998 and try_timeout < 1000
-        $('.simple-datepicker .datepicker-yearmonth .datepicker-year-prev a').trigger('click')
-        try_timeout++
-      while $('.simple-datepicker .datepicker-yearmonth .datepicker-year a:last').text()*1 < 1998 and try_timeout < 1000
-        $('.simple-datepicker .datepicker-yearmonth .datepicker-year-next a').trigger('click')
-        try_timeout++
-      $('.simple-datepicker .datepicker-yearmonth .datepicker-year a:contains(1998)').trigger('click')
-      $($('.simple-datepicker .datepicker-yearmonth .datepicker-month a').get(2)).trigger('click')
-      $('.simple-datepicker .datepicker-yearmonth .datepicker-yearmonth-ok').trigger('click')
-      $('.simple-datepicker .datepicker-day a:contains(15)').trigger('click')
 
-    it 'should set date to March 15th, 1998', (done)->
-      expect(date).toEqual('1998-03-15')
-      expect($('body').data('theDate').format('YYYY-MM-DD')).toEqual('1998-03-15')
-      expect(inlineDatepicker.selectedDate.format('YYYY-MM-DD')).toEqual('1998-03-15')
+      today = moment()
+      desiredDate = today.clone().add(1, 'year')
+                      .set('month', 2).set('date', 15)
+                      .format('YYYY-MM-DD')
+
+      dp.cal.find('.datepicker-title a').click()
+
+      dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click()
+      dp._yearmonth.find('.datepicker-month a:contains(3)').click()
+      dp._yearmonth.find('.datepicker-yearmonth-ok').click()
+      dp.cal.find('.datepicker-day a:contains(15)').click()
+
+    it 'should works all right', (done)->
+      expect(date).toEqual desiredDate
+      expect(dp.el.data('theDate').format('YYYY-MM-DD')).toEqual desiredDate
+      expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual desiredDate
       done()
 
-  describe 'Set date using setSelectedDate', ->
-    inlineDatepicker = null
-    beforeEach ->
-      $('.simple-datepicker').remove()
-      inlineDatepicker = simple.datepicker
-        el: $("body")
-        inline: true
-      inlineDatepicker.setSelectedDate '1998-03-15'
+  describe 'instance method [setSelectedDate]', ->
+    dateStr = '1998-03-15'
+    target = $('body')
+    dp = null
 
-    it 'should set date to March 15th, 1998', ->
-      expect($('body').data('theDate').format('YYYY-MM-DD')).toEqual('1998-03-15')
-      expect(inlineDatepicker.selectedDate.format('YYYY-MM-DD')).toEqual('1998-03-15')
+    beforeEach ->
+      dp = simple.datepicker
+        el: target
+        inline: true
+
+    it 'should works when pass in a string', ->
+      dp.setSelectedDate dateStr
+
+      expect(target.data('theDate').format('YYYY-MM-DD')).toEqual dateStr
+      expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual dateStr
+
+    it 'should works when pass in a moment', ->
+      dp.setSelectedDate moment(dateStr)
+
+      expect(target.data('theDate').format('YYYY-MM-DD')).toEqual dateStr
+      expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual dateStr
+
+    it 'should update calendar due to the new date', ->
+      dp.setSelectedDate dateStr
+
+      title = $.trim dp.cal.find('.datepicker-title').text()
+      day = dp.cal.find('.datepicker-day a.selected').text()*1
+
+      expect(title).toEqual dp._formatTitle(1998, 2)
+      expect(day).toEqual day
+
+    it 'should stay at same view', ->
+      expect(dp.cal.find('.datepicker-yearmonth').length).toEqual 0
+
+      dp.setSelectedDate dateStr
+      expect(dp.cal.find('.datepicker-yearmonth').length).toEqual 0
+
+      dp.cal.find('.datepicker-title a').click()
+      expect(dp.cal.find('.datepicker-yearmonth').length).toEqual 1
+
+      dp.setSelectedDate dateStr
+      expect(dp.cal.find('.datepicker-yearmonth').length).toEqual 1
 
   afterEach ->
     $('.simple-datepicker').remove()

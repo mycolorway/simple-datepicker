@@ -3,95 +3,104 @@
     it('should inherit from SimpleModule', function() {
       var datepicker;
       datepicker = simple.datepicker({
-        el: $("body")
+        el: $('body')
       });
       return expect(datepicker instanceof SimpleModule).toBe(true);
     });
-    describe('Date selecting', function() {
-      var date, desiredDate, inlineDatepicker;
+    describe('select day', function() {
+      var date, desiredDate, dp;
       date = null;
       desiredDate = null;
-      inlineDatepicker = null;
+      dp = null;
       beforeEach(function(done) {
         var today;
-        $('.simple-datepicker').remove();
-        inlineDatepicker = simple.datepicker({
-          el: $("body"),
+        dp = simple.datepicker({
+          el: $('body'),
           inline: true
         });
-        inlineDatepicker.on('select', function(e, _date) {
+        dp.on('select', function(e, _date) {
           date = _date;
           return done();
         });
         today = moment();
         desiredDate = today.clone().add('month', -1).set('date', 15).format('YYYY-MM-DD');
-        $('.simple-datepicker .datepicker-prev a').trigger('click');
-        return $('.simple-datepicker .datepicker-day a').each(function() {
-          if ($(this).text() * 1 === 15) {
-            $(this).trigger('click');
-            return false;
-          }
-        });
+        dp.cal.find('.datepicker-prev a').click();
+        return dp.cal.find('.datepicker-day a:contains(15)').click();
       });
-      return it('should set date to 15th of last month', function(done) {
+      return it('should works all right', function(done) {
         expect(date).toEqual(desiredDate);
-        expect($('body').data('theDate').format('YYYY-MM-DD')).toEqual(desiredDate);
-        expect(inlineDatepicker.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate);
+        expect(dp.el.data('theDate').format('YYYY-MM-DD')).toEqual(desiredDate);
+        expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate);
         return done();
       });
     });
-    describe('Quick Year&Month selecting', function() {
-      var date, inlineDatepicker;
+    describe('select year/Month', function() {
+      var date, desiredDate, dp;
       date = null;
-      inlineDatepicker = null;
+      desiredDate = null;
+      dp = null;
       beforeEach(function(done) {
-        var today, try_timeout;
-        $('.simple-datepicker').remove();
-        inlineDatepicker = simple.datepicker({
-          el: $("body"),
+        var today;
+        dp = simple.datepicker({
+          el: $('body'),
           inline: true
         });
-        inlineDatepicker.on('select', function(e, _date) {
+        dp.on('select', function(e, _date) {
           date = _date;
           return done();
         });
         today = moment();
-        $('.simple-datepicker .datepicker-title a').trigger('click');
-        try_timeout = 0;
-        while ($('.simple-datepicker .datepicker-yearmonth .datepicker-year a:first').text() * 1 > 1998 && try_timeout < 1000) {
-          $('.simple-datepicker .datepicker-yearmonth .datepicker-year-prev a').trigger('click');
-          try_timeout++;
-        }
-        while ($('.simple-datepicker .datepicker-yearmonth .datepicker-year a:last').text() * 1 < 1998 && try_timeout < 1000) {
-          $('.simple-datepicker .datepicker-yearmonth .datepicker-year-next a').trigger('click');
-          try_timeout++;
-        }
-        $('.simple-datepicker .datepicker-yearmonth .datepicker-year a:contains(1998)').trigger('click');
-        $($('.simple-datepicker .datepicker-yearmonth .datepicker-month a').get(2)).trigger('click');
-        $('.simple-datepicker .datepicker-yearmonth .datepicker-yearmonth-ok').trigger('click');
-        return $('.simple-datepicker .datepicker-day a:contains(15)').trigger('click');
+        desiredDate = today.clone().add(1, 'year').set('month', 2).set('date', 15).format('YYYY-MM-DD');
+        dp.cal.find('.datepicker-title a').click();
+        dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click();
+        dp._yearmonth.find('.datepicker-month a:contains(3)').click();
+        dp._yearmonth.find('.datepicker-yearmonth-ok').click();
+        return dp.cal.find('.datepicker-day a:contains(15)').click();
       });
-      return it('should set date to March 15th, 1998', function(done) {
-        expect(date).toEqual('1998-03-15');
-        expect($('body').data('theDate').format('YYYY-MM-DD')).toEqual('1998-03-15');
-        expect(inlineDatepicker.selectedDate.format('YYYY-MM-DD')).toEqual('1998-03-15');
+      return it('should works all right', function(done) {
+        expect(date).toEqual(desiredDate);
+        expect(dp.el.data('theDate').format('YYYY-MM-DD')).toEqual(desiredDate);
+        expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate);
         return done();
       });
     });
-    describe('Set date using setSelectedDate', function() {
-      var inlineDatepicker;
-      inlineDatepicker = null;
+    describe('instance method [setSelectedDate]', function() {
+      var dateStr, dp, target;
+      dateStr = '1998-03-15';
+      target = $('body');
+      dp = null;
       beforeEach(function() {
-        $('.simple-datepicker').remove();
-        inlineDatepicker = simple.datepicker({
-          el: $("body"),
+        return dp = simple.datepicker({
+          el: target,
           inline: true
         });
-        return inlineDatepicker.setSelectedDate('1998-03-15');
       });
-      return it('should set date to March 15th, 1998', function() {
-        expect($('body').data('theDate').format('YYYY-MM-DD')).toEqual('1998-03-15');
-        return expect(inlineDatepicker.selectedDate.format('YYYY-MM-DD')).toEqual('1998-03-15');
+      it('should works when pass in a string', function() {
+        dp.setSelectedDate(dateStr);
+        expect(target.data('theDate').format('YYYY-MM-DD')).toEqual(dateStr);
+        return expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(dateStr);
+      });
+      it('should works when pass in a moment', function() {
+        dp.setSelectedDate(moment(dateStr));
+        expect(target.data('theDate').format('YYYY-MM-DD')).toEqual(dateStr);
+        return expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(dateStr);
+      });
+      it('should update calendar due to the new date', function() {
+        var day, title;
+        dp.setSelectedDate(dateStr);
+        title = $.trim(dp.cal.find('.datepicker-title').text());
+        day = dp.cal.find('.datepicker-day a.selected').text() * 1;
+        expect(title).toEqual(dp._formatTitle(1998, 2));
+        return expect(day).toEqual(day);
+      });
+      return it('should stay at same view', function() {
+        expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(0);
+        dp.setSelectedDate(dateStr);
+        expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(0);
+        dp.cal.find('.datepicker-title a').click();
+        expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(1);
+        dp.setSelectedDate(dateStr);
+        return expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(1);
       });
     });
     return afterEach(function() {
