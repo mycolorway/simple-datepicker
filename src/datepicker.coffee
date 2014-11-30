@@ -72,6 +72,8 @@ class Datepicker extends SimpleModule
     # Save current date
     @el.data "theDate", theDate
 
+    usage ?= @_usage or 'calendar'
+
     panel = switch usage
       when 'yearmonth' then @_renderYearMonthSelector theDate
       else @_renderCal theDate
@@ -193,6 +195,8 @@ class Datepicker extends SimpleModule
 
 
   _renderCal: (theDate) ->
+    @_usage = "calendar"
+
     # Determine whether to show Previous arrow
     showP = showN = true
 
@@ -224,6 +228,7 @@ class Datepicker extends SimpleModule
 
   # render the year&month selector
   _renderYearMonthSelector: (theDate) ->
+    @_usage = "yearmonth"
     showP = showN = true
     showP = showN = false  unless @opts.showYearPrevNext
     currentYear = theDate.year()
