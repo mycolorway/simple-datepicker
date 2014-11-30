@@ -5,37 +5,132 @@
   <title>Jasmine Spec Runner</title>
   <link rel="stylesheet" type="text/css" href="./vendor/bower/fontawesome/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="./styles/datepicker.css">
+  <style type="text/css">
+  body {
+    padding: 15px;
+    font-family: Verdana, Geneva, sans-serif;
+  }
+  h1 {
+    display: block;
+    font-family: Arial, Helvetica, sans-serif;
+    padding-bottom: 15px;
+    border-bottom: 1px #ccc solid;
+  }
+  h1 small {
+    font-family: 'Trebuchet MS', Helvetica, sans-serif;
+    color: #999;
+  }
+  p.inline {
+    display: inline-block;
+    min-width: 300px;
+  }
+  label {
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 12px;
+  }
+  input[type="radio"] {
+    appearance: initial;
+    -moz-appearance: initial;
+    -webkit-appearance: initial;
+    -o-appearance: initial;
+    -ms-appearance: initial;
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 1px #cccccc solid;
+    margin: 2px;
+    vertical-align: middle;
+  }
+  input[type="radio"]:hover {
+    cursor: pointer;
+    background: transparent;
+    border: 3px #99ff99 solid;
+  }
+  input[type="radio"]:checked {
+    background: #99ff99;
+    border: none;
+  }
+  .form-control label {
+    display: block;
+    font-weight: bold;
+  }
+  input[type="text"] {
+    display: inline-block;
+    width: 200px;
+    padding: 5px 10px;
+    vertical-align: middle;
+    border: none;
+    border-radius: 3px;
+    box-shadow: 0px 0px 5px -1px rgba(0,0,0,0.4) inset;
+  }
+  a .fa-remove {
+    color: #ccc;
+  }
+  a .fa-remove:hover {
+    color: #999;
+  }
+  .simple-datepicker {
+    padding: 5px;
+    border: 1px #ccc solid;
+  }
+  button {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px #ccc solid;
+    border-radius: 3px;
+    font-family: Tahoma, Geneva, sans-serif;
+    background: transparent;
+  }
+  button:hover {
+    background-color: #eeeeee;
+    cursor: pointer;
+  }
+  button:active {
+    box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.4) inset;
+  }
+  </style>
 </head>
 <body>
+  <h1>Simple Datepicker&nbsp;&nbsp;<small>Demo</small></h1>
   <p>
-    <label><input type="radio" name="showPrevNext" checked value="1" />Show calendar nav buttons</label><br/>
-    <label><input type="radio" name="showPrevNext" value="0" />Hide calendar nav buttons</label>
+    Make the datepicker by yourself !
   </p>
-  <p>
-    <label><input type="radio" name="showYearPrevNext" checked value="1" />Show year-month panel nav buttons</label><br/>
-    <label><input type="radio" name="showYearPrevNext" value="0" />Hide year-month panel nav buttons</label>
-  </p>
-  <p>
-    <label>Earliest date</label>
-    <input type="text" name="disableBefore"><a href="javascript:;" onclick="document.getElementsByName('disableBefore')[0].value='';"><i class="fa fa-remove"></i></a>
-  </p>
-  <p>
-    <label>Latest date</label>
-    <input type="text" name="disableAfter"><a href="javascript:;" onclick="document.getElementsByName('disableAfter')[0].value='';"><i class="fa fa-remove"></i></a>
-  </p>
-  <p>
-    <button type="button" onclick="generate();">Generate</button>
-  </p>
-  <p>
+  <div>
+    <p class="inline">
+      <label><input type="radio" name="showPrevNext" checked value="1" />&nbsp;Show calendar nav buttons</label><br/>
+      <label><input type="radio" name="showPrevNext" value="0" />&nbsp;Hide calendar nav buttons</label>
+    </p>
+    <p class="inline">
+      <label><input type="radio" name="showYearPrevNext" checked value="1" />&nbsp;Show year-month panel nav buttons</label><br/>
+      <label><input type="radio" name="showYearPrevNext" value="0" />&nbsp;Hide year-month panel nav buttons</label>
+    </p>
+  </div>
+  <div>
+    <p class="form-control inline">
+      <label>Earliest date</label>
+      <input type="text" name="disableBefore">&nbsp;<a href="javascript:;" onclick="document.getElementsByName('disableBefore')[0].value='';"><i class="fa fa-remove"></i></a>
+    </p>
+    <p class="form-control inline">
+      <label>Latest date</label>
+      <input type="text" name="disableAfter">&nbsp;<a href="javascript:;" onclick="document.getElementsByName('disableAfter')[0].value='';"><i class="fa fa-remove"></i></a>
+    </p>
+  </div>
+  <p class="form-control">
     <label>Format</label>
     <input type="text" name="format" value="YYYY-MM-DD">
   </p>
   <p>
-    <label>A float one: </label><input type="text" name="date" id="date">
+    <button type="button" onclick="generate();">Generate</button>
   </p>
-  <p>
-    <label>An inline one: </label><input type="text" name="date-inline" id="date-inline">
-  </p>
+  <div id="result" style="display:none;">
+    <p class="form-control inline">
+      <label>A float one: </label><input type="text" name="date" id="date">
+    </p>
+    <p class="form-control inline">
+      <label>An inline one: </label><input type="text" name="date-inline" id="date-inline">
+    </p>
+  </div>
   <script src="./vendor/bower/jquery/dist/jquery.min.js"></script>
   <script src="./vendor/bower/simple-module/lib/module.js"></script>
   <script src="./vendor/bower/moment/moment.js"></script>
@@ -47,6 +142,7 @@
       $date_inline = $('#date-inline');
 
   function generate() {
+    $('#result').show();
     if (datepicker && datepicker.cal) datepicker.cal.remove();
     if (inlineDatepicker && inlineDatepicker.cal) inlineDatepicker.cal.remove();
     $date.off('focus');
