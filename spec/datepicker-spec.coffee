@@ -53,7 +53,7 @@ describe 'Simple Datepicker', ->
       dp.cal.find('.datepicker-title a').click()
 
       dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click()
-      dp._yearmonth.find('.datepicker-month a.contains(3)').click()
+      dp._yearmonth.find('.datepicker-month a:contains(Mar)').click()
       dp._yearmonth.find('.datepicker-yearmonth-ok').click()
       dp.cal.find('.datepicker-day a:contains(15)').click()
 
