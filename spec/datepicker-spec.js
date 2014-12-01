@@ -29,7 +29,6 @@
       });
       return it('should works all right', function(done) {
         expect(date).toEqual(desiredDate);
-        expect(dp.el.data('theDate').format('YYYY-MM-DD')).toEqual(desiredDate);
         expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate);
         return done();
       });
@@ -53,13 +52,12 @@
         desiredDate = today.clone().add(1, 'year').set('month', 2).set('date', 15).format('YYYY-MM-DD');
         dp.cal.find('.datepicker-title a').click();
         dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click();
-        dp._yearmonth.find('.datepicker-month a:contains(3)').click();
+        dp._yearmonth.find('.datepicker-month a[data-month=2]').click();
         dp._yearmonth.find('.datepicker-yearmonth-ok').click();
         return dp.cal.find('.datepicker-day a:contains(15)').click();
       });
       return it('should works all right', function(done) {
         expect(date).toEqual(desiredDate);
-        expect(dp.el.data('theDate').format('YYYY-MM-DD')).toEqual(desiredDate);
         expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate);
         return done();
       });
@@ -77,12 +75,10 @@
       });
       it('should works when pass in a string', function() {
         dp.setSelectedDate(dateStr);
-        expect(target.data('theDate').format('YYYY-MM-DD')).toEqual(dateStr);
         return expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(dateStr);
       });
       it('should works when pass in a moment', function() {
         dp.setSelectedDate(moment(dateStr));
-        expect(target.data('theDate').format('YYYY-MM-DD')).toEqual(dateStr);
         return expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(dateStr);
       });
       it('should update calendar due to the new date', function() {
@@ -90,7 +86,7 @@
         dp.setSelectedDate(dateStr);
         title = $.trim(dp.cal.find('.datepicker-title').text());
         day = dp.cal.find('.datepicker-day a.selected').text() * 1;
-        expect(title).toEqual(dp._formatTitle(1998, 2));
+        expect(title).toEqual(dp._formatTitle(moment(dateStr, 'YYYY-MM-DD')));
         return expect(day).toEqual(day);
       });
       return it('should stay at same view', function() {

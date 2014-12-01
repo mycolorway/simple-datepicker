@@ -26,9 +26,8 @@ describe 'Simple Datepicker', ->
       dp.cal.find('.datepicker-prev a').click()
       dp.cal.find('.datepicker-day a:contains(15)').click()
 
-    it 'should works all right', (done)->
+    it 'should works all right', (done) ->
       expect(date).toEqual(desiredDate)
-      expect(dp.el.data('theDate').format('YYYY-MM-DD')).toEqual(desiredDate)
       expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate)
       done()
 
@@ -54,13 +53,12 @@ describe 'Simple Datepicker', ->
       dp.cal.find('.datepicker-title a').click()
 
       dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click()
-      dp._yearmonth.find('.datepicker-month a:contains(3)').click()
+      dp._yearmonth.find('.datepicker-month a[data-month=2]').click()
       dp._yearmonth.find('.datepicker-yearmonth-ok').click()
       dp.cal.find('.datepicker-day a:contains(15)').click()
 
     it 'should works all right', (done)->
       expect(date).toEqual desiredDate
-      expect(dp.el.data('theDate').format('YYYY-MM-DD')).toEqual desiredDate
       expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual desiredDate
       done()
 
@@ -77,13 +75,11 @@ describe 'Simple Datepicker', ->
     it 'should works when pass in a string', ->
       dp.setSelectedDate dateStr
 
-      expect(target.data('theDate').format('YYYY-MM-DD')).toEqual dateStr
       expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual dateStr
 
     it 'should works when pass in a moment', ->
       dp.setSelectedDate moment(dateStr)
 
-      expect(target.data('theDate').format('YYYY-MM-DD')).toEqual dateStr
       expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual dateStr
 
     it 'should update calendar due to the new date', ->
@@ -92,7 +88,7 @@ describe 'Simple Datepicker', ->
       title = $.trim dp.cal.find('.datepicker-title').text()
       day = dp.cal.find('.datepicker-day a.selected').text()*1
 
-      expect(title).toEqual dp._formatTitle(1998, 2)
+      expect(title).toEqual dp._formatTitle(moment(dateStr, 'YYYY-MM-DD'))
       expect(day).toEqual day
 
     it 'should stay at same view', ->
