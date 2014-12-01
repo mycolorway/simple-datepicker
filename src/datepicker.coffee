@@ -131,8 +131,7 @@ class Datepicker extends SimpleModule
 
         # Save selected
         @selectedDate = date
-        @cal.find(".datepicker-day a.selected").removeClass "selected"
-        btn.addClass "selected"
+        @update()
 
         # Hide calendar
         @_hide()  unless @opts.inline
@@ -317,14 +316,6 @@ class Datepicker extends SimpleModule
           # Test to see if it's today
           c += (if (today.diff(date) is 0) then " today" else "")
 
-          if moment.isMoment(@opts.disableBefore)
-            until_ = moment(@opts.disableBefore, "YYYY-MM-DD")
-            c += (if (date.diff(until_) < 0) then " disabled" else "")
-
-          if moment.isMoment(@opts.disableAfter)
-            until_ = moment(@opts.disableAfter, "YYYY-MM-DD")
-            c += (if (date.diff(until_) > 0) then " disabled" else "")
-
           # Test against selected date
           c += (if (date.diff(@selectedDate) is 0) then " selected" else " ")  if @selectedDate
         else if n > lastDate.date() and x is 0
@@ -332,6 +323,14 @@ class Datepicker extends SimpleModule
         else
           c = ((if (x is 6) then "sun" else ((if (x is 5) then "sat" else "day")))) + " others"
           n = (if (n <= 0) then p else ((p - lastDate.date()) - prevLastDate.date()))
+
+        if moment.isMoment(@opts.disableBefore)
+          until_ = moment(@opts.disableBefore, "YYYY-MM-DD")
+          c += (if (date.diff(until_) < 0) then " disabled" else "")
+
+        if moment.isMoment(@opts.disableAfter)
+          until_ = moment(@opts.disableAfter, "YYYY-MM-DD")
+          c += (if (date.diff(until_) > 0) then " disabled" else "")
 
         # Create the cell
         row += """

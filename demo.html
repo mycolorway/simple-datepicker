@@ -23,6 +23,7 @@
   p.inline {
     display: inline-block;
     min-width: 300px;
+    vertical-align: top;
   }
   label {
     font-family: Verdana, Geneva, sans-serif;
@@ -146,13 +147,15 @@
     if (datepicker && datepicker.cal) datepicker.cal.remove();
     if (inlineDatepicker && inlineDatepicker.cal) inlineDatepicker.cal.remove();
     $date.off('focus');
+    var disableBefore = moment($('[name="disableBefore"]').val(), 'YYYY-MM-DD');
+    var disableAfter = moment($('[name="disableAfter"]').val(), 'YYYY-MM-DD');
     var options = {
       el: $date,
-      showPrevNext: parseInt($('[name=showPrevNext]:checked').attr('value')) ? true : false,
-      showYearPrevNext: parseInt($('[name=showYearPrevNext]:checked').attr('value')) ? true : false,
-      disableBefore: $('[name=disableBefore]').attr('value'),
-      disableAfter: $('[name=disableAfter]').attr('value'),
-      format: $('[name=format]').attr('value')
+      showPrevNext: parseInt($('[name=showPrevNext]:checked').val()) ? true : false,
+      showYearPrevNext: parseInt($('[name=showYearPrevNext]:checked').val()) ? true : false,
+      disableBefore: disableBefore.isValid() ? disableBefore : null,
+      disableAfter: disableAfter.isValid() ? disableAfter : null,
+      format: $('[name=format]').val()
     };
     datepicker = simple.datepicker(options);
     options.inline = true;
