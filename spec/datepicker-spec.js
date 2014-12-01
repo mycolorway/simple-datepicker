@@ -52,7 +52,7 @@
         desiredDate = today.clone().add(1, 'year').set('month', 2).set('date', 15).format('YYYY-MM-DD');
         dp.cal.find('.datepicker-title a').click();
         dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click();
-        dp._yearmonth.find('.datepicker-month a[data-month=2]').click();
+        dp._yearmonth.find('.datepicker-month a.contains(3)').click();
         dp._yearmonth.find('.datepicker-yearmonth-ok').click();
         return dp.cal.find('.datepicker-day a:contains(15)').click();
       });

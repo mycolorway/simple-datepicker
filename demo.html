@@ -75,6 +75,9 @@
     padding: 5px;
     border: 1px #ccc solid;
   }
+  label.month {
+    display: inline-block;
+  }
   button {
     display: inline-block;
     padding: 5px 10px;
@@ -117,9 +120,30 @@
       <input type="text" name="disableAfter">&nbsp;<a href="javascript:;" onclick="document.getElementsByName('disableAfter')[0].value='';"><i class="fa fa-remove"></i></a>
     </p>
   </div>
+  <div>
+    <p class="form-control inline">
+      <label>Format</label>
+      <input type="text" name="format" value="YYYY-MM-DD">
+    </p>
+    <p class="form-control inline">
+      <label>Width</label>
+      <input type="text" name="width" value="">
+    </p>
+  </div>
   <p class="form-control">
-    <label>Format</label>
-    <input type="text" name="format" value="YYYY-MM-DD">
+    <label class="month"><input type="radio" name="month" value="0">Jan</label>
+    <label class="month"><input type="radio" name="month" value="1">Feb</label>
+    <label class="month"><input type="radio" name="month" value="2">Mar</label>
+    <label class="month"><input type="radio" name="month" value="3">Apr</label>
+    <label class="month"><input type="radio" name="month" value="4">May</label>
+    <label class="month"><input type="radio" name="month" value="5">Jun</label>
+    <label class="month"><input type="radio" name="month" value="6">Jul</label>
+    <label class="month"><input type="radio" name="month" value="7">Aug</label>
+    <label class="month"><input type="radio" name="month" value="8">Sep</label>
+    <label class="month"><input type="radio" name="month" value="9">Oct</label>
+    <label class="month"><input type="radio" name="month" value="10">Nov</label>
+    <label class="month"><input type="radio" name="month" value="11">Dec</label>
+    <input type="text" name="year" style="width:30px" />
   </p>
   <p>
     <button type="button" onclick="generate();">Generate</button>
@@ -142,6 +166,10 @@
   var $date = $('#date'),
       $date_inline = $('#date-inline');
 
+  var today = moment();
+  $('[name="month"][value="' + today.month() + '"]').attr('checked', true);
+  $('[name="year"]').val(today.year());
+
   function generate() {
     $('#result').show();
     if (datepicker && datepicker.cal) datepicker.cal.remove();
@@ -149,14 +177,19 @@
     $date.off('focus');
     var disableBefore = moment($('[name="disableBefore"]').val(), 'YYYY-MM-DD');
     var disableAfter = moment($('[name="disableAfter"]').val(), 'YYYY-MM-DD');
+    var width = parseInt($('[name="width"]').val());
+    var month = moment().year($('[name="year"]').val()).month(parseInt($('[name="month"]:checked').val()));
     var options = {
       el: $date,
       showPrevNext: parseInt($('[name=showPrevNext]:checked').val()) ? true : false,
       showYearPrevNext: parseInt($('[name=showYearPrevNext]:checked').val()) ? true : false,
       disableBefore: disableBefore.isValid() ? disableBefore : null,
       disableAfter: disableAfter.isValid() ? disableAfter : null,
-      format: $('[name=format]').val()
+      format: $('[name=format]').val(),
+      width: isNaN(width) ? null : width,
+      month: month.isValid() ? month : null
     };
+    console.log(options);
     datepicker = simple.datepicker(options);
     options.inline = true;
     options.el = $date_inline;
