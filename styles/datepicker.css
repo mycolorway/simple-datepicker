@@ -98,6 +98,7 @@
 .simple-datepicker div.datepicker-yearmonth .datepicker-year-container .datepicker-year-list, .simple-datepicker div.datepicker-yearmonth .datepicker-year-container .datepicker-month-list, .simple-datepicker div.datepicker-yearmonth .datepicker-month-container .datepicker-year-list, .simple-datepicker div.datepicker-yearmonth .datepicker-month-container .datepicker-month-list {
   padding: 0px;
   margin: 0px;
+  white-space: normal;
 }
 .simple-datepicker div.datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-year, .simple-datepicker div.datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-month, .simple-datepicker div.datepicker-yearmonth .datepicker-year-container .datepicker-month-list .datepicker-year, .simple-datepicker div.datepicker-yearmonth .datepicker-year-container .datepicker-month-list .datepicker-month, .simple-datepicker div.datepicker-yearmonth .datepicker-month-container .datepicker-year-list .datepicker-year, .simple-datepicker div.datepicker-yearmonth .datepicker-month-container .datepicker-year-list .datepicker-month, .simple-datepicker div.datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-year, .simple-datepicker div.datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-month {
   display: inline-block;
