@@ -1,10 +1,11 @@
 {
   "name": "simple-datepicker",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "homepage": "https://github.com/mycolorway/simple-datepicker",
   "authors": [
     "farthinker <farthinker@gmail.com>",
-    "kshift <kshift.lv@gmail.com>"
+    "kshift <kshift.lv@gmail.com>",
+    "tinyfive <wls860801@gmail.com>"
   ],
   "description": "A simple date picker widget based on Simple Module",
   "main": "lib/datepicker.js",

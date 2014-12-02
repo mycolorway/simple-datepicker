@@ -28,7 +28,7 @@
         return dp.cal.find('.datepicker-day a:contains(15)').click();
       });
       return it('should works all right', function(done) {
-        expect(date).toEqual(desiredDate);
+        expect(date.format('YYYY-MM-DD')).toEqual(desiredDate);
         expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate);
         return done();
       });
@@ -57,7 +57,7 @@
         return dp.cal.find('.datepicker-day a:contains(15)').click();
       });
       return it('should works all right', function(done) {
-        expect(date).toEqual(desiredDate);
+        expect(date.format('YYYY-MM-DD')).toEqual(desiredDate);
         expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate);
         return done();
       });

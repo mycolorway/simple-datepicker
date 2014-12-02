@@ -27,7 +27,7 @@ class Datepicker extends SimpleModule
     if @opts.inline
       @_show()
     else
-      @el.focus (e) =>
+      @el.on 'focus click', (e) =>
         @_show()
       .focus()
 
@@ -93,7 +93,7 @@ class Datepicker extends SimpleModule
       btn.addClass('selected')
 
       @_hide() unless @opts.inline
-      @trigger 'select', [date.format(@opts.format), btn]
+      @trigger 'select', [date]
 
     .on 'click', '.datepicker-yearmonth-cancel, .datepicker-yearmonth-title a', (e) =>
       @update null, 'calendar'
@@ -323,7 +323,7 @@ class Datepicker extends SimpleModule
       @el.val date.format(@opts.format)
 
     @cal and @update(date)
-
+    @trigger 'select', [date]
 
 datepicker = (opts) ->
   return new Datepicker opts

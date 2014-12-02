@@ -27,7 +27,7 @@ describe 'Simple Datepicker', ->
       dp.cal.find('.datepicker-day a:contains(15)').click()
 
     it 'should works all right', (done) ->
-      expect(date).toEqual(desiredDate)
+      expect(date.format('YYYY-MM-DD')).toEqual(desiredDate)
       expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate)
       done()
 
@@ -58,7 +58,7 @@ describe 'Simple Datepicker', ->
       dp.cal.find('.datepicker-day a:contains(15)').click()
 
     it 'should works all right', (done)->
-      expect(date).toEqual desiredDate
+      expect(date.format('YYYY-MM-DD')).toEqual desiredDate
       expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual desiredDate
       done()
 
