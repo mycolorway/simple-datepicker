@@ -1,5 +1,7 @@
-simple-datepicker
-=================
+# simple-datepicker
+[![Circle CI](https://circleci.com/gh/mycolorway/simple-datepicker.png?style=badge)](https://circleci.com/gh/mycolorway/simple-datepicker)
+
+
 
 一个基于 [Simple Module](https://github.com/mycolorway/simple-module) 的选择日期组件。
 
