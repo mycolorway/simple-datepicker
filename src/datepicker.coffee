@@ -12,8 +12,6 @@ class Datepicker extends SimpleModule
 
   _init: () ->
     @el = $(@opts.el)
-    @_viewType = 'calendar'
-    @_viewDate = @opts.viewDate || moment().startOf('day')
 
     unless @el.length
       throw 'simple datepicker: option el is required'
@@ -21,6 +19,9 @@ class Datepicker extends SimpleModule
 
     val = @el.val()
     @selectedDate = moment(val, @opts.format) if val
+
+    @_viewType = 'calendar'
+    @_viewDate = @opts.viewDate || @selectedDate || moment().startOf('day')
     @_render()
 
   _render: () ->
