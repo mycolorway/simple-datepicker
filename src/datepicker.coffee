@@ -8,12 +8,12 @@ class Datepicker extends SimpleModule
     disableAfter: null
     format: 'YYYY-MM-DD'
     width: null
-    month: null
+    viewDate: null
 
   _init: () ->
     @el = $(@opts.el)
     @_viewType = 'calendar'
-    @_viewDate = @opts.month || moment().startOf('day')
+    @_viewDate = @opts.viewDate || moment().startOf('day')
 
     unless @el.length
       throw 'simple datepicker: option el is required'
