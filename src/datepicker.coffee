@@ -17,11 +17,6 @@ class Datepicker extends SimpleModule
       throw 'simple datepicker: option el is required'
       return
 
-    val = @el.val()
-    @selectedDate = moment(val, @opts.format) if val
-
-    @_viewType = 'calendar'
-    @_viewDate = @opts.viewDate || @selectedDate || moment().startOf('day')
     @_render()
 
   _render: () ->
@@ -36,6 +31,12 @@ class Datepicker extends SimpleModule
         @_hide() unless @el.is(e.target) or @el.has(e.target).length
 
   _show: ->
+    val = @el.val()
+    @selectedDate = moment(val, @opts.format) if val
+
+    @_viewType = 'calendar'
+    @_viewDate = @opts.viewDate || @selectedDate || moment().startOf('day')
+
     @update()
 
   _hide: ->
@@ -202,8 +203,8 @@ class Datepicker extends SimpleModule
           <ul class="datepicker-month-list">#{ @_renderMonthSelectors currentMonth }</ul>
         </div>
         <div class="datepicker-yearmonth-confirm">
-          <a href="javascript:;" class="datepicker-yearmonth-cancel">取消</a>
           <a href="javascript:;" class="datepicker-yearmonth-ok">确定</a>
+          <a href="javascript:;" class="datepicker-yearmonth-cancel">取消</a>
         </div>
       </div>
     """

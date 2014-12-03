@@ -104,13 +104,19 @@
         }
       }
     }
-    .datepicker-year-container,.datepicker-month-container {
+
+    .datepicker-year-container,
+    .datepicker-month-container {
       margin-bottom: 5px;
-      .datepicker-year-list,.datepicker-month-list {
+
+      .datepicker-year-list,
+      .datepicker-month-list {
         padding: 0px;
         margin: 0px;
         white-space: normal;
-        .datepicker-year,.datepicker-month {
+
+        .datepicker-year,
+        .datepicker-month {
           display: inline-block;
           height: 25px;
           line-height: 25px;
@@ -143,16 +149,26 @@
         width: (100%/6);
       }
     }
+
+    .datepicker-month-container {
+      border-top: 1px solid #e0e0e0;
+      padding-top: 5px;
+    }
+
     .datepicker-yearmonth-confirm {
-      text-align: right;
+      margin-top: 5px;
+      text-align: center;
+      overflow: hidden;
+
       a {
-        display: inline-block;
-        padding: 0 5px;
-        height: 20px;
-        line-height: 20px;
+        display: block;
+        float: left;
+        width: 50%;
+        height: 2em;
+        line-height: 2em;
         vertical-align: middle;
         color: #999;
-        border-radius: 3px;
+
         &:hover {
           color: #444;
           &.datepicker-yearmonth-cancel {
