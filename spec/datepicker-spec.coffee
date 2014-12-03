@@ -62,6 +62,35 @@ describe 'Simple Datepicker', ->
       expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual desiredDate
       done()
 
+  describe 'cancel year&month select', ->
+    date = null
+    desiredDate = null
+    dp = null
+
+    beforeEach (done)->
+      dp = simple.datepicker
+        el: $('body')
+        inline: true
+
+      dp.on 'select', (e, _date) ->
+        date = _date
+        done()
+
+      today = moment()
+      desiredDate = today.clone().set('date', 15).format('YYYY-MM-DD')
+
+      dp.cal.find('.datepicker-title a').click()
+
+      dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click()
+      dp._yearmonth.find('.datepicker-month a:contains(Mar)').click()
+      dp._yearmonth.find('.datepicker-yearmonth-cancel').click()
+      dp.cal.find('.datepicker-day a:contains(15)').click()
+
+    it 'should not set year and month when go back from year&month to calendar by clicking "cancel"', (done)->
+      expect(date.format('YYYY-MM-DD')).toEqual desiredDate
+      expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual desiredDate
+      done()
+
   describe 'instance method [setSelectedDate]', ->
     dateStr = '1998-03-15'
     target = $('body')
@@ -127,8 +156,7 @@ describe 'Simple Datepicker', ->
     it 'should show year navigators in year&month panel when showYearPrevNext is true', ->
       makeDp
         showYearPrevNext: true
-      year = dp.selectedDate.year()
-      console.log year
+      year = (dp.selectedDate or dp._viewDate).year()
       dp.cal.find('.datepicker-title a').click()
       dp.cal.find('.datepicker-year-prev a').click()
       expect(dp.cal.find(".datepicker-year a:contains(#{year-10})").length).toEqual 1
@@ -179,3 +207,4 @@ describe 'Simple Datepicker', ->
 
   afterEach ->
     $('.simple-datepicker').remove()
+    $('body').val(null)

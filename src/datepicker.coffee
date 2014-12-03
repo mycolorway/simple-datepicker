@@ -61,7 +61,7 @@ class Datepicker extends SimpleModule
 
     @cal.html panel
     @_calendar = @cal.find('.calendar')
-    @_yearmonth = @cal.find('.datepicker-yearmonth').data('tmpDate', date)
+    @_yearmonth = @cal.find('.datepicker-yearmonth').data('tmpDate', date.clone())
     @_viewType = type
     @_viewDate = date
 
