@@ -158,29 +158,23 @@ describe 'Simple Datepicker', ->
         showYearPrevNext: true
       year = (dp.selectedDate or dp._viewDate).year()
       dp.cal.find('.datepicker-title a').click()
-      dp.cal.find('.datepicker-year-prev a').click()
-      expect(dp.cal.find(".datepicker-year a:contains(#{year-10})").length).toEqual 1
-      dp.cal.find('.datepicker-year-next a').click()
-      expect(dp.cal.find(".datepicker-year a:contains(#{year})").length).toEqual 1
+      expect(dp.cal.find(".datepicker-year-prev").length).toEqual 1
+      expect(dp.cal.find(".datepicker-year-next").length).toEqual 1
 
     it 'should set year and month to the viewDate', ->
       date = moment().add('year', 1).add('month', 1)
       makeDp
         viewDate: moment().add('year', 1).add('month', 1)
       expect(dp.cal.find('.datepicker-title').text().trim()).toEqual date.format 'YYYY年M月'
-      dp.cal.find('.datepicker-day a:contains(15)').click()
-      expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual date.clone().date(15).format 'YYYY-MM-DD'
 
     it 'should disable the dates after the date specified by disableAfter option', ->
       date = moment().startOf('month')
       makeDp
         disableAfter: date
       dp.setSelectedDate date
-      dp.cal.find(".datepicker-day a:not(.others):contains(2):first").click()   # Click the 2nd day button of this month
-      expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual date.format 'YYYY-MM-DD'
-      dp.cal.find('.datepicker-next').click()
-      dp.cal.find('.datepicker-day a:contains(15)').click()
-      expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual date.format 'YYYY-MM-DD'
+      expect(dp.cal.find(".datepicker-day a:not(.others).disabled:contains(2):first").length).toEqual 1
+      dp.cal.find('.datepicker-next a').click()
+      expect(dp.cal.find(".datepicker-day a:not(.others):not(.disabled)").length).toEqual 0
 
     it 'should disable the dates before the date specified by disableBefore option', ->
       date = moment().endOf('month')
@@ -188,21 +182,95 @@ describe 'Simple Datepicker', ->
       makeDp
         disableBefore: date
       dp.setSelectedDate date
-      dp.cal.find(".datepicker-day a:not(.others):contains(#{theDate-1}):last").click()   # Click the 2nd day button of this month
-      expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual date.format 'YYYY-MM-DD'
-      dp.cal.find('.datepicker-prev').click()
-      dp.cal.find('.datepicker-day a:contains(15)').click()
-      expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual date.format 'YYYY-MM-DD'
-
-    it 'should set value in the format specified by format option', ->
-      date = moment()
-      makeDp
-        format: 'YY-M-D'
-      dp.setSelectedDate date
-      expect(target.val()).toEqual date.format('YY-M-D')
+      expect(dp.cal.find(".datepicker-day a:not(.others).disabled:contains(#{theDate-1}):last").length).toEqual 1
+      dp.cal.find('.datepicker-prev a').click()
+      expect(dp.cal.find(".datepicker-day a:not(.others):not(.disabled)").length).toEqual 0
 
     afterEach ->
       dp.cal.remove() if dp and dp.cal
+
+  describe 'Year navigators', ->
+    it 'should works all right', ->
+      dp = simple.datepicker
+        el: $('body')
+        inline: true
+        showYearPrevNext: true
+
+      year = (dp.selectedDate or dp._viewDate).year()
+      dp.cal.find('.datepicker-title a').click()
+      dp.cal.find('.datepicker-year-prev a').click()
+      expect(dp.cal.find(".datepicker-year a:contains(#{year-10})").length).toEqual 1
+      dp.cal.find('.datepicker-year-next a').click()
+      expect(dp.cal.find(".datepicker-year a:contains(#{year})").length).toEqual 1
+
+  describe 'Disable dates', ->
+    date = null
+    desiredDate = null
+    dp = null
+
+    describe 'disableAfter option', ->
+      beforeEach (done)->
+        theDate = moment().startOf('month')
+        desiredDate = theDate.format 'YYYY-MM-DD'
+        dp = simple.datepicker
+          el: $('body')
+          inline: true
+          disableAfter: theDate
+        dp.on 'select', (e, _date) ->
+          date = _date
+          done()
+        dp.setSelectedDate theDate
+        dp.cal.find(".datepicker-day a:not(.others):contains(2):first").click()   # Click the 2nd day button of this month
+
+      it 'should works all right', (done)->
+        expect(date.format('YYYY-MM-DD')).toEqual desiredDate
+        expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual desiredDate
+        done()
+
+    describe 'disableBefore option', ->
+      beforeEach (done)->
+        theDate = moment().endOf('month')
+        desiredDate = theDate.format 'YYYY-MM-DD'
+        dp = simple.datepicker
+          el: $('body')
+          inline: true
+          disableBefore: theDate
+        dp.on 'select', (e, _date) ->
+          date = _date
+          done()
+        dp.setSelectedDate theDate
+        dp.cal.find(".datepicker-day a:not(.others):contains(#{theDate.date()-1}):last").click()   # Click the day before the last day button of this month
+
+      it 'should works all right', (done)->
+        expect(date.format('YYYY-MM-DD')).toEqual desiredDate
+        expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual desiredDate
+        done()
+
+  describe 'Specify format', ->
+    date = null
+    desiredDate = null
+    dp = null
+
+    beforeEach (done)->
+      dp = simple.datepicker
+        el: $('body')
+        inline: true
+        format: 'YY-M-D'
+
+      dp.on 'select', (e, _date) ->
+        date = _date
+        done()
+
+      today = moment()
+      desiredDate = today.clone().add('month', -1)
+                      .set('date', 15).format('YY-M-D')
+
+      dp.cal.find('.datepicker-prev a').click()
+      dp.cal.find('.datepicker-day a:contains(15)').click()
+
+    it 'should works all right', (done) ->
+      expect($('body').val()).toEqual(desiredDate)
+      done()
 
 
   afterEach ->
