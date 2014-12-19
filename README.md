@@ -1,5 +1,7 @@
-simple-datepicker
-=================
+# simple-datepicker
+[![Circle CI](https://circleci.com/gh/mycolorway/simple-datepicker.png?style=badge)](https://circleci.com/gh/mycolorway/simple-datepicker)
+
+
 
 一个基于 [Simple Module](https://github.com/mycolorway/simple-module) 的选择日期组件。
 
@@ -29,41 +31,40 @@ simple.datepicker({
     el: null,                // * 必须
     inline: false,           // 初始化时是否显示日历组件
     showPrevNext: true,      // 是否显示切换月份的按钮
+    showYearPrevNext: true,  // 是否显示切换年份的按钮
     disableBefore: null,     // 禁用向前切换月份的按钮，参数为日期
     disableAfter: null,      // 禁用向后切换月份的按钮，参数为日期
     format: "YYYY-MM-DD",    // 格式化选中的日期格式
     width: null,             // 日历组件宽度
-    month: null              // 初始化时日历显示的月份
+    viewDate: null           // 初始化时日历显示的日期，Moment 对象
 });
 ```
 
 ### 二、方法和事件
 
-simple-datepicker： 初始化之后，datepicker 实例会暴露一些公共方法供调用：
+**1. 属性 **
 
-```javascript
-// 初始化 simple-datepicker：
-var datepicker = simple.datepicker({
-  el: $('#datepicker')
-});
+** selectedDate **
 
-// 调用 update 方法根据 date 参数重新渲染日历
-select.update(date);
-```
+已选中的日期，Moment 对象
 
-**1. 公共方法**
+**2. 实例方法**
 
-**update(date)**
+**update(date, type)**
 
-根据 date 参数重新渲染日历，参数为日期。
+重新渲染视图。
+
+date: 类型为 Moment 对象，默认值为当前显示的年月
+type: 类型为 String 对象，视图类型，可选参数为 calendar|yearmonth
 
 **setSelectedDate(date)**
 
-根据 date 参数选择对应日期，如果参数为空则清空选择的日期。
+设置选择对应日期，参数可以是和 format 配置项一致的 String 或 Moment 对象，如果参数为空则清空选择的日期。
 
-**2. 事件**
+**3. 事件**
 
 **select**
 
 触发条件：选择某日期。返回格式化后的日期和日期对应的
+参数：选中日期的 Moment 对象
 

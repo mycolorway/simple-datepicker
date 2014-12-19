@@ -3,7 +3,11 @@
   background: #fff;
   font-size: 12px;
 
-  table {
+  a {
+    text-decoration: none;
+  }
+
+  table.calendar {
     width: 100%;
 
     td {
@@ -25,9 +29,12 @@
       }
     }
 
-    .datepicker-title {
+    .datepicker-title a {
       color: #333;
       font-size: 14px;
+      &:hover {
+        color: #999;
+      }
     }
 
     .datepicker-dow {
@@ -65,6 +72,112 @@
         background: #fff;
         color: #ccc;
         cursor: default;
+      }
+    }
+    .datepicker-month a {
+      display: block;
+    }
+  }
+
+  div.datepicker-yearmonth {
+    .datepicker-yearmonth-title {
+      text-align: center;
+      height: 24px;
+      line-height: 24px;
+      vertical-align: middle;
+      a {
+        color: #333;
+        font-size: 14px;
+        &:hover {
+          color: #999;
+        }
+      }
+    }
+    .datepicker-year-prev,.datepicker-year-next {
+      text-align: center;
+      a {
+        display: block;
+        height: 100%;
+        color: #444;
+        &:hover {
+          color: #999;
+        }
+      }
+    }
+
+    .datepicker-year-container,
+    .datepicker-month-container {
+      margin-bottom: 5px;
+
+      .datepicker-year-list,
+      .datepicker-month-list {
+        padding: 0px;
+        margin: 0px;
+        white-space: normal;
+
+        .datepicker-year,
+        .datepicker-month {
+          display: inline-block;
+          height: 25px;
+          line-height: 25px;
+          vertical-align: middle;
+          text-align: center;
+
+          a {
+            display: block;
+            height: 100%;
+            color: #333;
+            -webkit-text-shadow: 0 1px 0 white;
+               -moz-text-shadow: 0 1px 0 white;
+                    text-shadow: 0 1px 0 white;
+            &.today {
+              background: #ffe451;
+            }
+            &.selected {
+              background: #cce5f1;
+            }
+            &:hover {
+              background: #cbe0ff;
+            }
+          }
+        }
+      }
+      .datepicker-year-list .datepicker-year {
+        width: (100%/5);
+      }
+      .datepicker-month-list .datepicker-month {
+        width: (100%/6);
+      }
+    }
+
+    .datepicker-month-container {
+      border-top: 1px solid #e0e0e0;
+      padding-top: 5px;
+    }
+
+    .datepicker-yearmonth-confirm {
+      margin-top: 5px;
+      text-align: center;
+      overflow: hidden;
+
+      a {
+        display: block;
+        float: left;
+        width: 50%;
+        height: 2em;
+        line-height: 2em;
+        vertical-align: middle;
+        color: #999;
+
+        &:hover {
+          color: #444;
+          &.datepicker-yearmonth-cancel {
+            background: #f0f0f0;
+          }
+          &.datepicker-yearmonth-ok {
+            background: #ddffdd;
+          }
+        }
       }
     }
   }

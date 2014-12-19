@@ -57,7 +57,10 @@ module.exports = (grunt) ->
         src: ['lib/**/*.js']
         options:
           outfile: 'spec/index.html'
-          styles: 'styles/datepicker.css'
+          styles: [
+            'vendor/bower/fontawesome/css/font-awesome.min.css',
+            'styles/datepicker.css'
+          ]
           specs: 'spec/datepicker-spec.js'
           vendor: [
             'vendor/bower/jquery/dist/jquery.min.js'
@@ -72,3 +75,4 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-umd'
 
   grunt.registerTask 'default', ['sass', 'coffee', 'umd', 'jasmine:test:build', 'watch']
+  grunt.registerTask 'test', ['sass', 'coffee', 'umd', 'jasmine:test']
