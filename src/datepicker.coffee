@@ -25,7 +25,6 @@ class Datepicker extends SimpleModule
     else
       @el.on 'focus click', (e) =>
         @_show()
-      .focus()
 
       $(document).on "click.datepicker", (e) =>
         @_hide() unless @el.is(e.target) or @el.has(e.target).length
