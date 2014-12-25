@@ -1,5 +1,9 @@
 
 describe 'Simple Datepicker', ->
+  afterEach ->
+    $('.simple-datepicker').remove()
+    $('body').val(null)
+
   it 'should inherit from SimpleModule', ->
     datepicker = simple.datepicker
       el: $('body')
@@ -137,9 +141,10 @@ describe 'Simple Datepicker', ->
     dp = null
 
     makeDp = (opts)->
-      _opts = 
+      _opts =
         el: target
-      dp = simple.datepicker $.extend _opts, opts
+        inline: true
+      dp = simple.datepicker $.extend({}, _opts, opts)
 
     it 'should disappear on blow when inline is false', ->
       makeDp
@@ -271,8 +276,3 @@ describe 'Simple Datepicker', ->
     it 'should works all right', (done) ->
       expect($('body').val()).toEqual(desiredDate)
       done()
-
-
-  afterEach ->
-    $('.simple-datepicker').remove()
-    $('body').val(null)

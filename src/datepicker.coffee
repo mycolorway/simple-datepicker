@@ -48,10 +48,16 @@ class Datepicker extends SimpleModule
     date or= @_viewDate
 
     unless @cal
-      @cal = $('<div class="simple-datepicker"></div>').insertAfter @el
+      @cal = $('<div class="simple-datepicker"></div>')
+      if @opts.inline
+        @cal.insertAfter @el
+      else
+        $('body').append @cal
+        @_setPosition()
+
       @cal.data('datepicker', @)
       @cal.css("width", @opts.width) if @opts.width
-      @_setPosition() unless @opts.inline
+
       @_bindEvent()
 
     panel = switch type

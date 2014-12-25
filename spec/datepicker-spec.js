@@ -1,5 +1,9 @@
 (function() {
   describe('Simple Datepicker', function() {
+    afterEach(function() {
+      $('.simple-datepicker').remove();
+      return $('body').val(null);
+    });
     it('should inherit from SimpleModule', function() {
       var datepicker;
       datepicker = simple.datepicker({
@@ -135,9 +139,10 @@
       makeDp = function(opts) {
         var _opts;
         _opts = {
-          el: target
+          el: target,
+          inline: true
         };
-        return dp = simple.datepicker($.extend(_opts, opts));
+        return dp = simple.datepicker($.extend({}, _opts, opts));
       };
       it('should disappear on blow when inline is false', function() {
         makeDp({
@@ -268,7 +273,7 @@
         });
       });
     });
-    describe('Specify format', function() {
+    return describe('Specify format', function() {
       var date, desiredDate, dp;
       date = null;
       desiredDate = null;
@@ -293,10 +298,6 @@
         expect($('body').val()).toEqual(desiredDate);
         return done();
       });
-    });
-    return afterEach(function() {
-      $('.simple-datepicker').remove();
-      return $('body').val(null);
     });
   });
 
