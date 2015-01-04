@@ -172,6 +172,11 @@ describe 'Simple Datepicker', ->
         viewDate: moment().add('year', 1).add('month', 1)
       expect(dp.cal.find('.datepicker-title').text().trim()).toEqual date.format 'YYYY年M月'
 
+    it 'should view year/month select when set viewType [yearmonth]', ->
+      makeDp
+        viewType: 'yearmonth'
+      expect(dp.cal.find('.datepicker-yearmonth').length).toEqual 1
+
     it 'should disable the dates after the date specified by disableAfter option', ->
       date = moment().startOf('month')
       makeDp

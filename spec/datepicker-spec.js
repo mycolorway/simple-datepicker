@@ -176,6 +176,12 @@
         });
         return expect(dp.cal.find('.datepicker-title').text().trim()).toEqual(date.format('YYYY年M月'));
       });
+      it('should view year/month select when set viewType [yearmonth]', function() {
+        makeDp({
+          viewType: 'yearmonth'
+        });
+        return expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(1);
+      });
       it('should disable the dates after the date specified by disableAfter option', function() {
         var date;
         date = moment().startOf('month');

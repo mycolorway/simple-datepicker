@@ -9,6 +9,7 @@ class Datepicker extends SimpleModule
     format: 'YYYY-MM-DD'
     width: null
     viewDate: null
+    viewType: 'calendar'
 
   _init: () ->
     @el = $(@opts.el)
@@ -33,7 +34,7 @@ class Datepicker extends SimpleModule
     val = @el.val()
     @selectedDate = moment(val, @opts.format) if val
 
-    @_viewType = 'calendar'
+    @_viewType = @opts.viewType
     @_viewDate = @opts.viewDate || @selectedDate || moment().startOf('day')
 
     @update()
