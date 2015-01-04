@@ -28,7 +28,7 @@
         });
         today = moment();
         desiredDate = today.clone().add('month', -1).set('date', 15).format('YYYY-MM-DD');
-        dp.cal.find('.datepicker-prev a').click();
+        dp.cal.find('.datepicker-prev').click();
         return dp.cal.find('.datepicker-day a:contains(15)').click();
       });
       return it('should works all right', function(done) {
@@ -54,7 +54,7 @@
         });
         today = moment();
         desiredDate = today.clone().add(1, 'year').set('month', 2).set('date', 15).format('YYYY-MM-DD');
-        dp.cal.find('.datepicker-title a').click();
+        dp.cal.find('.datepicker-title').click();
         dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click();
         dp._yearmonth.find('.datepicker-month a:contains(Mar)').click();
         dp._yearmonth.find('.datepicker-yearmonth-ok').click();
@@ -83,7 +83,7 @@
         });
         today = moment();
         desiredDate = today.clone().set('date', 15).format('YYYY-MM-DD');
-        dp.cal.find('.datepicker-title a').click();
+        dp.cal.find('.datepicker-title').click();
         dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click();
         dp._yearmonth.find('.datepicker-month a:contains(Mar)').click();
         dp._yearmonth.find('.datepicker-yearmonth-cancel').click();
@@ -126,7 +126,7 @@
         expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(0);
         dp.setSelectedDate(dateStr);
         expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(0);
-        dp.cal.find('.datepicker-title a').click();
+        dp.cal.find('.datepicker-title').click();
         expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(1);
         dp.setSelectedDate(dateStr);
         return expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(1);
@@ -155,8 +155,8 @@
         makeDp({
           showPrevNext: false
         });
-        expect(dp.cal.find('.datepicker-prev a').length).toBe(0);
-        return expect(dp.cal.find('.datepicker-next a').length).toBe(0);
+        expect(dp.cal.find('.datepicker-prev').length).toBe(0);
+        return expect(dp.cal.find('.datepicker-next').length).toBe(0);
       });
       it('should show year navigators in year&month panel when showYearPrevNext is true', function() {
         var year;
@@ -164,7 +164,7 @@
           showYearPrevNext: true
         });
         year = (dp.selectedDate || dp._viewDate).year();
-        dp.cal.find('.datepicker-title a').click();
+        dp.cal.find('.datepicker-title').click();
         expect(dp.cal.find(".datepicker-year-prev").length).toEqual(1);
         return expect(dp.cal.find(".datepicker-year-next").length).toEqual(1);
       });
@@ -184,7 +184,7 @@
         });
         dp.setSelectedDate(date);
         expect(dp.cal.find(".datepicker-day a:not(.others).disabled:contains(2):first").length).toEqual(1);
-        dp.cal.find('.datepicker-next a').click();
+        dp.cal.find('.datepicker-next').click();
         return expect(dp.cal.find(".datepicker-day a:not(.others):not(.disabled)").length).toEqual(0);
       });
       it('should disable the dates before the date specified by disableBefore option', function() {
@@ -196,7 +196,7 @@
         });
         dp.setSelectedDate(date);
         expect(dp.cal.find(".datepicker-day a:not(.others).disabled:contains(" + (theDate - 1) + "):last").length).toEqual(1);
-        dp.cal.find('.datepicker-prev a').click();
+        dp.cal.find('.datepicker-prev').click();
         return expect(dp.cal.find(".datepicker-day a:not(.others):not(.disabled)").length).toEqual(0);
       });
       return afterEach(function() {
@@ -214,10 +214,10 @@
           showYearPrevNext: true
         });
         year = (dp.selectedDate || dp._viewDate).year();
-        dp.cal.find('.datepicker-title a').click();
-        dp.cal.find('.datepicker-year-prev a').click();
+        dp.cal.find('.datepicker-title').click();
+        dp.cal.find('.datepicker-year-prev').click();
         expect(dp.cal.find(".datepicker-year a:contains(" + (year - 10) + ")").length).toEqual(1);
-        dp.cal.find('.datepicker-year-next a').click();
+        dp.cal.find('.datepicker-year-next').click();
         return expect(dp.cal.find(".datepicker-year a:contains(" + year + ")").length).toEqual(1);
       });
     });
@@ -291,7 +291,7 @@
         });
         today = moment();
         desiredDate = today.clone().add('month', -1).set('date', 15).format('YY-M-D');
-        dp.cal.find('.datepicker-prev a').click();
+        dp.cal.find('.datepicker-prev').click();
         return dp.cal.find('.datepicker-day a:contains(15)').click();
       });
       return it('should works all right', function(done) {

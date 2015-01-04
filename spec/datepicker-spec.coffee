@@ -27,7 +27,7 @@ describe 'Simple Datepicker', ->
       desiredDate = today.clone().add('month', -1)
                       .set('date', 15).format('YYYY-MM-DD')
 
-      dp.cal.find('.datepicker-prev a').click()
+      dp.cal.find('.datepicker-prev').click()
       dp.cal.find('.datepicker-day a:contains(15)').click()
 
     it 'should works all right', (done) ->
@@ -54,7 +54,7 @@ describe 'Simple Datepicker', ->
                       .set('month', 2).set('date', 15)
                       .format('YYYY-MM-DD')
 
-      dp.cal.find('.datepicker-title a').click()
+      dp.cal.find('.datepicker-title').click()
 
       dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click()
       dp._yearmonth.find('.datepicker-month a:contains(Mar)').click()
@@ -83,7 +83,7 @@ describe 'Simple Datepicker', ->
       today = moment()
       desiredDate = today.clone().set('date', 15).format('YYYY-MM-DD')
 
-      dp.cal.find('.datepicker-title a').click()
+      dp.cal.find('.datepicker-title').click()
 
       dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click()
       dp._yearmonth.find('.datepicker-month a:contains(Mar)').click()
@@ -130,7 +130,7 @@ describe 'Simple Datepicker', ->
       dp.setSelectedDate dateStr
       expect(dp.cal.find('.datepicker-yearmonth').length).toEqual 0
 
-      dp.cal.find('.datepicker-title a').click()
+      dp.cal.find('.datepicker-title').click()
       expect(dp.cal.find('.datepicker-yearmonth').length).toEqual 1
 
       dp.setSelectedDate dateStr
@@ -155,14 +155,14 @@ describe 'Simple Datepicker', ->
     it 'should not show month navigators in calendar when showPrevNext is false', ->
       makeDp
         showPrevNext: false
-      expect(dp.cal.find('.datepicker-prev a').length).toBe 0
-      expect(dp.cal.find('.datepicker-next a').length).toBe 0
+      expect(dp.cal.find('.datepicker-prev').length).toBe 0
+      expect(dp.cal.find('.datepicker-next').length).toBe 0
 
     it 'should show year navigators in year&month panel when showYearPrevNext is true', ->
       makeDp
         showYearPrevNext: true
       year = (dp.selectedDate or dp._viewDate).year()
-      dp.cal.find('.datepicker-title a').click()
+      dp.cal.find('.datepicker-title').click()
       expect(dp.cal.find(".datepicker-year-prev").length).toEqual 1
       expect(dp.cal.find(".datepicker-year-next").length).toEqual 1
 
@@ -178,7 +178,7 @@ describe 'Simple Datepicker', ->
         disableAfter: date
       dp.setSelectedDate date
       expect(dp.cal.find(".datepicker-day a:not(.others).disabled:contains(2):first").length).toEqual 1
-      dp.cal.find('.datepicker-next a').click()
+      dp.cal.find('.datepicker-next').click()
       expect(dp.cal.find(".datepicker-day a:not(.others):not(.disabled)").length).toEqual 0
 
     it 'should disable the dates before the date specified by disableBefore option', ->
@@ -188,7 +188,7 @@ describe 'Simple Datepicker', ->
         disableBefore: date
       dp.setSelectedDate date
       expect(dp.cal.find(".datepicker-day a:not(.others).disabled:contains(#{theDate-1}):last").length).toEqual 1
-      dp.cal.find('.datepicker-prev a').click()
+      dp.cal.find('.datepicker-prev').click()
       expect(dp.cal.find(".datepicker-day a:not(.others):not(.disabled)").length).toEqual 0
 
     afterEach ->
@@ -202,10 +202,10 @@ describe 'Simple Datepicker', ->
         showYearPrevNext: true
 
       year = (dp.selectedDate or dp._viewDate).year()
-      dp.cal.find('.datepicker-title a').click()
-      dp.cal.find('.datepicker-year-prev a').click()
+      dp.cal.find('.datepicker-title').click()
+      dp.cal.find('.datepicker-year-prev').click()
       expect(dp.cal.find(".datepicker-year a:contains(#{year-10})").length).toEqual 1
-      dp.cal.find('.datepicker-year-next a').click()
+      dp.cal.find('.datepicker-year-next').click()
       expect(dp.cal.find(".datepicker-year a:contains(#{year})").length).toEqual 1
 
   describe 'Disable dates', ->
@@ -270,7 +270,7 @@ describe 'Simple Datepicker', ->
       desiredDate = today.clone().add('month', -1)
                       .set('date', 15).format('YY-M-D')
 
-      dp.cal.find('.datepicker-prev a').click()
+      dp.cal.find('.datepicker-prev').click()
       dp.cal.find('.datepicker-day a:contains(15)').click()
 
     it 'should works all right', (done) ->

@@ -7,36 +7,48 @@
     text-decoration: none;
   }
 
-  table.calendar {
+  table {
     width: 100%;
+  }
 
-    td {
-      width: 24px;
-      line-height: 24px;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-      vertical-align: middle;
+  table td {
+    width: 24px;
+    line-height: 24px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .datepicker-year-prev,
+  .datepicker-year-next,
+  .datepicker-prev,
+  .datepicker-next {
+    float: left;
+    margin: 6px;
+    display: block;
+    color: #444;
+    &:hover {
+      color: #999;
     }
+  }
 
-    .datepicker-prev a,
-    .datepicker-next a {
-      display: block;
-      height: 100%;
-      color: #444;
-      &:hover {
-        color: #999;
-      }
+  .datepicker-year-next,
+  .datepicker-next {
+    float: right;
+  }
+
+  .datepicker-title,
+  .datepicker-yearmonth-title {
+    color: #333;
+    font-size: 14px;
+
+    &:hover {
+      color: #999;
     }
+  }
 
-    .datepicker-title a {
-      color: #333;
-      font-size: 14px;
-      &:hover {
-        color: #999;
-      }
-    }
-
+  table.calendar {
     .datepicker-dow {
       color: #999;
     }
@@ -79,32 +91,7 @@
     }
   }
 
-  div.datepicker-yearmonth {
-    .datepicker-yearmonth-title {
-      text-align: center;
-      height: 24px;
-      line-height: 24px;
-      vertical-align: middle;
-      a {
-        color: #333;
-        font-size: 14px;
-        &:hover {
-          color: #999;
-        }
-      }
-    }
-    .datepicker-year-prev,.datepicker-year-next {
-      text-align: center;
-      a {
-        display: block;
-        height: 100%;
-        color: #444;
-        &:hover {
-          color: #999;
-        }
-      }
-    }
-
+  .datepicker-yearmonth {
     .datepicker-year-container,
     .datepicker-month-container {
       margin-bottom: 5px;

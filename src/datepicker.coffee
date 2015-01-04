@@ -3,7 +3,7 @@ class Datepicker extends SimpleModule
     el: null
     inline: false
     showPrevNext: true
-    showYearPrevNext: false
+    showYearPrevNext: true
     disableBefore: null
     disableAfter: null
     format: 'YYYY-MM-DD'
@@ -75,13 +75,13 @@ class Datepicker extends SimpleModule
     .on 'mousedown click', (e) ->
       return false
 
-    .on 'click', '.datepicker-title a', (e) =>
+    .on 'click', '.datepicker-title', (e) =>
       @update null, 'yearmonth'
 
-    .on 'click', '.datepicker-prev a, .datepicker-next a', (e) =>
+    .on 'click', '.datepicker-prev, .datepicker-next', (e) =>
       e.preventDefault()
 
-      direction = if $(e.currentTarget).is('.datepicker-prev a') then -1 else 1
+      direction = if $(e.currentTarget).is('.datepicker-prev') then -1 else 1
       date = @_viewDate.clone().add(direction, 'months')
       @update(date)
 
@@ -102,7 +102,7 @@ class Datepicker extends SimpleModule
       @_hide() unless @opts.inline
       @trigger 'select', [date]
 
-    .on 'click', '.datepicker-yearmonth-cancel, .datepicker-yearmonth-title a', (e) =>
+    .on 'click', '.datepicker-yearmonth-cancel, .datepicker-yearmonth-title', (e) =>
       @update null, 'calendar'
 
     .on 'click', '.datepicker-yearmonth-ok', (e) =>
@@ -111,12 +111,12 @@ class Datepicker extends SimpleModule
       date = @_yearmonth.data('tmpDate')
       @update date, 'calendar'
 
-    .on 'click', '.datepicker-year-prev a, .datepicker-year-next a', (e) =>
+    .on 'click', '.datepicker-year-prev, .datepicker-year-next', (e) =>
       e.preventDefault()
 
       btn = $(e.currentTarget)
       currentYear = @_yearmonth.data('tmpDate').year()
-      direction = if btn.is('.datepicker-year-prev a') then -10 else 10
+      direction = if btn.is('.datepicker-year-prev') then -10 else 10
       firstYear = @cal.find('.datepicker-year a:first').data('year')*1 + direction
 
       years = @_renderYearSelectors firstYear, currentYear
@@ -138,7 +138,7 @@ class Datepicker extends SimpleModule
       btn.parent().siblings().find('a.selected').removeClass('selected')
       btn.addClass('selected')
 
-      @cal.find('.datepicker-yearmonth-title a').html @_formatTitle(date)
+      @cal.find('.datepicker-yearmonth-title').html @_formatTitle(date)
 
 
   _renderCal: (viewDate) ->
@@ -146,21 +146,17 @@ class Datepicker extends SimpleModule
     next = ''
 
     if @opts.showPrevNext
-      prev = '<a href="javascript:;" class="fa fa-chevron-left"></a>'
-      next = '<a href="javascript:;" class="fa fa-chevron-right"></a>'
+      prev = '<a href="javascript:;" class="fa fa-chevron-left datepicker-prev"></a>'
+      next = '<a href="javascript:;" class="fa fa-chevron-right datepicker-next"></a>'
 
     title = @_formatTitle viewDate
 
     return """
       <table class="calendar">
         <tr>
-          <td class="datepicker-prev">
+          <td colspan="7">
             #{ prev }
-          </td>
-          <td class="datepicker-title" colspan="5">
-            <a href="javascript:;">#{ title }</a>
-          </td>
-          <td class="datepicker-next">
+            <a href="javascript:;" class="datepicker-title">#{ title }</a>
             #{ next }
           </td>
         </tr>
@@ -176,16 +172,8 @@ class Datepicker extends SimpleModule
     next = ''
 
     if @opts.showYearPrevNext
-      prev = """
-        <div class="datepicker-year-prev">
-          <a href="javascript:;" class="fa fa-chevron-up"></a>
-        </div>
-      """
-      next = """
-        <div class="datepicker-year-next">
-          <a href="javascript:;" class="fa fa-chevron-down"></a>
-        </div>
-      """
+      prev = '<a href="javascript:;" class="fa fa-chevron-left datepicker-year-prev"></a>'
+      next = '<a href="javascript:;" class="fa fa-chevron-right datepicker-year-next"></a>'
 
     title = @_formatTitle viewDate
 
@@ -194,15 +182,17 @@ class Datepicker extends SimpleModule
 
     return """
       <div class="datepicker-yearmonth">
-        <div class='datepicker-yearmonth-title'>
-          <a href='javascript:;'>
-            #{ title }
-          </a>
-        </div>
+        <table>
+          <tr>
+            <td>
+              #{ prev }
+              <a class="datepicker-yearmonth-title" href="javascript:;">#{ title }</a>
+              #{ next }
+            </td>
+          </tr>
+        </table>
         <div class="datepicker-year-container">
-          #{ prev }
           <ul class="datepicker-year-list">#{ @_renderYearSelectors currentYear-5, currentYear }</ul>
-          #{ next }
         </div>
         <div class="datepicker-month-container">
           <ul class="datepicker-month-list">#{ @_renderMonthSelectors currentMonth }</ul>
