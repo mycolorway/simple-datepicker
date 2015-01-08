@@ -80,7 +80,7 @@ class Datepicker extends SimpleModule
   _bindEvent: ->
     @cal
     .on 'mousedown click', (e) ->
-      return false
+      false
 
     .on 'click', '.datepicker-title', (e) =>
       @update null, 'yearmonth'
@@ -143,7 +143,7 @@ class Datepicker extends SimpleModule
       btn.parent().siblings().find('a.selected').removeClass('selected')
       btn.addClass('selected')
 
-      @cal.find('.datepicker-yearmonth-title').html @_formatTitle(date)
+      #@cal.find('.datepicker-yearmonth-title').html @_formatTitle(date)
 
       unless isYear
         if @opts.monthOnly
@@ -187,11 +187,11 @@ class Datepicker extends SimpleModule
       prev = '<a href="javascript:;" class="fa fa-chevron-left datepicker-year-prev"></a>'
       next = '<a href="javascript:;" class="fa fa-chevron-right datepicker-year-next"></a>'
 
-    title = @_formatTitle viewDate
+    noSelected = @opts.monthOnly and !@selectedDate
+    title = if noSelected then '&nbsp;' else @_formatTitle(viewDate)
 
     currentYear = viewDate.year()
     currentMonth = viewDate.month()
-    noSelected = @opts.monthOnly and !@selectedDate
 
     return """
       <div class="datepicker-yearmonth">
