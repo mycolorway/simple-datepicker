@@ -20,6 +20,7 @@ class Datepicker extends SimpleModule
       return
 
     @opts.format = 'YYYY-MM' if @opts.monthOnly
+    @el.data 'datepicker', @
 
     @_render()
 
