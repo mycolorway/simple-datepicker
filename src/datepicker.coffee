@@ -191,6 +191,7 @@ class Datepicker extends SimpleModule
 
     currentYear = viewDate.year()
     currentMonth = viewDate.month()
+    noSelected = @opts.monthOnly and !@selectedDate
 
     return """
       <div class="datepicker-yearmonth">
@@ -204,10 +205,10 @@ class Datepicker extends SimpleModule
           </tr>
         </table>
         <div class="datepicker-year-container">
-          <ul class="datepicker-year-list">#{ @_renderYearSelectors(currentYear-5, currentYear if @selectedDate) }</ul>
+          <ul class="datepicker-year-list">#{ @_renderYearSelectors(currentYear-5, currentYear unless noSelected) }</ul>
         </div>
         <div class="datepicker-month-container">
-          <ul class="datepicker-month-list">#{ @_renderMonthSelectors(currentMonth if @selectedDate) }</ul>
+          <ul class="datepicker-month-list">#{ @_renderMonthSelectors(currentMonth unless noSelected) }</ul>
         </div>
         <div class="datepicker-yearmonth-confirm">
           <a href="javascript:;" class="datepicker-yearmonth-ok">确定</a>

@@ -58,7 +58,7 @@ describe 'Simple Datepicker', ->
 
       dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click()
       dp._yearmonth.find('.datepicker-month a:contains(Mar)').click()
-      dp._yearmonth.find('.datepicker-yearmonth-ok').click()
+      #dp._yearmonth.find('.datepicker-yearmonth-ok').click()
       dp.cal.find('.datepicker-day a:contains(15)').click()
 
     it 'should works all right', (done)->
@@ -86,7 +86,7 @@ describe 'Simple Datepicker', ->
       dp.cal.find('.datepicker-title').click()
 
       dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click()
-      dp._yearmonth.find('.datepicker-month a:contains(Mar)').click()
+      #dp._yearmonth.find('.datepicker-month a:contains(Mar)').click()
       dp._yearmonth.find('.datepicker-yearmonth-cancel').click()
       dp.cal.find('.datepicker-day a:contains(15)').click()
 

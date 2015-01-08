@@ -57,7 +57,6 @@
         dp.cal.find('.datepicker-title').click();
         dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click();
         dp._yearmonth.find('.datepicker-month a:contains(Mar)').click();
-        dp._yearmonth.find('.datepicker-yearmonth-ok').click();
         return dp.cal.find('.datepicker-day a:contains(15)').click();
       });
       return it('should works all right', function(done) {
@@ -85,7 +84,6 @@
         desiredDate = today.clone().set('date', 15).format('YYYY-MM-DD');
         dp.cal.find('.datepicker-title').click();
         dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click();
-        dp._yearmonth.find('.datepicker-month a:contains(Mar)').click();
         dp._yearmonth.find('.datepicker-yearmonth-cancel').click();
         return dp.cal.find('.datepicker-day a:contains(15)').click();
       });
