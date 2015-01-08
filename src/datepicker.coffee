@@ -10,6 +10,7 @@ class Datepicker extends SimpleModule
     width: null
     viewDate: null
     viewType: 'calendar'
+    monthOnly: false
 
   _init: () ->
     @el = $(@opts.el)
@@ -17,6 +18,8 @@ class Datepicker extends SimpleModule
     unless @el.length
       throw 'simple datepicker: option el is required'
       return
+
+    @opts.format = 'YYYY-MM' if @opts.monthOnly
 
     @_render()
 
@@ -34,7 +37,7 @@ class Datepicker extends SimpleModule
     val = @el.val()
     @selectedDate = moment(val, @opts.format) if val
 
-    @_viewType = @opts.viewType
+    @_viewType = if @opts.monthOnly then 'yearmonth' else @opts.viewType
     @_viewDate = @opts.viewDate || @selectedDate || moment().startOf('day')
 
     @update()
@@ -67,9 +70,12 @@ class Datepicker extends SimpleModule
 
     @cal.html panel
     @_calendar = @cal.find('.calendar')
-    @_yearmonth = @cal.find('.datepicker-yearmonth').data('tmpDate', date.clone())
+    @_yearmonth = @cal.find('.datepicker-yearmonth').data('tmpDate', date.clone().startOf('month'))
     @_viewType = type
     @_viewDate = date
+
+    if @opts.monthOnly and type == 'yearmonth'
+      @cal.find('.datepicker-yearmonth-confirm').remove()
 
   _bindEvent: ->
     @cal
@@ -92,18 +98,15 @@ class Datepicker extends SimpleModule
       btn = $(e.currentTarget)
       return if btn.hasClass('disabled')
 
-      date = moment(btn.data('date'), 'YYYY-MM-DD')
-      @el.val date.format(@opts.format)
-      @selectedDate = date
-      @_viewDate = date
-
       @cal.find('.datepicker-day a.selected').removeClass('selected')
       btn.addClass('selected')
 
+      date = moment(btn.data('date'), 'YYYY-MM-DD')
+      @setSelectedDate date
       @_hide() unless @opts.inline
-      @trigger 'select', [date]
 
     .on 'click', '.datepicker-yearmonth-cancel, .datepicker-yearmonth-title', (e) =>
+      return if @opts.monthOnly
       @update null, 'calendar'
 
     .on 'click', '.datepicker-yearmonth-ok', (e) =>
@@ -128,8 +131,9 @@ class Datepicker extends SimpleModule
 
       btn = $(e.currentTarget)
       date = @_yearmonth.data('tmpDate')
+      isYear = btn.is('.datepicker-year a')
 
-      if btn.is('.datepicker-year a')
+      if isYear
         date.set('year', btn.data('year')*1)
       else
         date.set('month', btn.data('month')*1)
@@ -140,6 +144,13 @@ class Datepicker extends SimpleModule
       btn.addClass('selected')
 
       @cal.find('.datepicker-yearmonth-title').html @_formatTitle(date)
+
+      unless isYear
+        if @opts.monthOnly
+          @setSelectedDate date
+          @_hide() unless @opts.inline
+        else
+          @update(date, 'calendar')
 
 
   _renderCal: (viewDate) ->
@@ -193,10 +204,10 @@ class Datepicker extends SimpleModule
           </tr>
         </table>
         <div class="datepicker-year-container">
-          <ul class="datepicker-year-list">#{ @_renderYearSelectors currentYear-5, currentYear }</ul>
+          <ul class="datepicker-year-list">#{ @_renderYearSelectors(currentYear-5, currentYear if @selectedDate) }</ul>
         </div>
         <div class="datepicker-month-container">
-          <ul class="datepicker-month-list">#{ @_renderMonthSelectors currentMonth }</ul>
+          <ul class="datepicker-month-list">#{ @_renderMonthSelectors(currentMonth if @selectedDate) }</ul>
         </div>
         <div class="datepicker-yearmonth-confirm">
           <a href="javascript:;" class="datepicker-yearmonth-ok">确定</a>
@@ -318,6 +329,7 @@ class Datepicker extends SimpleModule
     else
       date = moment(date, @opts.format)
       @selectedDate = date
+      @_viewDate = date
       @el.val date.format(@opts.format)
 
     @cal and @update(date)

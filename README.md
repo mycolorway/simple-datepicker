@@ -37,6 +37,7 @@ simple.datepicker({
     format: "YYYY-MM-DD",    // 格式化选中的日期格式
     width: null,             // 日历组件宽度
     viewDate: null           // 初始化时日历显示的日期，Moment 对象
+    monthOnly: false         // 只选择月份
 });
 ```
 
