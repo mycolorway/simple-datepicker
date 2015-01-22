@@ -17,32 +17,29 @@
   text-align: center;
   vertical-align: middle;
 }
-.simple-datepicker .datepicker-year-prev,
-.simple-datepicker .datepicker-year-next,
-.simple-datepicker .datepicker-prev,
-.simple-datepicker .datepicker-next {
+.simple-datepicker .datapicker-header {
+  text-align: center;
+  margin-bottom: 5px;
+}
+.simple-datepicker .datapicker-header .datepicker-prev,
+.simple-datepicker .datapicker-header .datepicker-next {
   float: left;
-  margin: 6px;
+  margin: 3px 6px;
   display: block;
   color: #444;
 }
-.simple-datepicker .datepicker-year-prev:hover,
-.simple-datepicker .datepicker-year-next:hover,
-.simple-datepicker .datepicker-prev:hover,
-.simple-datepicker .datepicker-next:hover {
+.simple-datepicker .datapicker-header .datepicker-prev:hover,
+.simple-datepicker .datapicker-header .datepicker-next:hover {
   color: #999;
 }
-.simple-datepicker .datepicker-year-next,
-.simple-datepicker .datepicker-next {
+.simple-datepicker .datapicker-header .datepicker-next {
   float: right;
 }
-.simple-datepicker .datepicker-title,
-.simple-datepicker .datepicker-yearmonth-title {
+.simple-datepicker .datapicker-header .datepicker-title {
   color: #333;
   font-size: 14px;
 }
-.simple-datepicker .datepicker-title:hover,
-.simple-datepicker .datepicker-yearmonth-title:hover {
+.simple-datepicker .datapicker-header .datepicker-title:hover {
   color: #999;
 }
 .simple-datepicker table.calendar .datepicker-dow {
@@ -79,39 +76,64 @@
 .simple-datepicker table.calendar .datepicker-month a {
   display: block;
 }
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container {
-  margin-bottom: 5px;
+.simple-datepicker .datepicker-yearmonth {
+  display: none;
 }
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-month-list,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-year-list,
+.simple-datepicker .datepicker-yearmonth .datepicker-year-container {
+  display: inline-block;
+  height: 80px;
+  width: 40px;
+  overflow: auto;
+}
+.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list {
+  padding: 0px;
+  margin: 0px;
+  white-space: normal;
+  text-align: center;
+}
+.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-year {
+  display: inline-block;
+  height: 20px;
+  width: 100%;
+  line-height: 20px;
+  vertical-align: middle;
+}
+.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-year a {
+  display: block;
+  height: 100%;
+  color: #333;
+  -webkit-text-shadow: 0 1px 0 white;
+  -moz-text-shadow: 0 1px 0 white;
+  text-shadow: 0 1px 0 white;
+}
+.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-year a.today {
+  background: #ffe451;
+}
+.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-year a.selected {
+  background: #cce5f1;
+}
+.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-year a:hover {
+  background: #cbe0ff;
+}
+.simple-datepicker .datepicker-yearmonth .datepicker-month-container {
+  display: inline-block;
+  vertical-align: top;
+  width: 120px;
+  height: 80px;
+}
 .simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list {
   padding: 0px;
   margin: 0px;
   white-space: normal;
+  text-align: center;
 }
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-year,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-month,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-month-list .datepicker-year,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-month-list .datepicker-month,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-year-list .datepicker-year,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-year-list .datepicker-month,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-year,
 .simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-month {
   display: inline-block;
   height: 25px;
+  width: 30px;
   line-height: 25px;
   vertical-align: middle;
-  text-align: center;
 }
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-year a,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-month a,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-month-list .datepicker-year a,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-month-list .datepicker-month a,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-year-list .datepicker-year a,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-year-list .datepicker-month a,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-year a,
 .simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-month a {
   display: block;
   height: 100%;
@@ -120,70 +142,12 @@
   -moz-text-shadow: 0 1px 0 white;
   text-shadow: 0 1px 0 white;
 }
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-year a.today,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-month a.today,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-month-list .datepicker-year a.today,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-month-list .datepicker-month a.today,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-year-list .datepicker-year a.today,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-year-list .datepicker-month a.today,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-year a.today,
 .simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-month a.today {
   background: #ffe451;
 }
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-year a.selected,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-month a.selected,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-month-list .datepicker-year a.selected,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-month-list .datepicker-month a.selected,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-year-list .datepicker-year a.selected,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-year-list .datepicker-month a.selected,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-year a.selected,
 .simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-month a.selected {
   background: #cce5f1;
 }
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-year a:hover,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-month a:hover,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-month-list .datepicker-year a:hover,
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-month-list .datepicker-month a:hover,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-year-list .datepicker-year a:hover,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-year-list .datepicker-month a:hover,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-year a:hover,
 .simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-month a:hover {
   background: #cbe0ff;
 }
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list .datepicker-year,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-year-list .datepicker-year {
-  width: 20%;
-}
-.simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-month-list .datepicker-month,
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-month {
-  width: 16.66667%;
-}
-.simple-datepicker .datepicker-yearmonth .datepicker-month-container {
-  border-top: 1px solid #e0e0e0;
-  padding-top: 5px;
-}
-.simple-datepicker .datepicker-yearmonth .datepicker-yearmonth-confirm {
-  margin-top: 5px;
-  text-align: center;
-  overflow: hidden;
-}
-.simple-datepicker .datepicker-yearmonth .datepicker-yearmonth-confirm a {
-  display: block;
-  float: left;
-  width: 50%;
-  height: 2em;
-  line-height: 2em;
-  vertical-align: middle;
-  color: #999;
-}
-.simple-datepicker .datepicker-yearmonth .datepicker-yearmonth-confirm a:hover {
-  color: #444;
-}
-.simple-datepicker .datepicker-yearmonth .datepicker-yearmonth-confirm a:hover.datepicker-yearmonth-cancel {
-  background: #f0f0f0;
-}
-.simple-datepicker .datepicker-yearmonth .datepicker-yearmonth-confirm a:hover.datepicker-yearmonth-ok {
-  background: #ddffdd;
-}
-
-/*# sourceMappingURL=datepicker.css.map */

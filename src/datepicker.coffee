@@ -2,17 +2,14 @@ class Datepicker extends SimpleModule
   opts:
     el: null
     inline: false
-    showPrevNext: true
-    showYearPrevNext: true
     disableBefore: null
     disableAfter: null
     format: 'YYYY-MM-DD'
     width: null
-    viewDate: null
-    viewType: 'calendar'
-    monthOnly: false
+    monthpicker: false
 
-  _init: () ->
+
+  _init: ->
     @el = $(@opts.el)
 
     unless @el.length
@@ -24,74 +21,84 @@ class Datepicker extends SimpleModule
 
     @_render()
 
-  _render: () ->
+  _render: ->
     if @opts.inline
       @_show()
     else
       @el.on 'focus click', (e) =>
+        return if @cal
         @_show()
 
       $(document).on "click.datepicker", (e) =>
         @_hide() unless @el.is(e.target) or @el.has(e.target).length
 
   _show: ->
-    val = @el.val()
-    @selectedDate = moment(val, @opts.format) if val
+    val = @el.val() || moment()
+    @date = moment(val, @opts.format) if val
 
-    @_viewType = if @opts.monthOnly then 'yearmonth' else @opts.viewType
-    @_viewDate = @opts.viewDate || @selectedDate || moment().startOf('day')
+    @monthOnly = @opts.monthpicker
 
-    @update()
+    @_renderPanel()
+    @_bindEvent()
 
   _hide: ->
     if @cal
       @cal.remove()
       @cal = null
 
-  update: (date, type) ->
-    type or= @_viewType
-    date or= @_viewDate
+  _renderPanel: ->
+    _calTemplate = """
+      <div class="simple-datepicker">
+        <div class="datapicker-header">
+          <a href="javascript:;" class="fa fa-chevron-left datepicker-prev"></a>
+          <a href="javascript:;" class="datepicker-title">#{  @_formatTitle(@date) }</a>
+          <a href="javascript:;" class="fa fa-chevron-right datepicker-next"></a>
+        </div>
+      </div>
+    """
 
-    unless @cal
-      @cal = $('<div class="simple-datepicker"></div>')
-      if @opts.inline
-        @cal.insertAfter @el
-      else
-        $('body').append @cal
-        @_setPosition()
+    @cal = $(_calTemplate)
+    if @opts.inline
+      @cal.insertAfter @el
+    else
+      $('body').append @cal
+      @_setPosition()
 
-      @cal.data('datepicker', @)
-      @cal.css("width", @opts.width) if @opts.width
+    @cal.data('datepicker', @)
+    @cal.css("width", @opts.width) if @opts.width
 
-      @_bindEvent()
+    @cal.append(@_renderYearMonth())
+    @cal.append(@_renderCal()) unless @opts.monthpicker
 
-    panel = switch type
-      when 'yearmonth' then @_renderYearMonth date
-      else @_renderCal date
-
-    @cal.html panel
     @_calendar = @cal.find('.calendar')
-    @_yearmonth = @cal.find('.datepicker-yearmonth').data('tmpDate', date.clone().startOf('month'))
-    @_viewType = type
-    @_viewDate = date
+    @_monthpicker = @cal.find('.datepicker-yearmonth').data('tmpDate', @date.clone().startOf('month'))
+    @title = @cal.find('.datepicker-title')
+    @yearContainer = @cal.find('.datepicker-year-container')
 
-    if @opts.monthOnly and type == 'yearmonth'
-      @cal.find('.datepicker-yearmonth-confirm').remove()
+    if @opts.monthpicker
+      @_monthpicker.show()
+      #scrollTo now position
+      year = @date.year()
+      @yearContainer.scrollTop(20 * (year - @firstYear))
+    else
+      @_calendar.find("[data-date=#{@date.format('YYYY-MM-DD')}]").addClass('selected')
+
 
   _bindEvent: ->
-    @cal
-    .on 'mousedown click', (e) ->
-      false
-
+    @cal.on 'mousedown click', (e) ->
+        false
     .on 'click', '.datepicker-title', (e) =>
-      @update null, 'yearmonth'
+      @_monthpicker.toggle() unless @opts.monthpicker
+
+      year = @date.year()
+      @yearContainer.scrollTop(20 * (year - @firstYear))
 
     .on 'click', '.datepicker-prev, .datepicker-next', (e) =>
       e.preventDefault()
 
       direction = if $(e.currentTarget).is('.datepicker-prev') then -1 else 1
-      date = @_viewDate.clone().add(direction, 'months')
-      @update(date)
+      @date.add(direction, 'months')
+      @_refresh()
 
     .on 'click', '.datepicker-day a', (e) =>
       e.preventDefault()
@@ -102,126 +109,95 @@ class Datepicker extends SimpleModule
       @cal.find('.datepicker-day a.selected').removeClass('selected')
       btn.addClass('selected')
 
-      date = moment(btn.data('date'), 'YYYY-MM-DD')
-      @setSelectedDate date
+      @date = moment(btn.data('date'), 'YYYY-MM-DD')
+      @setSelectedDate()
       @_hide() unless @opts.inline
 
-    .on 'click', '.datepicker-yearmonth-cancel, .datepicker-yearmonth-title', (e) =>
-      return if @opts.monthOnly
-      @update null, 'calendar'
+    .on 'click', '.datepicker-year a', (e) =>
+      $target = $(e.currentTarget)
 
-    .on 'click', '.datepicker-yearmonth-ok', (e) =>
-      e.preventDefault()
+      year = $target.data 'year'
+      @date.year year
+      @_refresh()
 
-      date = @_yearmonth.data('tmpDate')
-      @update date, 'calendar'
+    .on 'click', '.datepicker-month a', (e) =>
+      $target = $(e.currentTarget)
 
-    .on 'click', '.datepicker-year-prev, .datepicker-year-next', (e) =>
-      e.preventDefault()
+      month = $target.data 'month'
+      @date.months month
+      @_refresh()
 
-      btn = $(e.currentTarget)
-      currentYear = @_yearmonth.data('tmpDate').year()
-      direction = if btn.is('.datepicker-year-prev') then -10 else 10
-      firstYear = @cal.find('.datepicker-year a:first').data('year')*1 + direction
+      if @opts.monthpicker
+        @setSelectedDate()
+        @_hide() unless @opts.inline
 
-      years = @_renderYearSelectors firstYear, currentYear
-      @cal.find('.datepicker-year-list').html years
+    @cal.find('.datepicker-year-container').scroll (e) =>
+      scrollTop = $(e.target).scrollTop()
 
-    .on 'click', '.datepicker-year a, .datepicker-month a', (e) =>
-      e.preventDefault()
+      if scrollTop + 80 +10 >= @yearContainer.children().height()
+        @yearContainer.find('.datepicker-year-list').append(@_renderYearSelectors(@lastYear+1, @lastYear + 5))
+        @lastYear = @lastYear + 10
 
-      btn = $(e.currentTarget)
-      date = @_yearmonth.data('tmpDate')
-      isYear = btn.is('.datepicker-year a')
-
-      if isYear
-        date.set('year', btn.data('year')*1)
-      else
-        date.set('month', btn.data('month')*1)
-
-      @_yearmonth.data('tmpDate', date)
-
-      btn.parent().siblings().find('a.selected').removeClass('selected')
-      btn.addClass('selected')
-
-      #@cal.find('.datepicker-yearmonth-title').html @_formatTitle(date)
-
-      unless isYear
-        if @opts.monthOnly
-          @setSelectedDate date
-          @_hide() unless @opts.inline
-        else
-          @update(date, 'calendar')
+      else if scrollTop is 0
+        @yearContainer.find('.datepicker-year-list').prepend(@_renderYearSelectors(@firstYear-5, @firstYear-1))
+        @firstYear = @firstYear-5
+        @yearContainer.scrollTop(20 * 5)
 
 
-  _renderCal: (viewDate) ->
-    prev = ''
-    next = ''
+  _refresh: ->
+    unless @calendar
+      @_calendar.replaceWith(@_renderCal())
+      @_calendar = @cal.find('.calendar')
 
-    if @opts.showPrevNext
-      prev = '<a href="javascript:;" class="fa fa-chevron-left datepicker-prev"></a>'
-      next = '<a href="javascript:;" class="fa fa-chevron-right datepicker-next"></a>'
+    @title.text(@_formatTitle(@date))
 
-    title = @_formatTitle viewDate
+    year = @date.year()
+    month = @date.months()
 
+    @_monthpicker.find('.selected').removeClass('selected')
+    @_monthpicker.find("[data-year=#{year}]").addClass('selected')
+    @_monthpicker.find("[data-month=#{month}]").addClass('selected')
+
+  _renderCal: ->
+    week = ''
+    for i in [1, 2, 3, 4, 5, 6 ,0]
+      week += "<td>#{moment.weekdaysMin(i)}</td>"
     return """
       <table class="calendar">
-        <tr>
-          <td colspan="7">
-            #{ prev }
-            <a href="javascript:;" class="datepicker-title">#{ title }</a>
-            #{ next }
-          </td>
-        </tr>
         <tr class="datepicker-dow">
-          <td>一</td><td>二</td><td>三</td><td>四</td><td>五</td><td>六</td><td>日</td>
+          #{week}
         </tr>
-        #{ @_renderDaySelectors viewDate }
+        #{ @_renderDaySelectors @date }
       </table>
     """
 
-  _renderYearMonth: (viewDate) ->
-    prev = ''
-    next = ''
-
-    if @opts.showYearPrevNext
-      prev = '<a href="javascript:;" class="fa fa-chevron-left datepicker-year-prev"></a>'
-      next = '<a href="javascript:;" class="fa fa-chevron-right datepicker-year-next"></a>'
-
+  _renderYearMonth: ->
+    #TODO: fix it
     noSelected = @opts.monthOnly and !@selectedDate
-    title = if noSelected then '&nbsp;' else @_formatTitle(viewDate)
+    title = if noSelected then '&nbsp;' else @_formatTitle(@date)
 
-    currentYear = viewDate.year()
-    currentMonth = viewDate.month()
+    currentYear = @date.year()
+    currentMonth = @date.month()
 
+    @firstYear = currentYear - 5
+    @lastYear = currentYear + 10
     return """
       <div class="datepicker-yearmonth">
         <table>
-          <tr>
-            <td>
-              #{ prev }
-              <a class="datepicker-yearmonth-title" href="javascript:;">#{ title }</a>
-              #{ next }
-            </td>
-          </tr>
         </table>
         <div class="datepicker-year-container">
-          <ul class="datepicker-year-list">#{ @_renderYearSelectors(currentYear-5, currentYear unless noSelected) }</ul>
+          <ul class="datepicker-year-list">#{ @_renderYearSelectors(@firstYear, @lastYear, currentYear unless noSelected) }</ul>
         </div>
         <div class="datepicker-month-container">
           <ul class="datepicker-month-list">#{ @_renderMonthSelectors(currentMonth unless noSelected) }</ul>
         </div>
-        <div class="datepicker-yearmonth-confirm">
-          <a href="javascript:;" class="datepicker-yearmonth-ok">确定</a>
-          <a href="javascript:;" class="datepicker-yearmonth-cancel">取消</a>
-        </div>
       </div>
     """
 
-  _renderYearSelectors: (firstYear, selectedYear) ->
+  _renderYearSelectors: (firstYear, lastYear, selectedYear) ->
     years = ''
 
-    for y in [firstYear...firstYear + 10]
+    for y in [firstYear...lastYear]
       years += """
         <li class="datepicker-year">
           <a href="javascript:;" class="#{ if y is selectedYear then 'selected' else '' }" data-year="#{ y }">
@@ -239,7 +215,7 @@ class Datepicker extends SimpleModule
       months += """
         <li class="datepicker-month">
           <a href="javascript:;" class="#{ if m is selectedMonth then 'selected' else '' }" data-month="#{ m }">
-            #{ moment.monthsShort()[m] }
+            #{ moment.monthsShort(m) }
           </a>
         </li>
       """
@@ -296,25 +272,28 @@ class Datepicker extends SimpleModule
 
         # Create the cell
         row += """
-          <td class='datepicker-day'>
-            <a href="javascript:;" class="#{c}" data-date="#{date.format('YYYY-MM-DD')}">
-              #{n}
-            </a>
-          </td>
-          """
+            <td class='datepicker-day'>
+              <a href="javascript:;" class="#{c}" data-date="#{date.format('YYYY-MM-DD')}">
+                #{n}
+              </a>
+            </td>
+            """
         x++
         i++
 
       # Create the row
       if row
         days += """
-          <tr class="days">#{row}</tr>
-          """
+            <tr class="days">#{row}</tr>
+            """
       y++
     return days
 
   _formatTitle: (viewDate) ->
-    viewDate.format('YYYY年M月')
+    if moment.locale() is 'zh-cn'
+      viewDate.format('YYYY年M月')
+    else
+      viewDate.format('YYYY MMMM')
 
   _setPosition: ->
     offset = @el.offset()
@@ -325,16 +304,11 @@ class Datepicker extends SimpleModule
       'top': offset.top + @el.outerHeight(true)
 
   setSelectedDate: (date) ->
-    unless date
-      @selectedDate = null
-      @el.val ""
-    else
-      date = moment(date, @opts.format)
-      @selectedDate = date
-      @_viewDate = date
-      @el.val date.format(@opts.format)
+    if date
+      @date = moment(date, @opts.format)
+      @_refresh()
 
-    @cal and @update(date)
+    @el.val @date.format(@opts.format)
     @trigger 'select', [date]
 
 datepicker = (opts) ->
