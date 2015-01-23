@@ -30,39 +30,27 @@
 simple.datepicker({
     el: null,                // * 必须
     inline: false,           // 初始化时是否显示日历组件
-    showPrevNext: true,      // 是否显示切换月份的按钮
-    showYearPrevNext: true,  // 是否显示切换年份的按钮
     disableBefore: null,     // 禁用向前切换月份的按钮，参数为日期
     disableAfter: null,      // 禁用向后切换月份的按钮，参数为日期
     format: "YYYY-MM-DD",    // 格式化选中的日期格式
     width: null,             // 日历组件宽度
-    viewDate: null           // 初始化时日历显示的日期，Moment 对象
-    monthOnly: false         // 只选择月份
+    monthpicker: false         // 只选择月份
 });
 ```
 
 ### 二、方法和事件
 
-**1. 属性 **
+**1. 实例方法**
 
-** selectedDate **
+**setDate(date)**
 
-已选中的日期，Moment 对象
+设置选择对应日期，参数可以是和 format 配置项一致的 String 或 Moment 对象。
 
-**2. 实例方法**
+**destroy**
 
-**update(date, type)**
+销毁对象。
 
-重新渲染视图。
-
-date: 类型为 Moment 对象，默认值为当前显示的年月
-type: 类型为 String 对象，视图类型，可选参数为 calendar|yearmonth
-
-**setSelectedDate(date)**
-
-设置选择对应日期，参数可以是和 format 配置项一致的 String 或 Moment 对象，如果参数为空则清空选择的日期。
-
-**3. 事件**
+**2. 事件**
 
 **select**
 

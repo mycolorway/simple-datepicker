@@ -30,5 +30,8 @@
     "simple-module": "2.x",
     "fontawesome": "~4.x",
     "moment": "~2.x"
+  },
+  "devDependencies": {
+    "jasmine-jquery": "2.x"
   }
 }

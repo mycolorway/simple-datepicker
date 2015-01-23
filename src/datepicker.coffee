@@ -34,7 +34,7 @@ class Datepicker extends SimpleModule
 
   _show: ->
     val = @el.val() || moment()
-    @date = moment(val, @opts.format) if val
+    @date = if moment.isMoment(val) then val else moment(val, @opts.format)
 
     @_renderPanel()
     @_bindEvent()
@@ -47,7 +47,7 @@ class Datepicker extends SimpleModule
   _renderPanel: ->
     _calTemplate = """
       <div class="simple-datepicker">
-        <div class="datapicker-header">
+        <div class="datepicker-header">
           <a href="javascript:;" class="fa fa-chevron-left datepicker-prev"></a>
           <a href="javascript:;" class="datepicker-title">#{  @_formatTitle(@date) }</a>
           <a href="javascript:;" class="fa fa-chevron-right datepicker-next"></a>
@@ -68,15 +68,17 @@ class Datepicker extends SimpleModule
     @cal.append(@_renderCal()) unless @opts.monthpicker
 
     @_calendar = @cal.find('.calendar')
-    @_monthpicker = @cal.find('.datepicker-yearmonth').data('tmpDate', @date.clone().startOf('month'))
+    @_monthpicker = @cal.find('.datepicker-yearmonth')
     @_title = @cal.find('.datepicker-title')
     @yearContainer = @cal.find('.datepicker-year-container')
 
     if @opts.monthpicker
       @_monthpicker.show()
+      @cal.find('.datepicker-header').remove() #header not show when monthpicker only
       #scrollTo now position
       year = @date.year()
-      @yearContainer.scrollTop(20 * (year - @firstYear))
+      height = @_monthpicker.find('.datepicker-year').height()
+      @yearContainer.scrollTop(height * (year - @firstYear))
     else
       @_calendar.find("[data-date=#{@date.format('YYYY-MM-DD')}]").addClass('selected')
 
@@ -86,10 +88,11 @@ class Datepicker extends SimpleModule
         false
 
     .on 'click', '.datepicker-title', (e) =>
-      @_monthpicker.toggle() unless @opts.monthpicker
+      @_monthpicker.slideToggle() unless @opts.monthpicker
 
       year = @date.year()
-      @yearContainer.scrollTop(20 * (year - @firstYear))
+      height = @_monthpicker.find('.datepicker-year').height()
+      @yearContainer.scrollTop(height * (year - @firstYear))
 
     .on 'click', '.datepicker-prev, .datepicker-next', (e) =>
       e.preventDefault()
@@ -108,7 +111,7 @@ class Datepicker extends SimpleModule
       btn.addClass('selected')
 
       @date = moment(btn.data('date'), 'YYYY-MM-DD')
-      @setSelectedDate()
+      @_updateDate()
       @_hide() unless @opts.inline
 
     .on 'click', '.datepicker-year a', (e) =>
@@ -126,20 +129,23 @@ class Datepicker extends SimpleModule
       @_refresh()
 
       if @opts.monthpicker
-        @setSelectedDate()
+        @_updateDate()
         @_hide() unless @opts.inline
+      else
+        @_monthpicker.slideUp()
 
     @cal.find('.datepicker-year-container').scroll (e) =>
       scrollTop = $(e.target).scrollTop()
 
       if scrollTop + 80 +10 >= @yearContainer.children().height()
-        @yearContainer.find('.datepicker-year-list').append(@_renderYearSelectors(@lastYear+1, @lastYear + 5))
-        @lastYear = @lastYear + 10
+        @yearContainer.find('.datepicker-year-list').append(@_renderYearSelectors(@lastYear, @lastYear + 5))
+        @lastYear = @lastYear + 5
 
       else if scrollTop is 0
-        @yearContainer.find('.datepicker-year-list').prepend(@_renderYearSelectors(@firstYear-5, @firstYear-1))
+        @yearContainer.find('.datepicker-year-list').prepend(@_renderYearSelectors(@firstYear-5, @firstYear))
         @firstYear = @firstYear-5
-        @yearContainer.scrollTop(20 * 5)
+        height = @_monthpicker.find('.datepicker-year').height()
+        @yearContainer.scrollTop(height * 5)
 
 
   _refresh: ->
@@ -151,10 +157,12 @@ class Datepicker extends SimpleModule
 
     year = @date.year()
     month = @date.months()
+    date = @date.format(@opts.format)
 
     @_monthpicker.find('.selected').removeClass('selected')
     @_monthpicker.find("[data-year=#{year}]").addClass('selected')
     @_monthpicker.find("[data-month=#{month}]").addClass('selected')
+    @_calendar.find("[data-date=#{date}]").addClass('selected')
 
   _renderCal: ->
     week = ''
@@ -165,7 +173,7 @@ class Datepicker extends SimpleModule
         <tr class="datepicker-dow">
           #{week}
         </tr>
-        #{ @_renderDaySelectors @date }
+        #{ @_renderDaySelectors() }
       </table>
     """
 
@@ -179,8 +187,6 @@ class Datepicker extends SimpleModule
     @lastYear = currentYear + 10
     return """
       <div class="datepicker-yearmonth">
-        <table>
-        </table>
         <div class="datepicker-year-container">
           <ul class="datepicker-year-list">#{ @_renderYearSelectors(@firstYear, @lastYear, currentYear unless noSelected) }</ul>
         </div>
@@ -218,16 +224,16 @@ class Datepicker extends SimpleModule
 
     return months
 
-  _renderDaySelectors: (theDate) ->
+  _renderDaySelectors: ->
     today = moment().startOf("day")
 
     # Calculate the first and last date in month being rendered.
     # Also calculate the weekday to start rendering on
-    firstDate = theDate.clone().startOf("month")
-    lastDate = theDate.clone().endOf("month")
+    firstDate = @date.clone().startOf("month")
+    lastDate = @date.clone().endOf("month")
 
     # Calculate the last day in previous month
-    prevLastDate = theDate.clone().add(-1, "months").endOf("month")
+    prevLastDate = @date.clone().add(-1, "months").endOf("month")
 
     # Render the cells as <TD>
     days = ""
@@ -242,7 +248,7 @@ class Datepicker extends SimpleModule
         p = ((prevLastDate.date() - prevLastDate.day()) + i + 1)
         n = p - prevLastDate.date()
         c = (if (x is 6) then "sun" else ((if (x is 5) then "sat" else "day")))
-        date = theDate.clone().date(n)
+        date = @date.clone().date(n)
 
         # If value is outside of bounds its likely previous and next months
         if n >= 1 and n <= lastDate.date()
@@ -296,14 +302,19 @@ class Datepicker extends SimpleModule
       'left': offset.left
       'top': offset.top + @el.outerHeight(true)
 
-  setSelectedDate: (date) ->
-    if date
-      @date = moment(date, @opts.format)
-      @_refresh()
+  _updateDate: ->
+    @el.val @date.format(@opts.format)
+    @trigger 'select', [@date]
 
-    @selectedDate = @date
-    @el.val @selectedDate.format(@opts.format)
-    @trigger 'select', [@selectedDate]
+  setDate: (date) ->
+    @date = if moment.isMoment(date) then date else moment(date, @opts.format)
+
+    @_refresh()
+    @el.val @date.format(@opts.format)
+
+  destroy: ->
+    @cal?.remove()
+    @cal = null
 
 datepicker = (opts) ->
   return new Datepicker opts

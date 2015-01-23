@@ -1,5 +1,5 @@
 .simple-datepicker {
-  width: 168px;
+  width: 200px;
   background: #fff;
   font-size: 12px;
 
@@ -20,7 +20,7 @@
     vertical-align: middle;
   }
 
-  .datapicker-header {
+  .datepicker-header {
     text-align: center;
     margin-bottom: 5px;
 
@@ -92,13 +92,18 @@
     }
   }
 
+  .datepicker-header + .datepicker-yearmonth {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+  }
   .datepicker-yearmonth {
     display: none;
+    padding-top: 5px;
     .datepicker-year-container {
       display: inline-block;
       height: 80px;
-      width: 40px;
-      overflow: auto;
+      width: 25%;
+      overflow: scroll;
       .datepicker-year-list {
         padding: 0px;
         margin: 0px;
@@ -136,7 +141,7 @@
     .datepicker-month-container {
       display: inline-block;
       vertical-align: top;
-      width: 120px;
+      width: 70%;
       height: 80px;
       .datepicker-month-list {
         padding: 0px;
@@ -146,8 +151,8 @@
 
         .datepicker-month {
           display: inline-block;
-          height: 25px;
-          width: 30px;
+          height: 26px;
+          width: 25%;
           line-height: 25px;
           vertical-align: middle;
 

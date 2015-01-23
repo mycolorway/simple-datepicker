@@ -1,5 +1,5 @@
 .simple-datepicker {
-  width: 168px;
+  width: 200px;
   background: #fff;
   font-size: 12px;
 }
@@ -17,29 +17,29 @@
   text-align: center;
   vertical-align: middle;
 }
-.simple-datepicker .datapicker-header {
+.simple-datepicker .datepicker-header {
   text-align: center;
   margin-bottom: 5px;
 }
-.simple-datepicker .datapicker-header .datepicker-prev,
-.simple-datepicker .datapicker-header .datepicker-next {
+.simple-datepicker .datepicker-header .datepicker-prev,
+.simple-datepicker .datepicker-header .datepicker-next {
   float: left;
   margin: 3px 6px;
   display: block;
   color: #444;
 }
-.simple-datepicker .datapicker-header .datepicker-prev:hover,
-.simple-datepicker .datapicker-header .datepicker-next:hover {
+.simple-datepicker .datepicker-header .datepicker-prev:hover,
+.simple-datepicker .datepicker-header .datepicker-next:hover {
   color: #999;
 }
-.simple-datepicker .datapicker-header .datepicker-next {
+.simple-datepicker .datepicker-header .datepicker-next {
   float: right;
 }
-.simple-datepicker .datapicker-header .datepicker-title {
+.simple-datepicker .datepicker-header .datepicker-title {
   color: #333;
   font-size: 14px;
 }
-.simple-datepicker .datapicker-header .datepicker-title:hover {
+.simple-datepicker .datepicker-header .datepicker-title:hover {
   color: #999;
 }
 .simple-datepicker table.calendar .datepicker-dow {
@@ -76,14 +76,19 @@
 .simple-datepicker table.calendar .datepicker-month a {
   display: block;
 }
+.simple-datepicker .datepicker-header + .datepicker-yearmonth {
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
 .simple-datepicker .datepicker-yearmonth {
   display: none;
+  padding-top: 5px;
 }
 .simple-datepicker .datepicker-yearmonth .datepicker-year-container {
   display: inline-block;
   height: 80px;
-  width: 40px;
-  overflow: auto;
+  width: 25%;
+  overflow: scroll;
 }
 .simple-datepicker .datepicker-yearmonth .datepicker-year-container .datepicker-year-list {
   padding: 0px;
@@ -118,7 +123,7 @@
 .simple-datepicker .datepicker-yearmonth .datepicker-month-container {
   display: inline-block;
   vertical-align: top;
-  width: 120px;
+  width: 70%;
   height: 80px;
 }
 .simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list {
@@ -129,8 +134,8 @@
 }
 .simple-datepicker .datepicker-yearmonth .datepicker-month-container .datepicker-month-list .datepicker-month {
   display: inline-block;
-  height: 25px;
-  width: 30px;
+  height: 26px;
+  width: 25%;
   line-height: 25px;
   vertical-align: middle;
 }
