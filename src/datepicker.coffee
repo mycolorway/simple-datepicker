@@ -16,7 +16,7 @@ class Datepicker extends SimpleModule
       throw 'simple datepicker: option el is required'
       return
 
-    @opts.format = 'YYYY-MM' if @opts.monthOnly
+    @opts.format = 'YYYY-MM' if @opts.monthpicker
     @el.data 'datepicker', @
 
     @_render()
@@ -36,8 +36,6 @@ class Datepicker extends SimpleModule
     val = @el.val() || moment()
     @date = moment(val, @opts.format) if val
 
-    @monthOnly = @opts.monthpicker
-
     @_renderPanel()
     @_bindEvent()
 
@@ -56,7 +54,6 @@ class Datepicker extends SimpleModule
         </div>
       </div>
     """
-
     @cal = $(_calTemplate)
     if @opts.inline
       @cal.insertAfter @el
@@ -72,7 +69,7 @@ class Datepicker extends SimpleModule
 
     @_calendar = @cal.find('.calendar')
     @_monthpicker = @cal.find('.datepicker-yearmonth').data('tmpDate', @date.clone().startOf('month'))
-    @title = @cal.find('.datepicker-title')
+    @_title = @cal.find('.datepicker-title')
     @yearContainer = @cal.find('.datepicker-year-container')
 
     if @opts.monthpicker
@@ -87,6 +84,7 @@ class Datepicker extends SimpleModule
   _bindEvent: ->
     @cal.on 'mousedown click', (e) ->
         false
+
     .on 'click', '.datepicker-title', (e) =>
       @_monthpicker.toggle() unless @opts.monthpicker
 
@@ -149,7 +147,7 @@ class Datepicker extends SimpleModule
       @_calendar.replaceWith(@_renderCal())
       @_calendar = @cal.find('.calendar')
 
-    @title.text(@_formatTitle(@date))
+    @_title.text(@_formatTitle(@date))
 
     year = @date.year()
     month = @date.months()
@@ -172,9 +170,7 @@ class Datepicker extends SimpleModule
     """
 
   _renderYearMonth: ->
-    #TODO: fix it
-    noSelected = @opts.monthOnly and !@selectedDate
-    title = if noSelected then '&nbsp;' else @_formatTitle(@date)
+    noSelected = @opts.monthpicker and !@selectedDate
 
     currentYear = @date.year()
     currentMonth = @date.month()
@@ -290,10 +286,7 @@ class Datepicker extends SimpleModule
     return days
 
   _formatTitle: (viewDate) ->
-    if moment.locale() is 'zh-cn'
-      viewDate.format('YYYY年M月')
-    else
-      viewDate.format('YYYY MMMM')
+    viewDate.format('YYYY MMMM')
 
   _setPosition: ->
     offset = @el.offset()
@@ -308,8 +301,9 @@ class Datepicker extends SimpleModule
       @date = moment(date, @opts.format)
       @_refresh()
 
-    @el.val @date.format(@opts.format)
-    @trigger 'select', [date]
+    @selectedDate = @date
+    @el.val @selectedDate.format(@opts.format)
+    @trigger 'select', [@selectedDate]
 
 datepicker = (opts) ->
   return new Datepicker opts
