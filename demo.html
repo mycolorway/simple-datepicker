@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Jasmine Spec Runner</title>
+  <title>Simple Datepicker Demo</title>
   <link rel="stylesheet" type="text/css" href="./vendor/bower/fontawesome/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="./styles/datepicker.css">
   <style type="text/css">
@@ -101,16 +101,6 @@
     Make the datepicker by yourself !
   </p>
   <div>
-    <p class="inline">
-      <label><input type="radio" name="showPrevNext" checked value="1" />&nbsp;Show calendar nav buttons</label><br/>
-      <label><input type="radio" name="showPrevNext" value="0" />&nbsp;Hide calendar nav buttons</label>
-    </p>
-    <p class="inline">
-      <label><input type="radio" name="showYearPrevNext" checked value="1" />&nbsp;Show year-month panel nav buttons</label><br/>
-      <label><input type="radio" name="showYearPrevNext" value="0" />&nbsp;Hide year-month panel nav buttons</label>
-    </p>
-  </div>
-  <div>
     <p class="form-control inline">
       <label>Earliest date</label>
       <input type="text" name="disableBefore">&nbsp;<a href="javascript:;" onclick="document.getElementsByName('disableBefore')[0].value='';"><i class="fa fa-remove"></i></a>
@@ -145,6 +135,10 @@
     <label class="month"><input type="radio" name="month" value="11">Dec</label>
     <input type="text" name="year" style="width:30px" />
   </p>
+  
+  <div class="form-control">
+    <label style="display: inline-block">Monthpicker!</label> <input id="monthpicker" type="checkbox" style="display: inline-block"/>
+  </div>
   <p>
     <button type="button" onclick="generate();">Generate</button>
   </p>
@@ -181,13 +175,12 @@
     var month = moment().year($('[name="year"]').val()).month(parseInt($('[name="month"]:checked').val()));
     var options = {
       el: $date,
-      showPrevNext: parseInt($('[name=showPrevNext]:checked').val()) ? true : false,
-      showYearPrevNext: parseInt($('[name=showYearPrevNext]:checked').val()) ? true : false,
       disableBefore: disableBefore.isValid() ? disableBefore : null,
       disableAfter: disableAfter.isValid() ? disableAfter : null,
       format: $('[name=format]').val(),
       width: isNaN(width) ? null : width,
-      month: month.isValid() ? month : null
+      month: month.isValid() ? month : null,
+      monthpicker: $('#monthpicker').prop('checked')
     };
     console.log(options);
     datepicker = simple.datepicker(options);

@@ -1,307 +1,156 @@
 (function() {
   describe('Simple Datepicker', function() {
-    afterEach(function() {
-      $('.simple-datepicker').remove();
-      return $('body').val(null);
+    beforeEach(function() {
+      return $('<input id="time">').appendTo('body');
     });
-    it('should inherit from SimpleModule', function() {
+    afterEach(function() {
+      var datepicker;
+      datepicker = $('#time').data('datepicker');
+      if (datepicker != null) {
+        datepicker.destroy();
+      }
+      return $('#time').remove();
+    });
+    it('should throw error when option is invalid', function() {
+      var testError;
+      testError = function() {
+        return simple.datepicker({
+          el: null
+        });
+      };
+      return expect(testError).toThrow();
+    });
+    it('should render specific DOM', function() {
+      var $datepicker, datepicker;
+      datepicker = simple.datepicker({
+        el: '#time',
+        inline: true
+      });
+      $datepicker = $('.simple-datepicker');
+      expect($datepicker).toExist();
+      expect($datepicker.find('.datepicker-header')).toExist();
+      expect($datepicker.find('.datepicker-yearmonth .datepicker-year-container')).toExist();
+      expect($datepicker.find('table.calendar')).toExist();
+      datepicker.destroy();
+      datepicker = simple.datepicker({
+        el: '#time',
+        inline: true,
+        monthpicker: true
+      });
+      $datepicker = $('.simple-datepicker');
+      return expect($datepicker.find('table.calendar')).not.toExist();
+    });
+    it('should show when focused and inline off', function() {
       var datepicker;
       datepicker = simple.datepicker({
-        el: $('body')
+        el: '#time',
+        inline: false
       });
-      return expect(datepicker instanceof SimpleModule).toBe(true);
+      $('#time').blur();
+      expect($('.simple-datepicker')).not.toExist();
+      $('#time').focus();
+      $('#time').focus();
+      return expect($('.simple-datepicker')).toExist();
     });
-    describe('select day', function() {
-      var date, desiredDate, dp;
-      date = null;
-      desiredDate = null;
-      dp = null;
-      beforeEach(function(done) {
-        var today;
-        dp = simple.datepicker({
-          el: $('body'),
-          inline: true
-        });
-        dp.on('select', function(e, _date) {
-          date = _date;
-          return done();
-        });
-        today = moment();
-        desiredDate = today.clone().add('month', -1).set('date', 15).format('YYYY-MM-DD');
-        dp.cal.find('.datepicker-prev').click();
-        return dp.cal.find('.datepicker-day a:contains(15)').click();
+    it('should render right calendar based on year and month', function() {
+      var $datepicker, datepicker;
+      datepicker = simple.datepicker({
+        el: '#time',
+        inline: true
       });
-      return it('should works all right', function(done) {
-        expect(date.format('YYYY-MM-DD')).toEqual(desiredDate);
-        expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate);
-        return done();
-      });
+      $datepicker = $('.simple-datepicker');
+      $datepicker.find('[data-year=2016]').click();
+      $datepicker.find('[data-month=5]').click();
+      return expect($datepicker.find('[data-date=2016-06-01]')).toExist();
     });
-    describe('select year/Month', function() {
-      var date, desiredDate, dp;
-      date = null;
-      desiredDate = null;
-      dp = null;
-      beforeEach(function(done) {
-        var today;
-        dp = simple.datepicker({
-          el: $('body'),
-          inline: true
-        });
-        dp.on('select', function(e, _date) {
-          date = _date;
-          return done();
-        });
-        today = moment();
-        desiredDate = today.clone().add(1, 'year').set('month', 2).set('date', 15).format('YYYY-MM-DD');
-        dp.cal.find('.datepicker-title').click();
-        dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click();
-        dp._yearmonth.find('.datepicker-month a:contains(Mar)').click();
-        return dp.cal.find('.datepicker-day a:contains(15)').click();
+    it('should slide monthpicker when hit header', function() {
+      var $datepicker, $monthpicker, datepicker;
+      datepicker = simple.datepicker({
+        el: '#time',
+        inline: true
       });
-      return it('should works all right', function(done) {
-        expect(date.format('YYYY-MM-DD')).toEqual(desiredDate);
-        expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate);
-        return done();
-      });
+      $datepicker = $('.simple-datepicker');
+      $monthpicker = $datepicker.find('.datepicker-yearmonth');
+      expect($monthpicker).not.toBeVisible();
+      $datepicker.find('.datepicker-title').click();
+      return expect($monthpicker).toBeVisible();
     });
-    describe('cancel year&month select', function() {
-      var date, desiredDate, dp;
-      date = null;
-      desiredDate = null;
-      dp = null;
-      beforeEach(function(done) {
-        var today;
-        dp = simple.datepicker({
-          el: $('body'),
-          inline: true
-        });
-        dp.on('select', function(e, _date) {
-          date = _date;
-          return done();
-        });
-        today = moment();
-        desiredDate = today.clone().set('date', 15).format('YYYY-MM-DD');
-        dp.cal.find('.datepicker-title').click();
-        dp._yearmonth.find('.datepicker-year a.selected').parent().next().find('a').click();
-        dp._yearmonth.find('.datepicker-yearmonth-cancel').click();
-        return dp.cal.find('.datepicker-day a:contains(15)').click();
+    it('should pick correct time', function() {
+      var $datepicker, datepicker;
+      datepicker = simple.datepicker({
+        el: '#time',
+        inline: true
       });
-      return it('should not set year and month when go back from year&month to calendar by clicking "cancel"', function(done) {
-        expect(date.format('YYYY-MM-DD')).toEqual(desiredDate);
-        expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate);
-        return done();
+      $datepicker = $('.simple-datepicker');
+      $datepicker.find('[data-year=2016]').click();
+      $datepicker.find('[data-month=5]').click();
+      $datepicker.find('[data-date=2016-06-01]').click();
+      expect($('#time').val()).toBe('2016-06-01');
+      datepicker.destroy();
+      datepicker = simple.datepicker({
+        el: '#time',
+        inline: true,
+        monthpicker: true
       });
+      $datepicker = $('.simple-datepicker');
+      $datepicker.find('[data-year=2016]').click();
+      $datepicker.find('[data-month=5]').click();
+      return expect($('#time').val()).toBe('2016-06');
     });
-    describe('instance method [setSelectedDate]', function() {
-      var dateStr, dp, target;
-      dateStr = '1998-03-15';
-      target = $('body');
-      dp = null;
-      beforeEach(function() {
-        return dp = simple.datepicker({
-          el: target,
-          inline: true
-        });
+    it('should change month when click prev/next button', function() {
+      var $datepicker, datepicker;
+      datepicker = simple.datepicker({
+        el: '#time',
+        inline: true
       });
-      it('should works when pass in a string', function() {
-        dp.setSelectedDate(dateStr);
-        return expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(dateStr);
-      });
-      it('should works when pass in a moment', function() {
-        dp.setSelectedDate(moment(dateStr));
-        return expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(dateStr);
-      });
-      it('should update calendar due to the new date', function() {
-        var day, title;
-        dp.setSelectedDate(dateStr);
-        title = $.trim(dp.cal.find('.datepicker-title').text());
-        day = dp.cal.find('.datepicker-day a.selected').text() * 1;
-        expect(title).toEqual(dp._formatTitle(moment(dateStr, 'YYYY-MM-DD')));
-        return expect(day).toEqual(day);
-      });
-      return it('should stay at same view', function() {
-        expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(0);
-        dp.setSelectedDate(dateStr);
-        expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(0);
-        dp.cal.find('.datepicker-title').click();
-        expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(1);
-        dp.setSelectedDate(dateStr);
-        return expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(1);
-      });
+      $datepicker = $('.simple-datepicker');
+      $datepicker.find('[data-month=5]').click();
+      expect($datepicker.find('[data-month=5]')).toHaveClass('selected');
+      $datepicker.find('.datepicker-prev').click();
+      expect($datepicker.find('[data-month=4]')).toHaveClass('selected');
+      $datepicker.find('.datepicker-next').click();
+      return expect($datepicker.find('[data-month=5]')).toHaveClass('selected');
     });
-    describe('Specify options', function() {
-      var dp, makeDp, target;
-      target = $('body');
-      dp = null;
-      makeDp = function(opts) {
-        var _opts;
-        _opts = {
-          el: target,
-          inline: true
-        };
-        return dp = simple.datepicker($.extend({}, _opts, opts));
-      };
-      it('should disappear on blow when inline is false', function() {
-        makeDp({
-          inline: false
-        });
-        $(document).click();
-        return expect($(document).find('.simple-datepicker').length).toBe(0);
+    it('should scroll to have more years', function() {
+      var $datepicker, $years, datepicker;
+      datepicker = simple.datepicker({
+        el: '#time',
+        inline: true,
+        monthpicker: true
       });
-      it('should not show month navigators in calendar when showPrevNext is false', function() {
-        makeDp({
-          showPrevNext: false
-        });
-        expect(dp.cal.find('.datepicker-prev').length).toBe(0);
-        return expect(dp.cal.find('.datepicker-next').length).toBe(0);
-      });
-      it('should show year navigators in year&month panel when showYearPrevNext is true', function() {
-        var year;
-        makeDp({
-          showYearPrevNext: true
-        });
-        year = (dp.selectedDate || dp._viewDate).year();
-        dp.cal.find('.datepicker-title').click();
-        expect(dp.cal.find(".datepicker-year-prev").length).toEqual(1);
-        return expect(dp.cal.find(".datepicker-year-next").length).toEqual(1);
-      });
-      it('should set year and month to the viewDate', function() {
-        var date;
-        date = moment().add('year', 1).add('month', 1);
-        makeDp({
-          viewDate: moment().add('year', 1).add('month', 1)
-        });
-        return expect(dp.cal.find('.datepicker-title').text().trim()).toEqual(date.format('YYYY年M月'));
-      });
-      it('should view year/month select when set viewType [yearmonth]', function() {
-        makeDp({
-          viewType: 'yearmonth'
-        });
-        return expect(dp.cal.find('.datepicker-yearmonth').length).toEqual(1);
-      });
-      it('should disable the dates after the date specified by disableAfter option', function() {
-        var date;
-        date = moment().startOf('month');
-        makeDp({
-          disableAfter: date
-        });
-        dp.setSelectedDate(date);
-        expect(dp.cal.find(".datepicker-day a:not(.others).disabled:contains(2):first").length).toEqual(1);
-        dp.cal.find('.datepicker-next').click();
-        return expect(dp.cal.find(".datepicker-day a:not(.others):not(.disabled)").length).toEqual(0);
-      });
-      it('should disable the dates before the date specified by disableBefore option', function() {
-        var date, theDate;
-        date = moment().endOf('month');
-        theDate = date.date();
-        makeDp({
-          disableBefore: date
-        });
-        dp.setSelectedDate(date);
-        expect(dp.cal.find(".datepicker-day a:not(.others).disabled:contains(" + (theDate - 1) + "):last").length).toEqual(1);
-        dp.cal.find('.datepicker-prev').click();
-        return expect(dp.cal.find(".datepicker-day a:not(.others):not(.disabled)").length).toEqual(0);
-      });
-      return afterEach(function() {
-        if (dp && dp.cal) {
-          return dp.cal.remove();
-        }
-      });
+      $datepicker = $('.simple-datepicker');
+      $years = $datepicker.find('.datepicker-year-container');
+      expect($years.find('[data-year=2008]')).not.toExist();
+      $years.scrollTop(0);
+      $years.trigger('scroll');
+      expect($years.find('[data-year=2008]')).toExist();
+      expect($years.find('[data-year=2025]')).not.toExist();
+      $years.scrollTop(10000);
+      $years.trigger('scroll');
+      return expect($years.find('[data-year=2025]')).toExist();
     });
-    describe('Year navigators', function() {
-      return it('should works all right', function() {
-        var dp, year;
-        dp = simple.datepicker({
-          el: $('body'),
-          inline: true,
-          showYearPrevNext: true
-        });
-        year = (dp.selectedDate || dp._viewDate).year();
-        dp.cal.find('.datepicker-title').click();
-        dp.cal.find('.datepicker-year-prev').click();
-        expect(dp.cal.find(".datepicker-year a:contains(" + (year - 10) + ")").length).toEqual(1);
-        dp.cal.find('.datepicker-year-next').click();
-        return expect(dp.cal.find(".datepicker-year a:contains(" + year + ")").length).toEqual(1);
+    it('should set correct date', function() {
+      var $datepicker, datepicker;
+      datepicker = simple.datepicker({
+        el: '#time',
+        inline: true
       });
+      $datepicker = $('.simple-datepicker');
+      datepicker.setDate('2016-06-01');
+      expect($datepicker.find('[data-year=2016]')).toHaveClass('selected');
+      expect($datepicker.find('[data-month=5]')).toHaveClass('selected');
+      expect($datepicker.find('[data-date=2016-06-01]')).toHaveClass('selected');
+      return expect($('#time').val()).toBe('2016-06-01');
     });
-    describe('Disable dates', function() {
-      var date, desiredDate, dp;
-      date = null;
-      desiredDate = null;
-      dp = null;
-      describe('disableAfter option', function() {
-        beforeEach(function(done) {
-          var theDate;
-          theDate = moment().startOf('month');
-          desiredDate = theDate.format('YYYY-MM-DD');
-          dp = simple.datepicker({
-            el: $('body'),
-            inline: true,
-            disableAfter: theDate
-          });
-          dp.on('select', function(e, _date) {
-            date = _date;
-            return done();
-          });
-          dp.setSelectedDate(theDate);
-          return dp.cal.find(".datepicker-day a:not(.others):contains(2):first").click();
-        });
-        return it('should works all right', function(done) {
-          expect(date.format('YYYY-MM-DD')).toEqual(desiredDate);
-          expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate);
-          return done();
-        });
+    return it('should reset all when destroy', function() {
+      var datepicker;
+      datepicker = simple.datepicker({
+        el: '#time',
+        inline: true,
+        monthpicker: true
       });
-      return describe('disableBefore option', function() {
-        beforeEach(function(done) {
-          var theDate;
-          theDate = moment().endOf('month');
-          desiredDate = theDate.format('YYYY-MM-DD');
-          dp = simple.datepicker({
-            el: $('body'),
-            inline: true,
-            disableBefore: theDate
-          });
-          dp.on('select', function(e, _date) {
-            date = _date;
-            return done();
-          });
-          dp.setSelectedDate(theDate);
-          return dp.cal.find(".datepicker-day a:not(.others):contains(" + (theDate.date() - 1) + "):last").click();
-        });
-        return it('should works all right', function(done) {
-          expect(date.format('YYYY-MM-DD')).toEqual(desiredDate);
-          expect(dp.selectedDate.format('YYYY-MM-DD')).toEqual(desiredDate);
-          return done();
-        });
-      });
-    });
-    return describe('Specify format', function() {
-      var date, desiredDate, dp;
-      date = null;
-      desiredDate = null;
-      dp = null;
-      beforeEach(function(done) {
-        var today;
-        dp = simple.datepicker({
-          el: $('body'),
-          inline: true,
-          format: 'YY-M-D'
-        });
-        dp.on('select', function(e, _date) {
-          date = _date;
-          return done();
-        });
-        today = moment();
-        desiredDate = today.clone().add('month', -1).set('date', 15).format('YY-M-D');
-        dp.cal.find('.datepicker-prev').click();
-        return dp.cal.find('.datepicker-day a:contains(15)').click();
-      });
-      return it('should works all right', function(done) {
-        expect($('body').val()).toEqual(desiredDate);
-        return done();
-      });
+      datepicker.destroy();
+      return expect($('.simple-datepicker')).not.toExist();
     });
   });
 

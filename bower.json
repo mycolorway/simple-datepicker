@@ -1,6 +1,6 @@
 {
   "name": "simple-datepicker",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "homepage": "https://github.com/mycolorway/simple-datepicker",
   "authors": [
     "farthinker <farthinker@gmail.com>",
@@ -30,5 +30,8 @@
     "simple-module": "2.x",
     "fontawesome": "~4.x",
     "moment": "~2.x"
+  },
+  "devDependencies": {
+    "jasmine-jquery": "2.x"
   }
 }
