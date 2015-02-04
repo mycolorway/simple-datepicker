@@ -151,7 +151,7 @@ class Datepicker extends SimpleModule
 
 
   _refresh: ->
-    unless @calendar
+    if @_calendar
       @_calendar.replaceWith(@_renderCal())
       @_calendar = @cal.find('.calendar')
 

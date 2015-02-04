@@ -144,6 +144,18 @@ describe 'Simple Datepicker', ->
     expect($datepicker.find('[data-date=2016-06-01]')).toHaveClass('selected')
     expect($('#time').val()).toBe('2016-06-01')
 
+  it 'should set correct date when monthpicker on', ->
+    datepicker = simple.datepicker
+      el: '#time'
+      inline: true
+      monthpicker: true
+
+    $datepicker = $('.simple-datepicker')
+    datepicker.setDate('2016-06')
+    expect($datepicker.find('[data-year=2016]')).toHaveClass('selected')
+    expect($datepicker.find('[data-month=5]')).toHaveClass('selected')
+    expect($('#time').val()).toBe('2016-06')
+
   it 'should reset all when destroy', ->
     datepicker = simple.datepicker
       el: '#time'
