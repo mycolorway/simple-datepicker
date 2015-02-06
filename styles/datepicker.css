@@ -19,13 +19,12 @@
 }
 .simple-datepicker .datepicker-header {
   text-align: center;
-  padding-bottom: 5px;
-  margin-bottom: 5px;
+  padding-bottom: 8px;
 }
 .simple-datepicker .datepicker-header .datepicker-prev,
 .simple-datepicker .datepicker-header .datepicker-next {
   float: left;
-  margin: 3px 6px;
+  margin: 6px 6px;
   display: block;
   color: #444;
 }
@@ -39,6 +38,8 @@
 .simple-datepicker .datepicker-header .datepicker-title {
   color: #333;
   font-size: 14px;
+  display: inline-block;
+  padding-top: 2px;
 }
 .simple-datepicker .datepicker-header .datepicker-title:hover {
   color: #999;
@@ -155,7 +156,9 @@
 }
 .simple-datepicker.shadowed .datepicker-header {
   box-shadow: 0 5px 5px -5px rgba(0, 0, 1, 0.2);
+  margin-bottom: 5px;
 }
 .simple-datepicker.shadowed .calendar {
   box-shadow: 0 -5px 5px -5px rgba(0, 0, 1, 0.2);
+  margin-top: 5px;
 }

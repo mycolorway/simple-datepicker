@@ -22,13 +22,12 @@
 
   .datepicker-header {
     text-align: center;
-    padding-bottom: 5px;
-    margin-bottom: 5px;
+    padding-bottom: 8px;
 
     .datepicker-prev,
     .datepicker-next {
       float: left;
-      margin: 3px 6px;
+      margin: 6px 6px;
       display: block;
       color: #444;
       &:hover {
@@ -43,7 +42,8 @@
     .datepicker-title {
       color: #333;
       font-size: 14px;
-
+      display: inline-block;
+      padding-top: 2px;
       &:hover {
         color: #999;
       }
@@ -178,10 +178,12 @@
   &.shadowed {
     .datepicker-header {
       box-shadow: 0 5px 5px -5px rgba(0, 0, 1, 0.2);
+      margin-bottom: 5px;
     }
 
     .calendar {
       box-shadow: 0 -5px 5px -5px rgba(0, 0, 1, 0.2);
+      margin-top: 5px;
     }
   }
 }
