@@ -151,7 +151,7 @@ class Datepicker extends SimpleModule
 
 
   _refresh: ->
-    if @_calendar
+    unless @opts.monthpicker
       @_calendar.replaceWith(@_renderCal())
       @_calendar = @cal.find('.calendar')
 
@@ -164,7 +164,7 @@ class Datepicker extends SimpleModule
     @_monthpicker.find('.selected').removeClass('selected')
     @_monthpicker.find("[data-year=#{year}]").addClass('selected')
     @_monthpicker.find("[data-month=#{month}]").addClass('selected')
-    @_calendar.find("[data-date=#{date}]").addClass('selected')
+    @_calendar.find("[data-date=#{date}]").addClass('selected') unless @opts.monthpicker
 
   _renderCal: ->
     week = ''
