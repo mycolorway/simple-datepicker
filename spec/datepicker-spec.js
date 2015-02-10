@@ -155,6 +155,16 @@
       expect($datepicker.find('[data-month=5]')).toHaveClass('selected');
       return expect($('#time').val()).toBe('2016-06');
     });
+    it('should clear value when clear is called', function() {
+      var datepicker;
+      datepicker = simple.datepicker({
+        el: '#time',
+        inline: true
+      });
+      datepicker.setDate('2016-06-01');
+      datepicker.clear();
+      return expect(datepicker.getDate()).toBe(null);
+    });
     return it('should reset all when destroy', function() {
       var datepicker;
       datepicker = simple.datepicker({

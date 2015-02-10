@@ -314,6 +314,17 @@ class Datepicker extends SimpleModule
     @_refresh()
     @el.val @date.format(@opts.format)
 
+  getDate: ->
+    if @el.val()
+      @date
+    else
+      null
+
+  clear: ->
+    @el.val ''
+    @date = moment()
+    @_refresh()
+
   destroy: ->
     @cal?.remove()
     @cal = null
