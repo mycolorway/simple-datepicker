@@ -165,7 +165,7 @@
       datepicker.clear();
       return expect(datepicker.getDate()).toBe(null);
     });
-    return it('should reset all when destroy', function() {
+    it('should reset all when destroy', function() {
       var datepicker;
       datepicker = simple.datepicker({
         el: '#time',
@@ -174,6 +174,16 @@
       });
       datepicker.destroy();
       return expect($('.simple-datepicker')).not.toExist();
+    });
+    return it("should fetch date from @el by @getDate if @date is undefined", function() {
+      var date, datepicker;
+      date = "2015-01-01";
+      $("<input id='timeWithValue' value='" + date + "'>").appendTo('body');
+      datepicker = simple.datepicker({
+        el: '#timeWithValue'
+      });
+      expect(datepicker.getDate().isSame(date)).toBe(true);
+      return $("#timeWithValue").remove();
     });
   });
 

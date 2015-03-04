@@ -151,6 +151,7 @@ class Datepicker extends SimpleModule
 
 
   _refresh: ->
+    return unless @cal
     unless @opts.monthpicker
       @_calendar.replaceWith(@_renderCal())
       @_calendar = @cal.find('.calendar')
@@ -316,7 +317,7 @@ class Datepicker extends SimpleModule
 
   getDate: ->
     if @el.val()
-      @date
+      @date ||= moment(@el.val(), @opts.format)
     else
       null
 

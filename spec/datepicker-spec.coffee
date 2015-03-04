@@ -174,8 +174,11 @@ describe 'Simple Datepicker', ->
     datepicker.destroy()
     expect($('.simple-datepicker')).not.toExist()
 
-
-
-
-
-
+  it "should fetch date from @el by @getDate if @date is undefined", ->
+    date = "2015-01-01"
+    $("<input id='timeWithValue' value='#{date}'>").appendTo 'body'
+    datepicker = simple.datepicker
+      el: '#timeWithValue'
+    expect datepicker.getDate().isSame date
+      .toBe true
+    $("#timeWithValue").remove()
