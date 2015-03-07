@@ -13,7 +13,6 @@
 通过 `bower install` 下载依赖的第三方库，然后在页面中引入这些文件：
 
 ```html
-<link rel="stylesheet" type="text/css" href="[style path]/font-awesome.css" />
 <link rel="stylesheet" type="text/css" href="[style path]/datepicker.css" />
 
 <script type="text/javascript" src="[script path]/jquery.min.js"></script>
