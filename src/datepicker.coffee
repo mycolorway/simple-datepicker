@@ -306,7 +306,7 @@ class Datepicker extends SimpleModule
 
   _updateDate: ->
     @el.val @date.format(@opts.format)
-    @el.trigger 'change'
+    @el.trigger('change').blur()
     @trigger 'select', [@date]
 
   setDate: (date) ->
