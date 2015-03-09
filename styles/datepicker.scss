@@ -27,11 +27,16 @@
     .datepicker-prev,
     .datepicker-next {
       float: left;
-      margin: 6px 6px;
+      font-size: 16px;
+      margin: 0 6px;
       display: block;
       color: #444;
       &:hover {
         color: #999;
+      }
+
+      > i {
+        font-style: normal;
       }
     }
 

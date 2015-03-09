@@ -24,13 +24,18 @@
 .simple-datepicker .datepicker-header .datepicker-prev,
 .simple-datepicker .datepicker-header .datepicker-next {
   float: left;
-  margin: 6px 6px;
+  font-size: 16px;
+  margin: 0 6px;
   display: block;
   color: #444;
 }
 .simple-datepicker .datepicker-header .datepicker-prev:hover,
 .simple-datepicker .datepicker-header .datepicker-next:hover {
   color: #999;
+}
+.simple-datepicker .datepicker-header .datepicker-prev > i,
+.simple-datepicker .datepicker-header .datepicker-next > i {
+  font-style: normal;
 }
 .simple-datepicker .datepicker-header .datepicker-next {
   float: right;
