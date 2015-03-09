@@ -88,8 +88,7 @@ class Datepicker extends SimpleModule
         false
 
     .on 'click', '.datepicker-title', (e) =>
-      @_monthpicker.slideToggle() unless @opts.monthpicker
-      @cal.toggleClass 'shadowed' unless @opts.monthpicker
+      @cal.toggleClass('expanded') unless @opts.monthpicker
 
       year = @date.year()
       height = @_monthpicker.find('.datepicker-year').height()
@@ -133,8 +132,7 @@ class Datepicker extends SimpleModule
         @_updateDate()
         @_hide() unless @opts.inline
       else
-        @_monthpicker.slideUp()
-        @cal.removeClass 'shadowed'
+        @cal.removeClass 'expanded'
 
     @cal.find('.datepicker-year-container').scroll (e) =>
       scrollTop = $(e.target).scrollTop()
