@@ -67,11 +67,10 @@ describe 'Simple Datepicker', ->
       inline: true
 
     $datepicker = $('.simple-datepicker')
-    $monthpicker = $datepicker.find('.datepicker-yearmonth')
-    expect($monthpicker).not.toBeVisible()
+    expect($datepicker).not.toHaveClass('expanded')
 
     $datepicker.find('.datepicker-title').click()
-    expect($monthpicker).toBeVisible()
+    expect($datepicker).toHaveClass('expanded')
 
 
   it 'should pick correct time', ->

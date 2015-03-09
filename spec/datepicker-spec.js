@@ -64,16 +64,15 @@
       return expect($datepicker.find('[data-date=2016-06-01]')).toExist();
     });
     it('should slide monthpicker when hit header', function() {
-      var $datepicker, $monthpicker, datepicker;
+      var $datepicker, datepicker;
       datepicker = simple.datepicker({
         el: '#time',
         inline: true
       });
       $datepicker = $('.simple-datepicker');
-      $monthpicker = $datepicker.find('.datepicker-yearmonth');
-      expect($monthpicker).not.toBeVisible();
+      expect($datepicker).not.toHaveClass('expanded');
       $datepicker.find('.datepicker-title').click();
-      return expect($monthpicker).toBeVisible();
+      return expect($datepicker).toHaveClass('expanded');
     });
     it('should pick correct time', function() {
       var $datepicker, datepicker;
