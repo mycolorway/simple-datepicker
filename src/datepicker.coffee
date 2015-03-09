@@ -61,6 +61,7 @@ class Datepicker extends SimpleModule
       $('body').append @cal
       @_setPosition()
 
+    @cal.addClass('simple-monthpicker') if @opts.monthpicker
     @cal.data('datepicker', @)
     @cal.css("width", @opts.width) if @opts.width
 
