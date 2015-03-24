@@ -48,9 +48,9 @@ class Datepicker extends SimpleModule
     _calTemplate = """
       <div class="simple-datepicker">
         <div class="datepicker-header">
-          <a href="javascript:;" class="datepicker-prev"><i class="icon-cheron-left"><span>&#10094;</span></i></a>
+          <a href="javascript:;" class="datepicker-prev"><i class="icon-cheron-left"><span>&lt;</span></i></a>
           <a href="javascript:;" class="datepicker-title">#{  @_formatTitle(@date) }</a>
-          <a href="javascript:;" class="datepicker-next"><i class="icon-cheron-right"><span>&#10095;</span></i></a>
+          <a href="javascript:;" class="datepicker-next"><i class="icon-cheron-right"><span>&gt;</span></i></a>
         </div>
       </div>
     """
