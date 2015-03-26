@@ -33,7 +33,7 @@ class Datepicker extends SimpleModule
         @_hide() unless @el.is(e.target) or @el.has(e.target).length
 
   _show: ->
-    val = @el.val() || moment()
+    val = @el.val() || moment().startOf(if @opts.monthpicker then 'month' else 'day')
     @date = if moment.isMoment(val) then val else moment(val, @opts.format)
 
     @_renderPanel()
