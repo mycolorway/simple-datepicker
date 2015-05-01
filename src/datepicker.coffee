@@ -8,6 +8,21 @@ class Datepicker extends SimpleModule
     width: null
     monthpicker: false
 
+  @i18n:
+    'zh-CN':
+      year: '年'
+      month: '月'
+      currentYear: '今年'
+      nextYear: '明年'
+      lastYear: '去年'
+      beforeLastYear: '去年'
+    'en':
+      year: 'Y'
+      month: 'M'
+      currentYear: 'current year'
+      nextYear: 'new year'
+      lastYear: 'last year'
+      beforeLastYear: 'the year before last'
 
   _init: ->
     @el = $(@opts.el)
@@ -70,30 +85,25 @@ class Datepicker extends SimpleModule
 
     @_calendar = @cal.find('.calendar')
     @_monthpicker = @cal.find('.datepicker-yearmonth')
+    @_year = @_monthpicker.find('.year-input').val(@date.year())
+    @_month = @_monthpicker.find('.month-input').val(Number(@date.month())+1)
     @_title = @cal.find('.datepicker-title')
-    @yearContainer = @cal.find('.datepicker-year-container')
 
     if @opts.monthpicker
       @_monthpicker.show()
       @cal.find('.datepicker-header').remove() #header not show when monthpicker only
-      #scrollTo now position
-      year = @date.year()
-      height = @_monthpicker.find('.datepicker-year').height()
-      @yearContainer.scrollTop(height * (year - @firstYear))
     else
       @_calendar.find("[data-date=#{@date.format('YYYY-MM-DD')}]").addClass('selected')
 
 
   _bindEvent: ->
     @cal.on 'mousedown click', (e) ->
-        false
+      false
 
     .on 'click', '.datepicker-title', (e) =>
       @cal.toggleClass('expanded') unless @opts.monthpicker
-
-      year = @date.year()
-      height = @_monthpicker.find('.datepicker-year').height()
-      @yearContainer.scrollTop(height * (year - @firstYear))
+      if @cal.is '.expanded'
+        @_year.focus()
 
     .on 'click', '.datepicker-prev, .datepicker-next', (e) =>
       e.preventDefault()
@@ -115,38 +125,118 @@ class Datepicker extends SimpleModule
       @_updateDate()
       @_hide() unless @opts.inline
 
-    .on 'click', '.datepicker-year a', (e) =>
+    .on 'click mousedown', '.year-input, .month-input', (e) ->
+      $(@).focus()
+
+    @_monthpicker.on 'keydown', '.year-input, .month-input', (e) =>
+      key = e.which
+      $input = $(e.currentTarget)
+      yearInput = true if $input.is '.year-input'
+
+      return if [8, 27].indexOf(key) isnt -1 #del backspace
+
+      if key is 9 #tab
+        if yearInput
+          year = Number($input.val())
+          if year < 50
+            year += 2000
+          else if year < 100
+            year += 1900
+          $input.val year
+          @date.year year
+          @_refresh()
+          return
+        else
+          month = $input.val() - 1
+          @date.months month
+          @_refresh()
+
+          if @opts.monthpicker
+            @_updateDate()
+            @_hide() unless @opts.inline
+          else
+            @cal.removeClass 'expanded'
+          return
+
+      if key is 13 #enter
+        @date.year @_year.val()
+        @date.months @_month.val()-1
+
+        @_refresh()
+
+        if @opts.monthpicker
+          @_updateDate()
+          @_hide() unless @opts.inline
+        else
+          @cal.removeClass 'expanded'
+
+        return e.preventDefault()
+
+      if [48..57].indexOf(key) isnt -1
+        if yearInput
+          year = $input.val()
+          $input.val(year.substring(year.length - 3))  if Number(year)*10 + key - 48 > 9999
+        else
+          month = $input.val()
+          $input.val(month.substring(month.length)) if Number(month)*10 + key - 48 > 12
+        return
+
+      if key is 38 or key is 40 # up and down
+        direction = if key is 38 then 1 else -1
+        newData = Number($input.val()) + direction
+        if yearInput
+          newData = 1900 if newData > 9999
+          newData = 1900 if newData < 1000
+        else
+          newData = 1 if newData > 12
+          newData = 12 if newData < 1
+        $input.val(newData)
+        return e.preventDefault()
+
+      e.preventDefault()
+
+    @_monthpicker.on 'click', '.icon-triangle-down', (e) =>
+      e.stopPropagation()
+
       $target = $(e.currentTarget)
+      $wrapper = $target.parent()
+      $popover = $wrapper.next('.datepicker-popover')
 
-      year = $target.data 'year'
-      @date.year year
-      @_refresh()
+      if $popover.is '.expanded'
+        $popover.removeClass 'expanded'
+        return
 
-    .on 'click', '.datepicker-month a', (e) =>
+      $(document).off 'click.datepicker-popover'
+      @cal.off 'click.datepicker-popover'
+      @_monthpicker.find('.datepicker-popover').removeClass 'expanded'
+
+      $popover.css 'width', $wrapper.outerWidth()
+      $popover.addClass 'expanded'
+
+      @cal.one 'click.datepicker-popover', (e) =>
+        $(document).off 'click.datepicker-popover'
+        $popover.removeClass 'expanded'
+
+      $(document).one 'click.datepicker-popover', (e) =>
+        @cal.off 'click.datepicker-popover'
+        $popover.removeClass 'expanded'
+
+
+    @_monthpicker.on 'click', '.datepicker-popover p', (e) =>
+      e.stopPropagation()
+
       $target = $(e.currentTarget)
+      value = $target.data 'value'
 
-      month = $target.data 'month'
-      @date.months month
+      $popover = $target.parent('.datepicker-popover')
+      $input = $popover.prev('.input-wrapper').find('input')
+
+      $input.val(value+1)
+
+      @date.set($input.data('type'), value)
       @_refresh()
+      $popover.removeClass 'expanded'
 
-      if @opts.monthpicker
-        @_updateDate()
-        @_hide() unless @opts.inline
-      else
-        @cal.removeClass 'expanded'
-
-    @cal.find('.datepicker-year-container').scroll (e) =>
-      scrollTop = $(e.target).scrollTop()
-
-      if scrollTop + 80 +10 >= @yearContainer.children().height()
-        @yearContainer.find('.datepicker-year-list').append(@_renderYearSelectors(@lastYear, @lastYear + 5))
-        @lastYear = @lastYear + 5
-
-      else if scrollTop is 0
-        @yearContainer.find('.datepicker-year-list').prepend(@_renderYearSelectors(@firstYear-5, @firstYear))
-        @firstYear = @firstYear-5
-        height = @_monthpicker.find('.datepicker-year').height()
-        @yearContainer.scrollTop(height * 5)
 
 
   _refresh: ->
@@ -161,9 +251,12 @@ class Datepicker extends SimpleModule
     month = @date.months()
     date = @date.format(@opts.format)
 
-    @_monthpicker.find('.selected').removeClass('selected')
-    @_monthpicker.find("[data-year=#{year}]").addClass('selected')
-    @_monthpicker.find("[data-month=#{month}]").addClass('selected')
+    @_year.val(year)
+    @_month.val(month+1)
+
+    @_monthpicker.find('.datepicker-popover p').removeClass 'selected'
+    @_monthpicker.find("[data-value=#{year}]").addClass('selected')
+    @_monthpicker.find("[data-value=#{month}]").addClass('selected')
     @_calendar.find("[data-date=#{date}]").addClass('selected') unless @opts.monthpicker
 
   _renderCal: ->
@@ -180,51 +273,44 @@ class Datepicker extends SimpleModule
     """
 
   _renderYearMonth: ->
-    noSelected = @opts.monthpicker and !@selectedDate
-
-    currentYear = @date.year()
-    currentMonth = @date.month()
-
-    @firstYear = currentYear - 5
-    @lastYear = currentYear + 10
     return """
       <div class="datepicker-yearmonth">
         <div class="datepicker-year-container">
-          <ul class="datepicker-year-list">#{ @_renderYearSelectors(@firstYear, @lastYear, currentYear unless noSelected) }</ul>
+          <div class="input-wrapper">
+            <input class="year-input" data-type="year"/>
+            <i class="icon-triangle-down"><span>&#9660;</span></i>
+          </div>
+          #{@_renderYearSelect()}
+          <span>#{@_t 'year'}</span>
         </div>
         <div class="datepicker-month-container">
-          <ul class="datepicker-month-list">#{ @_renderMonthSelectors(currentMonth unless noSelected) }</ul>
+          <div class="input-wrapper">
+            <input class="month-input" data-type="month"/>
+            <i class="icon-triangle-down"><span>&#9660;</span></i>
+          </div>
+          #{@_renderMonthSelect()}
+          <span>#{@_t 'month'}</span>
         </div>
       </div>
     """
 
-  _renderYearSelectors: (firstYear, lastYear, selectedYear) ->
-    years = ''
+  _renderYearSelect: ->
+    currentYear = moment().year()
+    return """
+      <div class="datepicker-popover">
+        <p data-value="#{currentYear}">#{@_t 'currentYear'}</p>
+        <p data-value="#{currentYear+1}">#{@_t 'nextYear'}</p>
+        <p data-value='#{currentYear-1}'>#{@_t 'lastYear'}</p>
+        <p data-value='#{currentYear-2}'>#{@_t 'beforeLastYear'}</p>
+      </div>
+    """
 
-    for y in [firstYear...lastYear]
-      years += """
-        <li class="datepicker-year">
-          <a href="javascript:;" class="#{ if y is selectedYear then 'selected' else '' }" data-year="#{ y }">
-            #{ y }
-          </a>
-        </li>
-      """
+  _renderMonthSelect: ->
 
-    return years
-
-  _renderMonthSelectors: (selectedMonth) ->
-    months = ''
-
-    for m in [0..11]
-      months += """
-        <li class="datepicker-month">
-          <a href="javascript:;" class="#{ if m is selectedMonth then 'selected' else '' }" data-month="#{ m }">
-            #{ moment.monthsShort(m) }
-          </a>
-        </li>
-      """
-
-    return months
+    el = '<div class="datepicker-popover">'
+    for month in [1..12]
+      el+= "<p data-value='#{month-1}'>#{month}</p>"
+    el += "</div>"
 
   _renderDaySelectors: ->
     today = moment().startOf("day")
@@ -252,7 +338,7 @@ class Datepicker extends SimpleModule
         c = (if (x is 6) then "sun" else ((if (x is 5) then "sat" else "day")))
         date = @date.clone().date(n)
 
-        # If value is outside of bounds its likely previous and next months
+        # If value is outside of bounds its likelym previous and next months
         if n >= 1 and n <= lastDate.date()
 
           # Test to see if it's today

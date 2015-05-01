@@ -1,3 +1,5 @@
+$border-color: #e7e7e7;
+
 .simple-datepicker {
   width: 200px;
   background: #fff;
@@ -100,95 +102,78 @@
 
   .datepicker-yearmonth {
     height: 0;
-    overflow: hidden;
+    padding: 0 10px;
     transition: 200ms height;
-    -webkit-transition: 200ms height;
+    -webkit-transition: 200ms height, 200ms padding;
+
+    clear: both;
+    overflow: hidden;
 
     .datepicker-year-container {
       float: left;
-      padding: 5px 0 0 0;
-      height: 80px;
-      width: 70px;
-      overflow: scroll;
-      
-      .datepicker-year-list {
-        padding: 0px;
-        margin: 0px;
-        width: 60px;
-        white-space: normal;
-        text-align: center;
-
-        .datepicker-year {
-          display: inline-block;
-          height: 20px;
-          width: 100%;
-          line-height: 20px;
-          vertical-align: middle;
-
-          a {
-            display: block;
-            height: 100%;
-            color: #333;
-            -webkit-text-shadow: 0 1px 0 white;
-            -moz-text-shadow: 0 1px 0 white;
-            text-shadow: 0 1px 0 white;
-            &.today {
-              background: #ffe451;
-            }
-            &.selected {
-              background: #cce5f1;
-            }
-            &:hover {
-              background: #cbe0ff;
-            }
-          }
-        }
-      }
+      width: 60%;
     }
 
     .datepicker-month-container {
-      vertical-align: top;
-      margin-left: 70px;
-      height: 80px;
-      padding: 5px 0 0 0;
+      float: right;
+      width: 40%;
+    }
 
-      .datepicker-month-list {
-        padding: 0px;
-        margin: 0px;
-        white-space: normal;
+    .input-wrapper {
+      display: inline-block;
+      border: 1px solid #f3f3f3;
+      width: calc(100% - 20px);
+
+      input {
+        border: none;
         text-align: center;
+        width: calc(100% - 20px);
 
-        .datepicker-month {
-          display: inline-block;
-          height: 26px;
-          width: 25%;
-          line-height: 25px;
-          vertical-align: middle;
+        &:focus {
+          outline: 0;
+        }
+      }
 
-          a {
-            display: block;
-            height: 100%;
-            color: #333;
-            -webkit-text-shadow: 0 1px 0 white;
-               -moz-text-shadow: 0 1px 0 white;
-                    text-shadow: 0 1px 0 white;
-            &.today {
-              background: #ffe451;
-            }
-            &.selected {
-              background: #cce5f1;
-            }
-            &:hover {
-              background: #cbe0ff;
-            }
-          }
+      > i {
+        font-style: normal;
+        cursor: pointer;
+      }
+    }
+    
+    .datepicker-popover {
+      display: none;
+      position: absolute;
+      box-sizing: border-box;
+      text-align: center;
+      background:white;
+
+      border: solid $border-color;
+      border-width: 0 1px 1px 1px;
+
+      &.expanded {
+        display: block;
+      }
+      p {
+        margin: 0;
+        padding: 5px 0;
+        letter-spacing: 5px;
+        text-indent: 5px;
+
+        &.selected {
+          background: #cce5f1;
+        }
+
+        &:hover {
+          background: #cbe0ff;
         }
       }
     }
+
   }
 
   &.simple-monthpicker .datepicker-yearmonth {
     height: auto;
+    padding: 8px 10px;
   }
 
   &.expanded {
@@ -199,7 +184,8 @@
 
 
     .datepicker-yearmonth {
-      height: 85px;
+      height: 20px;
+      padding: 8px 10px;
     }
 
     .calendar {
