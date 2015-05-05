@@ -1,3 +1,5 @@
+$hover-color: #cbe0ff;
+$selected-color: #cce5f1;
 $border-color: #e7e7e7;
 
 .simple-datepicker {
@@ -9,188 +11,136 @@ $border-color: #e7e7e7;
     text-decoration: none;
   }
 
-  table {
-    width: 100%;
-  }
-
-  table td {
-    width: 24px;
-    line-height: 24px;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-    vertical-align: middle;
-  }
-
   .datepicker-header {
     text-align: center;
-    padding-bottom: 8px;
+    padding: 10px;
+    border-bottom: 1px solid $border-color;
 
-    .datepicker-prev,
-    .datepicker-next {
-      float: left;
-      font-size: 16px;
-      margin: 0 6px;
-      display: block;
-      color: #444;
-      &:hover {
-        color: #999;
-      }
-
-      > i {
-        font-style: normal;
-      }
-    }
-
-    .datepicker-next {
-      float: right;
-    }
-
-    .datepicker-title {
-      color: #333;
-      font-size: 14px;
+    input {
       display: inline-block;
-      padding-top: 2px;
-      &:hover {
-        color: #999;
+      outline: 0;
+
+      &.year-input {
+        width: 30%;
+      }
+      &.month-input {
+        width: 20%;
+        margin-left: 10px;
+      }
+      &.day-input {
+        width: 20%;
+        margin-left: 10px;
       }
     }
   }
 
-  table.calendar {
-    .datepicker-dow {
-      color: #999;
+  .datepicker-selector {
+
+    table {
+      width: 100%;
     }
 
-    .datepicker-day a {
-      display: block;
-      height: 100%;
-      background: #f3f3f3;
-      color: #333;
-      border-bottom: 2px solid #fff;
-      -webkit-text-shadow: 0 1px 0 white;
-         -moz-text-shadow: 0 1px 0 white;
-              text-shadow: 0 1px 0 white;
-
-      &.today {
-        background: #ffe451;
-      }
-
-      &.others {
-        background: #fff;
-        color: #cccccc;
-      }
-
-      &:hover {
-        background: #cbe0ff;
-      }
-
-      &.selected {
-        background: #cce5f1;
-      }
-
-      &.disabled {
-        background: #fff;
-        color: #ccc;
-        cursor: default;
-      }
-    }
-    .datepicker-month a {
-      display: block;
-    }
-  }
-
-  .datepicker-yearmonth {
-    height: 0;
-    padding: 0 10px;
-    transition: 200ms height;
-    -webkit-transition: 200ms height, 200ms padding;
-
-    clear: both;
-    overflow: hidden;
-
-    .datepicker-year-container {
-      float: left;
-      width: 60%;
-    }
-
-    .datepicker-month-container {
-      float: right;
-      width: 40%;
-    }
-
-    .input-wrapper {
-      display: inline-block;
-      border: 1px solid #f3f3f3;
-      width: calc(100% - 20px);
-
-      input {
-        border: none;
-        text-align: center;
-        width: calc(100% - 20px);
-
-        &:focus {
-          outline: 0;
-        }
-      }
-
-      > i {
-        font-style: normal;
-        cursor: pointer;
-      }
-    }
-    
-    .datepicker-popover {
-      display: none;
-      position: absolute;
-      box-sizing: border-box;
+    table td {
+      width: 24px;
+      line-height: 24px;
+      margin: 0;
+      padding: 0;
       text-align: center;
-      background:white;
+      vertical-align: middle;
+    }
 
-      border: solid $border-color;
-      border-width: 0 1px 1px 1px;
-
-      &.expanded {
-        display: block;
+    table.calendar {
+      &.active {
+        display: table;
       }
-      p {
-        margin: 0;
-        padding: 5px 0;
-        letter-spacing: 5px;
-        text-indent: 5px;
+      .datepicker-dow {
+        color: #999;
+      }
 
-        &.selected {
-          background: #cce5f1;
+      .datepicker-day a {
+        display: block;
+        height: 100%;
+        background: #f3f3f3;
+        color: #333;
+        border-bottom: 2px solid #fff;
+        -webkit-text-shadow: 0 1px 0 white;
+        -moz-text-shadow: 0 1px 0 white;
+        text-shadow: 0 1px 0 white;
+
+        &.today {
+          background: #ffe451;
+        }
+
+        &.others {
+          background: #fff;
+          color: #cccccc;
         }
 
         &:hover {
-          background: #cbe0ff;
+          background: $hover-color;
+        }
+
+        &.selected {
+          background: $selected-color;
+        }
+
+        &.disabled {
+          background: #fff;
+          color: #ccc;
+          cursor: default;
+        }
+      }
+      .datepicker-month a {
+        display: block;
+      }
+    }
+
+
+    .panel {
+      display: none;
+
+      &.active {
+        display: block;
+      }
+    }
+
+    .panel-year {
+      width: 100%;
+
+      .datepicker-year {
+        display: inline-block;
+        box-sizing: border-box;
+        margin: 0;
+        width: 25%;
+        background: #f3f3f3;
+        text-align: center;
+        padding: 10px;
+        cursor: pointer;
+
+        &:hover {
+          background: $hover-color;
         }
       }
     }
 
-  }
 
-  &.simple-monthpicker .datepicker-yearmonth {
-    height: auto;
-    padding: 8px 10px;
-  }
+    .panel-month {
+      width: 100%;
+      text-align: center;
 
-  &.expanded {
-    .datepicker-header {
-      box-shadow: 0 5px 5px -5px rgba(0, 0, 1, 0.2);
-      margin-bottom: 5px;
-    }
+      .datepicker-month {
+        display: inline-block;
+        box-sizing: border-box;
+        margin: 0;
+        width: 25%;
+        background: #f3f3f3;
+        text-align: center;
+        padding: 10px;
 
-
-    .datepicker-yearmonth {
-      height: 20px;
-      padding: 8px 10px;
-    }
-
-    .calendar {
-      box-shadow: 0 -5px 5px -5px rgba(0, 0, 1, 0.2);
-      margin-top: 5px;
+        &:hover {
+          background: $hover-color;
+        }
+      }
     }
   }
 }
