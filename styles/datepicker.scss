@@ -19,62 +19,125 @@ $border-color: #e7e7e7;
     input {
       display: inline-block;
       outline: 0;
+      text-align: center;
 
       &.year-input {
-        width: 30%;
+        width: 25%;
       }
       &.month-input {
-        width: 20%;
-        margin-left: 10px;
+        width: 15%;
       }
       &.day-input {
-        width: 20%;
-        margin-left: 10px;
+        width: 15%;
       }
+    }
+
+    span {
+      &:last-child {
+        margin-right: 0;
+      }
+      margin: 0 5px;
     }
   }
 
   .datepicker-selector {
 
-    table {
+    .panel-day {
+
+      .calendar-menu {
+        .menu-item {
+          width: 50%;
+          padding: 5px 0;
+          text-align: center;
+          float: left;
+          box-sizing: border-box;
+          border-bottom: 1px solid $border-color;
+          cursor: pointer;
+          &:first-child {
+            border-right: 1px solid $border-color;
+          }
+
+          &:hover {
+            background: $hover-color;
+          }
+        }
+      }
+
+
+      table {
+        width: 100%;
+      }
+
+      table td {
+        width: 24px;
+        line-height: 24px;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      table.calendar {
+        .datepicker-dow {
+          color: #999;
+        }
+
+        .datepicker-day a {
+          display: block;
+          height: 100%;
+          background: #f3f3f3;
+          color: #333;
+          border-bottom: 2px solid #fff;
+          -webkit-text-shadow: 0 1px 0 white;
+          -moz-text-shadow: 0 1px 0 white;
+          text-shadow: 0 1px 0 white;
+
+          &.today {
+            background: #ffe451;
+          }
+
+          &.others {
+            background: #fff;
+            color: #cccccc;
+          }
+
+          &:hover {
+            background: $hover-color;
+          }
+
+          &.selected {
+            background: $selected-color;
+          }
+
+          &.disabled {
+            background: #fff;
+            color: #ccc;
+            cursor: default;
+          }
+        }
+        .datepicker-month a {
+          display: block;
+        }
+      }
+    }
+
+
+    .panel {
+      display: none;
       width: 100%;
-    }
 
-    table td {
-      width: 24px;
-      line-height: 24px;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-      vertical-align: middle;
-    }
-
-    table.calendar {
       &.active {
-        display: table;
-      }
-      .datepicker-dow {
-        color: #999;
-      }
-
-      .datepicker-day a {
         display: block;
-        height: 100%;
-        background: #f3f3f3;
-        color: #333;
-        border-bottom: 2px solid #fff;
-        -webkit-text-shadow: 0 1px 0 white;
-        -moz-text-shadow: 0 1px 0 white;
-        text-shadow: 0 1px 0 white;
+      }
 
-        &.today {
-          background: #ffe451;
-        }
-
-        &.others {
-          background: #fff;
-          color: #cccccc;
-        }
+      .datepicker-year, .datepicker-month {
+        display: inline-block;
+        box-sizing: border-box;
+        margin: 0;
+        width: 25%;
+        text-align: center;
+        padding: 10px;
+        cursor: pointer;
 
         &:hover {
           background: $hover-color;
@@ -83,64 +146,8 @@ $border-color: #e7e7e7;
         &.selected {
           background: $selected-color;
         }
-
-        &.disabled {
-          background: #fff;
-          color: #ccc;
-          cursor: default;
-        }
-      }
-      .datepicker-month a {
-        display: block;
       }
     }
 
-
-    .panel {
-      display: none;
-
-      &.active {
-        display: block;
-      }
-    }
-
-    .panel-year {
-      width: 100%;
-
-      .datepicker-year {
-        display: inline-block;
-        box-sizing: border-box;
-        margin: 0;
-        width: 25%;
-        background: #f3f3f3;
-        text-align: center;
-        padding: 10px;
-        cursor: pointer;
-
-        &:hover {
-          background: $hover-color;
-        }
-      }
-    }
-
-
-    .panel-month {
-      width: 100%;
-      text-align: center;
-
-      .datepicker-month {
-        display: inline-block;
-        box-sizing: border-box;
-        margin: 0;
-        width: 25%;
-        background: #f3f3f3;
-        text-align: center;
-        padding: 10px;
-
-        &:hover {
-          background: $hover-color;
-        }
-      }
-    }
   }
 }
