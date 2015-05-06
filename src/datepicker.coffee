@@ -39,7 +39,10 @@ class Datepicker extends SimpleModule
     @_renderPanel()
     @_bind()
 
-    @_year.focus()
+    if @el.val().length
+      @_day.focus()
+    else
+      @_year.focus()
 
   _bind: ->
     @_bindMouse()
@@ -66,10 +69,10 @@ class Datepicker extends SimpleModule
 
       if ['prev', 'next'].indexOf(year) is -1
         @date.year year
-        @_refresh()
+        @_year.val year
         @_month.focus()
       else
-        from = @_yearSelector.find('p').eq(0).data 'year'
+        from = @_yearSelector.find('p:not(.menu-item)').eq(0).data 'year'
         from = if year is 'prev' then from-10 else from+10
 
         @_yearSelector.replaceWith(@_renderYearSelector(from))
@@ -86,7 +89,7 @@ class Datepicker extends SimpleModule
         @_calendar.replaceWith(@_renderCal())
         @_calendar = @cal.find('.panel-day')
 
-      @_refresh()
+      @_month.val(Number(month)+1)
       if @opts.monthpicker
         @_select()
       else
@@ -100,7 +103,7 @@ class Datepicker extends SimpleModule
       return if btn.hasClass('disabled')
 
       @date = moment(btn.data('date'), 'YYYY-MM-DD')
-      @_refresh()
+      @_day.val(@date.date())
       @_select()
 
     @cal.on 'click', '.panel-day .menu-item', (e) =>
@@ -108,7 +111,7 @@ class Datepicker extends SimpleModule
       direction = if $target.is '.prev' then -1 else 1
       @date.add('month', direction)
 
-      @_refresh()
+      @_refresh(true)
       @cal.find('.panel-day').addClass 'active'
 
   _bindKey: ->
@@ -140,8 +143,10 @@ class Datepicker extends SimpleModule
         @_update()
       else if [48..57].indexOf(key) isnt -1
         return
-      else if [8, 37, 37, 39].indexOf(key) isnt -1
+      else if [8, 46, 37, 39].indexOf(key) isnt -1
         return
+      else if key is 27
+        @_hide()
       e.preventDefault()
 
     @cal.on 'input', 'input', (e) =>
@@ -168,20 +173,22 @@ class Datepicker extends SimpleModule
           if Number(value) > max
             $input.val value.substr(1)
 
+  #update date from input val
   _update: ->
     year = @_year.val()
     month = Number(@_month.val()) - 1
     day = @_day.val()
 
-    oldMonth = @date.month()
-
     @date.year year if year
     @date.month month if month
     @date.date day if day
 
-    if not @opts.monthpicker and oldMonth isnt month
-      @_calendar.replaceWith(@_renderCal())
-      @_calendar = @cal.find('.panel-day')
+    firstYear = @_yearSelector.find('p:not(.menu-item)').data 'year'
+    if year < firstYear or year > firstYear+11
+      firstYear = year - (year % 10)
+      @_yearSelector.replaceWith(@_renderYearSelector(firstYear))
+      @_yearSelector = @cal.find('.panel-year')
+
 
     @cal.find('.selected').removeClass 'selected'
     @_yearSelector.find("[data-year=#{year}]").addClass 'selected'
@@ -189,22 +196,21 @@ class Datepicker extends SimpleModule
     @_calendar.find("[data-date=#{@date.format('YYYY-MM-DD')}]").addClass('selected')
 
 
-  _refresh: ->
-    oldMonth = @date.month()
 
-    @_year.val @date.year()
-    @_month.val @date.month()+1
-    @_day.val @date.date() unless @opts.monthpicker
+# refresh input val form new date
+  _refresh: (all = false)->
+    if all
+      @_year.val @date.year()
+      @_month.val @date.month()+1
+      @_day.val @date.date() unless @opts.monthpicker
 
-    if not @opts.monthpicker and oldMonth isnt @date.month()+1
-      @_calendar.replaceWith(@_renderCal())
-      @_calendar = @cal.find('.panel-day')
+    @_calendar.replaceWith(@_renderCal())
+    @_calendar = @cal.find('.panel-day')
 
     @cal.find('.selected').removeClass 'selected'
     @_yearSelector.find("[data-year=#{@date.year()}]").addClass 'selected'
     @_monthSelector.find("[data-month=#{@date.month()}]").addClass 'selected'
     @_calendar.find("[data-date=#{@date.format('YYYY-MM-DD')}]").addClass('selected')
-
 
   _select: ->
     @el.val @date.format(@opts.format)
@@ -360,9 +366,10 @@ class Datepicker extends SimpleModule
     @_month = @cal.find('.month-input')
     @_day = @cal.find('.day-input')
 
-    @_year.val(@date.year())
-    @_month.val(@date.month()+1)
-    @_day.val(@date.date())
+    unless @el.val() is ''
+      @_year.val(@date.year())
+      @_month.val(@date.month()+1)
+      @_day.val(@date.date())
 
 
     @_monthSelector.find("[data-month='#{@date.month()}']").addClass 'selected'
@@ -380,12 +387,11 @@ class Datepicker extends SimpleModule
       from = Math.floor(moment().year()/10)*10
 
     el = '<div class="panel panel-year">'
-    for year in [from..from+9]
-      el += "<p class='datepicker-year' data-year='#{year}'>#{year}</p>"
-
     el+= '''
-      <p class="datepicker-year" data-year="prev"><i class="icon-chevron-left"><span>&lt;</span></i></p><p class="datepicker-year" data-year="next"><i class="icon-chevron-right"><span>&gt;</span></i></p>
+      <p class="datepicker-year menu-item" data-year="prev"><i class="icon-chevron-left"><span>&lt;</span></i></p><p class="datepicker-year menu-item" data-year="next"><i class="icon-chevron-right"><span>&gt;</span></i></p>
     '''
+    for year in [from..from+11]
+      el += "<p class='datepicker-year' data-year='#{year}'>#{year}</p>"
 
     el += '</div>'
 
@@ -398,6 +404,9 @@ class Datepicker extends SimpleModule
     el += '</div>'
 
   setActive: (type) ->
+    if type is 'day'
+      @_calendar.replaceWith(@_renderCal())
+      @_calendar = @cal.find('.panel-day')
     @cal.find('.panel').removeClass 'active'
     @cal.find(".panel-#{type}").addClass 'active'
 
