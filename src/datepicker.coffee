@@ -70,6 +70,8 @@ class Datepicker extends SimpleModule
       if ['prev', 'next'].indexOf(year) is -1
         @date.year year
         @_year.val year
+        @_yearSelector.find('.selected').removeClass 'selected'
+        @_yearSelector.find("[data-year=#{year}]").addClass 'selected'
         @_month.focus()
       else
         from = @_yearSelector.find('p:not(.menu-item)').eq(0).data 'year'
@@ -84,6 +86,8 @@ class Datepicker extends SimpleModule
       $target = $(e.currentTarget)
       month = $target.data 'month'
       @date.month month
+      @_monthSelector.find('.selected').removeClass 'selected'
+      @_monthSelector.find("[data-month=#{month}]").addClass 'selected'
 
       unless @opts.monthpicker
         @_calendar.replaceWith(@_renderCal())

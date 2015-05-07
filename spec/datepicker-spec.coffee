@@ -22,11 +22,12 @@ describe 'Simple Datepicker', ->
 
     $datepicker = $('.simple-datepicker')
 
-
     expect($datepicker).toExist()
     expect($datepicker.find('.datepicker-header')).toExist()
-    expect($datepicker.find('.datepicker-yearmonth .datepicker-year-container')).toExist()
-    expect($datepicker.find('table.calendar')).toExist()
+    expect($datepicker.find('.datepicker-selector')).toExist()
+    expect($datepicker.find('.panel.panel-day table.calendar')).toExist()
+    expect($datepicker.find('.panel.panel-month')).toExist()
+    expect($datepicker.find('.panel.panel-year')).toExist()
 
     datepicker.destroy()
 
@@ -61,16 +62,25 @@ describe 'Simple Datepicker', ->
 
     expect($datepicker.find('[data-date=2016-06-01]')).toExist()
 
-  it 'should slide monthpicker when hit header', ->
+  it 'should change different panel when focus on different field', ->
     datepicker = simple.datepicker
       el: '#time'
       inline: true
 
     $datepicker = $('.simple-datepicker')
-    expect($datepicker).not.toHaveClass('expanded')
+    expect($datepicker.find('.panel-year')).toBeVisible()
+    expect($datepicker.find('.panel-month')).not.toBeVisible()
+    expect($datepicker.find('.panel-day')).not.toBeVisible()
 
-    $datepicker.find('.datepicker-title').click()
-    expect($datepicker).toHaveClass('expanded')
+    $datepicker.find('input[data-type=month]').focus()
+    expect($datepicker.find('.panel-year')).not.toBeVisible()
+    expect($datepicker.find('.panel-month')).toBeVisible()
+    expect($datepicker.find('.panel-day')).not.toBeVisible()
+
+    $datepicker.find('input[data-type=day]').focus()
+    expect($datepicker.find('.panel-year')).not.toBeVisible()
+    expect($datepicker.find('.panel-month')).not.toBeVisible()
+    expect($datepicker.find('.panel-day')).toBeVisible()
 
 
   it 'should pick correct time', ->
@@ -105,31 +115,29 @@ describe 'Simple Datepicker', ->
       inline: true
 
     $datepicker = $('.simple-datepicker')
+    $datepicker.find('[data-year=2016]').click()
     $datepicker.find('[data-month=5]').click()
     expect($datepicker.find('[data-month=5]')).toHaveClass('selected')
-    $datepicker.find('.datepicker-prev').click()
+
+    $datepicker.find('.panel-day .prev.menu-item').click()
     expect($datepicker.find('[data-month=4]')).toHaveClass('selected')
-    $datepicker.find('.datepicker-next').click()
+    $datepicker.find('.panel-day .next.menu-item').click()
     expect($datepicker.find('[data-month=5]')).toHaveClass('selected')
 
-  it 'should scroll to have more years', ->
+  it 'should change year panel when click prev/next button', ->
     datepicker = simple.datepicker
       el: '#time'
       inline: true
-      monthpicker: true
 
     $datepicker = $('.simple-datepicker')
-    $years = $datepicker.find('.datepicker-year-container')
+    expect($datepicker.find('[data-year=2010]')).toExist()
 
-    expect($years.find('[data-year=2008]')).not.toExist()
-    $years.scrollTop(0)
-    $years.trigger 'scroll'
-    expect($years.find('[data-year=2008]')).toExist()
+    $datepicker.find('.panel-year .menu-item[data-year=prev]').click()
+    expect($datepicker.find('[data-year=2000]')).toExist()
 
-    expect($years.find('[data-year=2025]')).not.toExist()
-    $years.scrollTop(10000)
-    $years.trigger 'scroll'
-    expect($years.find('[data-year=2025]')).toExist()
+    $datepicker.find('.panel-year .menu-item[data-year=next]').click()
+    expect($datepicker.find('[data-year=2010]')).toExist()
+
 
   it 'should set correct date', ->
     datepicker = simple.datepicker
