@@ -2,6 +2,7 @@
   width: 200px;
   background: #fff;
   font-size: 12px;
+  display: none;
 }
 .simple-datepicker a {
   text-decoration: none;
@@ -22,7 +23,7 @@
 .simple-datepicker .datepicker-header input.month-input {
   width: 15%;
 }
-.simple-datepicker .datepicker-header input.day-input {
+.simple-datepicker .datepicker-header input.date-input {
   width: 15%;
 }
 .simple-datepicker .datepicker-header span {
@@ -31,7 +32,14 @@
 .simple-datepicker .datepicker-header span:last-child {
   margin-right: 0;
 }
-.simple-datepicker .datepicker-selector .panel-day .calendar-menu .menu-item {
+.simple-datepicker .datepicker-panels .panel-date {
+  width: 100%;
+  display: none;
+}
+.simple-datepicker .datepicker-panels .panel-date.active {
+  display: table;
+}
+.simple-datepicker .datepicker-panels .panel-date .calendar-menu .menu-item {
   width: 50%;
   padding: 5px 0;
   text-align: center;
@@ -39,13 +47,13 @@
   box-sizing: border-box;
   cursor: pointer;
 }
-.simple-datepicker .datepicker-selector .panel-day .calendar-menu .menu-item:hover {
+.simple-datepicker .datepicker-panels .panel-date .calendar-menu .menu-item:hover {
   background: #cbe0ff;
 }
-.simple-datepicker .datepicker-selector .panel-day table {
+.simple-datepicker .datepicker-panels .panel-date table {
   width: 100%;
 }
-.simple-datepicker .datepicker-selector .panel-day table td {
+.simple-datepicker .datepicker-panels .panel-date table td {
   width: 24px;
   line-height: 24px;
   margin: 0;
@@ -53,10 +61,10 @@
   text-align: center;
   vertical-align: middle;
 }
-.simple-datepicker .datepicker-selector .panel-day table.calendar .datepicker-dow {
+.simple-datepicker .datepicker-panels .panel-date table.calendar .datepicker-dow {
   color: #999;
 }
-.simple-datepicker .datepicker-selector .panel-day table.calendar .datepicker-day a {
+.simple-datepicker .datepicker-panels .panel-date table.calendar .datepicker-day a {
   display: block;
   height: 100%;
   background: #f3f3f3;
@@ -66,35 +74,36 @@
   -moz-text-shadow: 0 1px 0 white;
   text-shadow: 0 1px 0 white;
 }
-.simple-datepicker .datepicker-selector .panel-day table.calendar .datepicker-day a.today {
+.simple-datepicker .datepicker-panels .panel-date table.calendar .datepicker-day a.today {
   background: #ffe451;
 }
-.simple-datepicker .datepicker-selector .panel-day table.calendar .datepicker-day a.others {
+.simple-datepicker .datepicker-panels .panel-date table.calendar .datepicker-day a.others {
   background: #fff;
   color: #cccccc;
 }
-.simple-datepicker .datepicker-selector .panel-day table.calendar .datepicker-day a:hover {
+.simple-datepicker .datepicker-panels .panel-date table.calendar .datepicker-day a:hover {
   background: #cbe0ff;
 }
-.simple-datepicker .datepicker-selector .panel-day table.calendar .datepicker-day a.selected {
+.simple-datepicker .datepicker-panels .panel-date table.calendar .datepicker-day a.selected {
   background: #cce5f1;
 }
-.simple-datepicker .datepicker-selector .panel-day table.calendar .datepicker-day a.disabled {
+.simple-datepicker .datepicker-panels .panel-date table.calendar .datepicker-day a.disabled {
   background: #fff;
   color: #ccc;
   cursor: default;
+  pointer-events: none;
 }
-.simple-datepicker .datepicker-selector .panel-day table.calendar .datepicker-month a {
+.simple-datepicker .datepicker-panels .panel-date table.calendar .datepicker-month a {
   display: block;
 }
-.simple-datepicker .datepicker-selector .panel {
+.simple-datepicker .datepicker-panels .panel-year, .simple-datepicker .datepicker-panels .panel-month {
   display: none;
   width: 100%;
 }
-.simple-datepicker .datepicker-selector .panel.active {
+.simple-datepicker .datepicker-panels .panel-year.active, .simple-datepicker .datepicker-panels .panel-month.active {
   display: block;
 }
-.simple-datepicker .datepicker-selector .panel .datepicker-year, .simple-datepicker .datepicker-selector .panel .datepicker-month {
+.simple-datepicker .datepicker-panels .panel-year a.panel-item, .simple-datepicker .datepicker-panels .panel-month a.panel-item {
   display: inline-block;
   box-sizing: border-box;
   margin: 0;
@@ -103,13 +112,13 @@
   padding: 10px;
   cursor: pointer;
 }
-.simple-datepicker .datepicker-selector .panel .datepicker-year:hover, .simple-datepicker .datepicker-selector .panel .datepicker-month:hover {
+.simple-datepicker .datepicker-panels .panel-year a.panel-item:hover, .simple-datepicker .datepicker-panels .panel-month a.panel-item:hover {
   background: #cbe0ff;
 }
-.simple-datepicker .datepicker-selector .panel .datepicker-year.selected, .simple-datepicker .datepicker-selector .panel .datepicker-month.selected {
+.simple-datepicker .datepicker-panels .panel-year a.panel-item.selected, .simple-datepicker .datepicker-panels .panel-month a.panel-item.selected {
   background: #cce5f1;
 }
-.simple-datepicker .datepicker-selector .panel .datepicker-year.menu-item, .simple-datepicker .datepicker-selector .panel .datepicker-month.menu-item {
+.simple-datepicker .datepicker-panels .panel-year a.panel-item.menu, .simple-datepicker .datepicker-panels .panel-month a.panel-item.menu {
   width: 50%;
   padding: 5px 0;
 }
