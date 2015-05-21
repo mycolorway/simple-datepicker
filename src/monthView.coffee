@@ -6,8 +6,8 @@ class MonthView extends View
 
   _renderPanel: ->
     el = ''
-    for month in [0..11]
-      el += "<a class='panel-item' data-value='#{month}'>#{month+1}</a>"
+    for month in [1..12]
+      el += "<a class='panel-item' data-value='#{month}'>#{month}</a>"
 
     $(@_panelTpl).html(el).addClass 'panel-month'
 
@@ -15,14 +15,12 @@ class MonthView extends View
     @input.val(@input.val().substr(1)) while Number(@input.val()) > 12
     value = @input.val()
     if value.length is 2
-      @date.set 'month', Number(value)-1
-      @refreshView()
-      @_picker.trigger 'finish',
-        panel: 'month'
+      @select(value, false, true)
 
-  refreshInput: ->
-    value = @date.get 'month'
-    @input.val value+1
+  _onDateChangeHandler: (e) ->
+    @value = e.month
+    @_refreshInput()
+    @_refreshSelected()
 
 
 Datepicker.addView(MonthView)

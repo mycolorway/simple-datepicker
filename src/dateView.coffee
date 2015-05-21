@@ -1,10 +1,14 @@
 class DateView extends View
   name: 'date'
 
+  currentMonth: moment().format 'YYYY-MM'
+
   opts:
     el: null
     disableBefore: null
     disableAfter: null
+
+  value: moment().format 'YYYY-MM-DD'
 
   _inputTpl: '<input type="text" class="date-input" data-type="date" data-min="1"/>'
 
@@ -18,7 +22,7 @@ class DateView extends View
         <div class="calendar-menu">
           #{ @_renderDayMenu() }
         </div>
-        <table class="calendar" data-month="#{@date.format 'YYYY-MM'}">
+        <table class="calendar"">
           <tr class="datepicker-dow">
             #{week}
           </tr>
@@ -36,14 +40,18 @@ class DateView extends View
 
   _renderDaySelectors: ->
     today = moment().startOf("day")
+    tmpDate = moment(@currentMonth, 'YYYY-MM')
+
+    @input.attr
+      'data-max': tmpDate.endOf('month').date()
 
     # Calculate the first and last date in month being rendered.
     # Also calculate the weekday to start rendering on
-    firstDate = @date.clone().startOf("month")
-    lastDate = @date.clone().endOf("month")
+    firstDate = tmpDate.clone().startOf("month")
+    lastDate = tmpDate.clone().endOf("month")
 
     # Calculate the last day in previous month
-    prevLastDate = @date.clone().add(-1, "months").endOf("month")
+    prevLastDate = tmpDate.clone().add(-1, "months").endOf("month")
 
     # Render the cells as <TD>
     days = ""
@@ -58,7 +66,7 @@ class DateView extends View
         p = ((prevLastDate.date() - prevLastDate.day()) + i + 1)
         n = p - prevLastDate.date()
         c = (if (x is 6) then "sun" else ((if (x is 5) then "sat" else "day")))
-        date = @date.clone().date(n)
+        date = tmpDate.clone().date(n)
 
         # If value is outside of bounds its likelym previous and next months
         if n >= 1 and n <= lastDate.date()
@@ -85,7 +93,7 @@ class DateView extends View
         # Create the cell
         row += """
             <td class='datepicker-day'>
-              <a href="javascript:;" class="#{c}" data-value="#{date.get('date')}">
+              <a href="javascript:;" class="#{c}" data-value="#{date.format('YYYY-MM-DD')}">
                 #{n}
               </a>
             </td>
@@ -101,44 +109,51 @@ class DateView extends View
       y++
     return days
 
-  _prepareAction: ->
-    @action = []
-
-    f = (action) =>
-      direction = if action is 'prev' then -1 else 1
-      @date.add(direction, 'month')
-
-      @_reRenderPanel()
-      @panel.addClass('active')
-
-      @_picker.trigger 'refresh',
-        source: 'date'
-
-    @action['prev'] = f
-    @action['next'] = f
 
   _onInputHandler: ->
     value = @input.val()
-    max = @date.endOf('month').date()
+    max = moment(@currentMonth).endOf('month').date()
     if Number(value) > max
       @input.val value.substr(1)
     else if value.length is 2 and Number(value) > 0 and Number(value) < max
-      @date.set 'date', value
-      @refreshView()
-      @panel.find('a.selected').removeClass 'selected'
-      @panel.find("a[data-value=#{value}]").addClass 'selected'
-      @_picker.trigger 'finish',
-        panel: 'date'
+      @select(value, false, true)
 
-  refreshView: ->
-    return if @panel.find('table.calendar').data('month') is @date.format('YYYY-MM')
+  _handleAction: (action) ->
+    tmpDate = moment(@currentMonth, 'YYYY-MM')
+    direction = if action is 'prev' then -1 else 1
+
+    tmpDate.add(direction, 'month')
+    @currentMonth = tmpDate.format 'YYYY-MM'
+    @triggerHandler 'select',
+      source: 'date'
+      value:
+        year: tmpDate.year()
+        month: tmpDate.month()+1
+      finished: false
+
+    @_reRenderPanel()
+    @panel.addClass('active')
+
+  _refreshInput: ->
+    date = moment(@value).date()
+    @input.val date
+
+  _onDateChangeHandler: (e) ->
+    newMonth = moment().year(e.year).month(e.month-1).format('YYYY-MM')
+
+    if e.date
+      @value = e.date
+      @_refreshSelected()
+      @_refreshInput()
+
+    return if newMonth is @currentMonth
+
+    @currentMonth = newMonth
     @_reRenderPanel()
 
-  setActive: (active) ->
-    super(active)
+  select: (value, refreshInput, finished) ->
+    value = moment(@currentMonth, 'YYYY-MM').date(value).format('YYYY-MM-DD') unless value.toString().length > 2
 
-    if active
-      @refreshView()
-      @panel.addClass 'active'
+    super(value, refreshInput, finished)
 
 Datepicker.addView(DateView)

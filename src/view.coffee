@@ -1,40 +1,49 @@
 class View extends SimpleModule
 
   opts:
-    el: null # bind parent element
+    parent: null
+    inputContainer: null
+    panelContainer: null
 
-  _itemTpl: '<a class="panel-item"></a>'
-  _inputTpl: '<input/>'
+  #view's name & moment's type
+  name: ''
+
+  #View's current value
+  value: 0
+
+  #template
+  _inputTpl: '<input class="input"/>'
   _panelTpl: '<div class="panel"></div>'
 
+
+
   _init: ->
-    # store parent el
-    @_header = @opts.el._header
-    @_panel = @opts.el._panel
-    @_picker = @opts.el
-    @date = @opts.el.date
+    @parent = $(@opts.parent)
+    @inputContainer = $(@opts.inputContainer)
+    @panelContainer = $(@opts.panelContainer)
+
+    @value = @opts.defaultValue
 
     @_render()
-    @_bindPanel()
     @_bindInput()
-    @_prepareAction()
+    @_bindPanel()
+    @_bindView()
 
   _render: ->
     @input = $(@_renderInput())
     @panel = $(@_renderPanel())
 
-    $(@_header).append(@input)
-    $(@_panel).append(@panel)
+    @inputContainer.append @input
+    @panelContainer.append @panel
 
-  _bindPanel: ->
-    @panel.on 'click', 'a', (e) =>
-      @_onClickHandler(e)
+    @_refreshSelected()
+    @_refreshInput()
 
   _bindInput: ->
     @input.off('focus').on 'focus', =>
       @panel.addClass 'active'
-      @_picker.trigger 'panelchange',
-        panel: @name
+      @trigger 'showpanel',
+        source: @name
 
     @input.on 'keydown', (e) =>
       @_onKeydownHandler(e)
@@ -42,61 +51,63 @@ class View extends SimpleModule
     @input.on 'input', (e) =>
       @_onInputHandler(e)
 
-
-  _onClickHandler: (e) ->
-    $target = $(e.currentTarget)
-    value = $target.data 'value'
-    if value
-      @date.set(@name, value)
-      @panel.find('a.selected').removeClass 'selected'
-      @panel.find("a[data-value=#{value}]").addClass 'selected'
-      @refreshInput()
-      @_picker.trigger 'finish',
-        panel: @name
-        value: value
-    else
-      action = $target.data 'action'
-      @action[action](action)
-
   _onKeydownHandler: (e) ->
     key = e.which
     value = @input.val()
     type = @input.data 'type'
     min = @input.data 'min'
     max = @input.data 'max'
-    max = @date.endOf('month').date() unless max #only for DateView TODO!!
 
     if key is 9 #tab
-      @date.set @name, value
-      @refreshView()
-      @_picker.trigger 'finish',
-        panel: @name
+      if e.shiftKey
+        @trigger 'showpanel',
+          source: @name
+          prev: true
+      else
+        @select(value, false, true)
     else if key is 13 #enter
-      @date.set @name, value
-      @_picker.trigger 'finish',
-        panel: @name
-        completed: true
+      @select(value, false, false)
+      @trigger 'close',
+        selected: true
     else if key is 38 or key is 40
       direction = if key is 38 then 1 else -1
       value = Number(value) + direction
       value = max if value < min
       value = min if value > max
-      @input.val value
-      @date.set @name, value
-      @_picker.trigger 'refresh',
-        source: @name
+      @select(value, true, false)
     else if [48..57].indexOf(key) isnt -1
       return
     else if [8, 46, 37, 39].indexOf(key) isnt -1
       return
-    else if key is 27
-      @_picker.trigger 'close'
+    else if key is 27 #esc
+      @trigger 'close'
 
     e.preventDefault()
 
-  _onInputHandler: (e) ->
+  _onInputHandler: ->
 
-  _prepareAction: ->
+  _bindPanel: ->
+    @panel.on 'click', 'a', (e) =>
+      @_onClickHandler(e)
+
+  _onClickHandler: (e) ->
+    e.preventDefault()
+
+    $target = $(e.currentTarget)
+    value = $target.data 'value'
+    if value
+      @select(value, true, true)
+    else
+      action = $target.data 'action'
+      @_handleAction(action)
+
+  _handleAction: ->
+
+  _bindView: ->
+    @on 'datechange', (e, event) =>
+      @_onDateChangeHandler(event)
+
+  _onDateChangeHandler: ->
 
   _renderInput: ->
     @_inputTpl
@@ -105,9 +116,32 @@ class View extends SimpleModule
     @_panelTpl
 
   _reRenderPanel: (opt) ->
+    active = true if @panel.is '.active'
+
     @panel.replaceWith $(@_renderPanel(opt))
-    @panel = @_panel.find ".panel-#{@name}"
+    @panel = @panelContainer.find ".panel-#{@name}"
+
+    @panel.addClass 'active'  if active
+    @_refreshSelected()
     @_bindPanel()
+
+  _refreshSelected: ->
+    @panel.find('a.selected').removeClass 'selected'
+    @panel.find("a[data-value='#{@value}']").addClass 'selected'
+
+  _refreshInput: ->
+    @input.val(@value)
+
+  select: (value, refreshInput, finished) ->
+    @value = value
+
+    @_refreshSelected()
+    @_refreshInput() if refreshInput
+    @triggerHandler 'select',
+      source: @name
+      value:
+        "#{@name}": value
+      finished: finished
 
   setActive: (active = true) ->
     if active
@@ -115,12 +149,7 @@ class View extends SimpleModule
     else
       @panel.removeClass 'active'
 
-  #new date to refresh input
-  refreshInput: ->
-    value = @date.get @name
-    @input.val value
+  clear: ->
+    @value = 0
+    @input.val('')
 
-  #new date to refresh panel
-  refreshView: ->
-    @panel.find('a.selected').removeClass 'selected'
-    @panel.find("a[data-value=#{@date.get(@name)}]").addClass 'selected'

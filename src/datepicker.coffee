@@ -1,24 +1,25 @@
 
-class Datepicker extends  SimpleModule
+class Datepicker extends SimpleModule
 
   opts:
     list: ['year','%-',  'month', '%-', 'date']
     el: null
     inline: false
     format: 'YYYY-MM-DD'
-    width: null
-    date:
-      disableBefore: null
-      disableAfter: null
+    viewOpts:
+      date:
+        disableBefore: null
+        disableAfter: null
 
+  # add constructor of view
   @addView: (view) ->
-    unless @panel
-      @panel = []
-    @panel[view::name] = view
+    unless @views
+      @views = []
+    @views[view::name] = view
 
   _init: ->
-    @panels = []
-    @list = []
+    @view = []
+    @viewList = []
 
     @el = $(@opts.el)
 
@@ -26,9 +27,8 @@ class Datepicker extends  SimpleModule
       throw 'simple datepicker: option el is required'
       return
 
-    @opts.format = 'YYYY-MM' if @opts.monthpicker
     @el.data 'datepicker', @
-    val = @el.val() || moment().startOf(if @opts.monthpicker then 'month' else 'day')
+    val = @el.val() || moment()
     @date = if moment.isMoment(val) then val else moment(val, @opts.format)
 
     @_render()
@@ -44,9 +44,9 @@ class Datepicker extends  SimpleModule
       </div>
     '''
     @picker = $(tpl)
-    @_header = @picker.find('.datepicker-header')
-    @_panel = @picker.find('.datepicker-panels')
-    @_renderPanels()
+    @headerContainer = @picker.find('.datepicker-header')
+    @panelContainer = @picker.find('.datepicker-panels')
+    @_renderViews()
 
     if @opts.inline
       @picker.insertAfter @el
@@ -55,16 +55,27 @@ class Datepicker extends  SimpleModule
       @picker.appendTo 'body'
       @_setPosition()
 
-  _renderPanels: ->
+  _renderViews: ->
     for name in @opts.list
       if name.indexOf('%') is -1
         opt =
-          el: @
-        $.extend opt, @opts[name] if @opts[name]
-        @panels[name] = new @constructor.panel[name](opt)
-        @list.push name
+          parent: @
+          inputContainer: @headerContainer
+          panelContainer: @panelContainer
+        opt.defaultValue = switch name
+          when 'year'
+            @date.year()
+          when 'month'
+            @date.month()+1
+          when 'date'
+            @date.format('YYYY-MM-DD')
+
+        $.extend opt, @opts['viewOpts'][name] if @opts['viewOpts'][name]
+        @view[name] = new @constructor.views[name](opt)
+        @viewList.push name
+        @_bindView(@view[name])
       else
-        @_header.append("<span>#{name.substr(1)}</span>")
+        @headerContainer.append("<span>#{name.substr(1)}</span>")
 
   _setPosition: ->
     offset = @el.offset()
@@ -75,60 +86,71 @@ class Datepicker extends  SimpleModule
       'top': offset.top + @el.outerHeight(true)
 
   _bind: ->
-    unless @opts.inline
-      @el.on 'focus', (e) =>
-        @show()
+    return if @opts.inline
 
-      $(document).on "click.datepicker", (e) =>
-        @hide() unless @el.is(e.target) or @picker.has(e.target).length
+    @el.on 'focus.datepicker', =>
+      @show()
 
-    @on 'finish', (e, event) =>
-      panel = event.panel
-      completed = event.completed
-      index = @list.indexOf(panel)
-      if completed or index is @list.length-1
-        #@panels[panel].setActive(false)
-        @_selectDate()
-      else
-        @trigger 'refresh',
-          source: panel
-
-        nextPanel = @list[index+1]
-        @panels[panel].setActive(false)
-        @panels[nextPanel].setActive(true)
-
-    @on 'refresh', (e, event) =>
-      source = event.source
-
-      switch source
-        when 'year'
-          @panels['date'].refreshView() if @panels['date']
-        when 'month'
-          @panels['date'].refreshView() if @panels['date']
-        when 'date'
-          if @panels['year']
-            @panels['year'].refreshInput()
-            @panels['year'].refreshView()
-          if @panels['month']
-            @panels['month'].refreshInput()
-            @panels['month'].refreshView()
-
-
-    @on 'panelchange', (e, event) =>
-      for panel in @list
-        @panels[panel].setActive(false) if panel isnt event.panel
-
-    @on 'close', (e) =>
-      for panel in @list
-        @panels[panel].setActive(false)
+    $(document).on 'click.datepicker', (e) =>
+      return if @el.is e.target
+      return if $(e.target).parentsUntil(@picker).length
+      return if @picker.is e.target
       @hide()
 
-  setDate: (date)->
-    @date = if moment.isMoment(date) then date else moment(date, @opts.format)
-    for panel in @panels
-      panel.refreshView()
-      panel.refreshInput()
-    @el.val @date.format(@opts.format)
+  _bindView: (view) ->
+    view.on 'select', (e, event) =>
+      source = event.source
+      newDate = event.value
+
+      if newDate.year
+        @date.year newDate.year
+
+      if newDate.month
+        @date.month newDate.month-1
+
+      if newDate.date
+        @date = moment(newDate.date)
+        @view['year'].trigger 'datechange',
+          year: @date.year()
+        @view['month'].trigger 'datechange',
+          month: @date.month()+1
+
+      switch source
+        when 'year', 'month'
+          @view['date']?.trigger 'datechange',
+            year: @date.year()
+            month: @date.month()+1
+        when 'date'
+          @view['year'].trigger 'datechange',
+            year: @date.year()
+          @view['month'].trigger 'datechange',
+            month: @date.month()+1
+
+      if event.finished
+        index = @viewList.indexOf(source)
+        if index is @viewList.length-1
+          # close panel
+          @_selectDate()
+        else
+          @view[@viewList[index+1]].setActive()
+
+    view.on 'showpanel', (e, event) =>
+      source = event.source
+      if event.prev
+        #show prev view
+        @view[source].setActive(false)
+        index = @viewList.indexOf(source) - 1
+        index = 0 if index < 0
+        @view[@viewList[index]].setActive()
+
+      else
+        for name in @viewList
+          @view[name].setActive(false) unless name is source
+
+    view.on 'close', (e, event) =>
+      if event?.selected
+        @_selectDate()
+      @hide() unless @opts.inline
 
   _selectDate: ->
     @el.val @date.format(@opts.format)
@@ -136,12 +158,45 @@ class Datepicker extends  SimpleModule
     @trigger 'select', [@date]
     @hide() unless @opts.inline
 
+  setDate: (date) ->
+    @date = if moment.isMoment(date) then date else moment(date, @opts.format)
+    @el.val @date.format(@opts.format)
+
+    @view['year']?.trigger 'datechange', {year: @date.year()}
+    @view['month']?.trigger 'datechange', {month: @date.month()+1}
+    @view['date']?.trigger 'datechange',
+      year: @date.year()
+      month: @date.month()+1
+      date: @date.format('YYYY-MM-DD')
+
+  clear: ->
+    @el.val ''
+    @date = moment()
+    for name in @viewList
+      @view[name].clear()
+
+  getDate: ->
+    if @el.val()
+      @date ||= moment(@el.val(), @opts.format)
+    else
+      null
+
   show: ->
     @picker.show()
-    @panels[@list[0]].setActive()
+
+    if @el.val() isnt '' and @view['date']
+      @view['date'].setActive()
+    else
+      @view[@viewList[0]].setActive()
 
   hide: ->
     @picker.hide()
+
+  destroy: ->
+    @picker?.remove()
+    @picker = null
+    @el.off '.datepicker'
+    $(document).off '.datepicker'
 
 
 
