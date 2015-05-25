@@ -6,6 +6,7 @@ class Datepicker extends SimpleModule
     el: null
     inline: false
     format: 'YYYY-MM-DD'
+    defaultView: 'auto'
     viewOpts:
       date:
         disableBefore: null
@@ -183,11 +184,16 @@ class Datepicker extends SimpleModule
 
   show: ->
     @picker.show()
+    view = @opts.defaultView
 
-    if @el.val() isnt '' and @view['date']
-      @view['date'].setActive()
+    if @viewList.indexOf(view) isnt -1
+      @view[view].setActive()
     else
-      @view[@viewList[0]].setActive()
+      #deafultView is 'auto'
+      if @el.val() isnt '' and @view['date']
+        @view['date'].setActive()
+      else
+        @view[@viewList[0]].setActive()
 
   hide: ->
     @picker.hide()
