@@ -51,6 +51,9 @@ class View extends SimpleModule
     @input.on 'input', (e) =>
       @_onInputHandler(e)
 
+    @input.on 'click mousedown', (e) =>
+      e.stopPropagation()
+
   _onKeydownHandler: (e) ->
     key = e.which
     value = @input.val()

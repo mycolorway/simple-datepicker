@@ -1,7 +1,7 @@
 class YearView extends View
   name: 'year'
 
-  _inputTpl: '<input type="text" class="year-input" data-type="year" data-min="1800" data-max="3000"/>'
+  _inputTpl: '<input type="text" class="view-input year-input" data-type="year" data-min="1800" data-max="3000"/>'
 
   # store the first year of current view
   firstYear: 0
@@ -18,7 +18,7 @@ class YearView extends View
 
   _renderYears: (firstYear) ->
     el = '''
-        <a class="panel-item menu" data-action="prev"><i class="icon-chevron-left"><span>&lt;</span></i></a><a class="panel-item menu" data-action="next"><i class="icon-chevron-right"><span>&gt;</span></i></a>
+        <a class="menu-item" data-action="prev"><i class="icon-chevron-left"><span>&lt;</span></i></a><a class="menu-item" data-action="next"><i class="icon-chevron-right"><span>&gt;</span></i></a>
     '''
 
     for year in [firstYear..firstYear+11]

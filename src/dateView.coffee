@@ -10,7 +10,7 @@ class DateView extends View
 
   value: moment().format 'YYYY-MM-DD'
 
-  _inputTpl: '<input type="text" class="date-input" data-type="date" data-min="1"/>'
+  _inputTpl: '<input type="text" class="view-input date-input" data-type="date" data-min="1"/>'
 
 
   _renderPanel: ->
@@ -34,7 +34,7 @@ class DateView extends View
   _renderDayMenu: ->
     return """
       <a class="menu-item" data-action="prev"><i class="icon-chevron-left"><span>&lt;</span></i></a>
-      <a class="menu-item" data-action="next"><i class="icon-chevron-left"><span>&gt;</span></i></a>
+      <a class="menu-item" data-action="next"><i class="icon-chevron-right"><span>&gt;</span></i></a>
     """
 
 

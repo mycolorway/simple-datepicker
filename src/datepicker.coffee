@@ -87,6 +87,8 @@ class Datepicker extends SimpleModule
       'top': offset.top + @el.outerHeight(true)
 
   _bind: ->
+    @picker.on 'click mousedown', ->
+      false
     return if @opts.inline
 
     @el.on 'focus.datepicker', =>
@@ -184,6 +186,7 @@ class Datepicker extends SimpleModule
 
   show: ->
     @picker.show()
+    @picker.addClass 'active'
     view = @opts.defaultView
 
     if @viewList.indexOf(view) isnt -1
@@ -197,6 +200,13 @@ class Datepicker extends SimpleModule
 
   hide: ->
     @picker.hide()
+    @picker.removeClass 'active'
+
+  toggle: ->
+    if @picker.is '.active'
+      @hide()
+    else
+      @show()
 
   destroy: ->
     @picker?.remove()

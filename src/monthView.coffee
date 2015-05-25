@@ -1,7 +1,7 @@
 class MonthView extends View
   name: 'month'
 
-  _inputTpl: '<input type="text" class="month-input" data-type="month" data-min="1" data-max="12"/>'
+  _inputTpl: '<input type="text" class="view-input month-input" data-type="month" data-min="1" data-max="12"/>'
 
 
   _renderPanel: ->
