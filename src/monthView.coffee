@@ -16,6 +16,8 @@ class MonthView extends View
     value = @input.val()
     if value.length is 2
       @select(value, false, true)
+    else if value.length is 1 and Number(value) > 2
+      @select(value, false, true)
 
   _onDateChangeHandler: (e) ->
     @value = e.month

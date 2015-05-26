@@ -111,12 +111,23 @@ class DateView extends View
 
 
   _onInputHandler: ->
-    value = @input.val()
+    clearTimeout @timer if @timer
     max = moment(@currentMonth).endOf('month').date()
-    if Number(value) > max
-      @input.val value.substr(1)
-    else if value.length is 2 and Number(value) > 0 and Number(value) < max
+    @input.val(@input.val().substr(1)) while Number(@input.val()) > max
+
+    @input.val(@input.val().substr(1)) if @input.val().length is 3 #remove leading zero
+
+    value = @input.val()
+    if value.length is 1 and Number(value) > 3
       @select(value, false, true)
+    else if value.length is 2 and Number(value) <= max
+      if value % 10 < 4
+        @timer = setTimeout =>
+          @select(value, false, true)
+          @timer = null
+        , 400
+      else
+        @select(value, false, true)
 
   _handleAction: (action) ->
     tmpDate = moment(@currentMonth, 'YYYY-MM')
@@ -152,6 +163,7 @@ class DateView extends View
     @_reRenderPanel()
 
   select: (value, refreshInput, finished) ->
+    clearTimeout @timer if @timer
     value = moment(@currentMonth, 'YYYY-MM').date(value).format('YYYY-MM-DD') unless value.toString().length > 2
 
     super(value, refreshInput, finished)
