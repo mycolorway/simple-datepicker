@@ -148,7 +148,7 @@ class View extends SimpleModule
 
   setActive: (active = true) ->
     if active
-      @input.focus()
+      @input.focus().select()
     else
       @panel.removeClass 'active'
 

@@ -3,7 +3,6 @@ class MonthView extends View
 
   _inputTpl: '<input type="text" class="view-input month-input" data-type="month" data-min="1" data-max="12"/>'
 
-
   _renderPanel: ->
     el = ''
     for month in [1..12]

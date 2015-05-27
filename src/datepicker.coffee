@@ -58,7 +58,13 @@ class Datepicker extends SimpleModule
       @picker.appendTo 'body'
 
   _renderFakeInput: ->
-    @input = @el.clone().addClass('display-input').attr('readonly', 'true')
+    type = @el.attr 'type'
+    @input = $('<input />').addClass('display-input').attr
+      'readonly': 'true'
+      'type': type
+    .css
+      'cursor': 'pointer'
+
     @input.insertAfter @el
     @el.hide()
 
@@ -118,7 +124,7 @@ class Datepicker extends SimpleModule
         @date.month newDate.month-1
 
       if newDate.date
-        @date = moment(newDate.date)
+        @date = moment(newDate.date, 'YYYY-MM-DD')
         @view['year'].trigger 'datechange',
           year: @date.year()
         @view['month'].trigger 'datechange',

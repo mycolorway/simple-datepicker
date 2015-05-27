@@ -48,10 +48,10 @@
         el: '#time',
         inline: false
       });
-      $('#time.display-input').blur();
+      $('.display-input').blur();
       expect($('.simple-datepicker')).not.toBeVisible();
-      $('#time.display-input').focus();
-      $('#time.display-input').focus();
+      $('.display-input').focus();
+      $('.display-input').focus();
       return expect($('.simple-datepicker')).toBeVisible();
     });
     it('should render right calendar based on year and month', function() {

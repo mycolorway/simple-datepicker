@@ -45,7 +45,8 @@
     var options = {
       el: '.all',
       list: ['year', '%年','month','%月', 'date', '%日'],
-      format: 'YYYY-MM-DD',
+      valueFormat: 'YYYY-MM-DD',
+      displayFormat: 'YYYY年MM月DD日',
       inline: false
     };
     datepicker = simple.datepicker(options);
@@ -53,7 +54,7 @@
     options = {
       el: '.month',
       list: ['month', '%-' ,'year'],
-      format: 'MM-YYYY',
+      valueFormat: 'MM-YYYY',
       inline: true
     };
     inlineDatepicker = simple.datepicker(options);
