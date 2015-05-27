@@ -48,10 +48,10 @@
         el: '#time',
         inline: false
       });
-      $('#time').blur();
+      $('#time.display-input').blur();
       expect($('.simple-datepicker')).not.toBeVisible();
-      $('#time').focus();
-      $('#time').focus();
+      $('#time.display-input').focus();
+      $('#time.display-input').focus();
       return expect($('.simple-datepicker')).toBeVisible();
     });
     it('should render right calendar based on year and month', function() {
@@ -100,7 +100,7 @@
         el: '#time',
         inline: true,
         list: ['year', 'month'],
-        format: 'YYYY-MM'
+        valueFormat: 'YYYY-MM'
       });
       $datepicker = $('.simple-datepicker');
       $datepicker.find('.panel-year a[data-value=2016]').click();

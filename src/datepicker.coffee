@@ -5,7 +5,8 @@ class Datepicker extends SimpleModule
     list: ['year','%-',  'month', '%-', 'date']
     el: null
     inline: false
-    format: 'YYYY-MM-DD'
+    valueFormat: 'YYYY-MM-DD'
+    displayFormat: 'YYYY-MM-DD'
     defaultView: 'auto'
     viewOpts:
       date:
@@ -30,7 +31,7 @@ class Datepicker extends SimpleModule
 
     @el.data 'datepicker', @
     val = @el.val() || moment()
-    @date = if moment.isMoment(val) then val else moment(val, @opts.format)
+    @date = if moment.isMoment(val) then val else moment(val, @opts.valueFormat)
 
     @_render()
     @_bind()
@@ -53,8 +54,13 @@ class Datepicker extends SimpleModule
       @picker.insertAfter @el
       @show()
     else
+      @_renderFakeInput()
       @picker.appendTo 'body'
-      @_setPosition()
+
+  _renderFakeInput: ->
+    @input = @el.clone().addClass('display-input').attr('readonly', 'true')
+    @input.insertAfter @el
+    @el.hide()
 
   _renderViews: ->
     for name in @opts.list
@@ -79,24 +85,24 @@ class Datepicker extends SimpleModule
         @headerContainer.append("<span>#{name.substr(1)}</span>")
 
   _setPosition: ->
-    offset = @el.offset()
+    offset = @input.offset()
     @picker.css
       'position': 'absolute'
       'z-index': 100
       'left': offset.left
-      'top': offset.top + @el.outerHeight(true)
+      'top': offset.top + @input.outerHeight(true)
 
   _bind: ->
     @picker.on 'click mousedown', ->
       false
-    return if @opts.inline
 
-    @el.on 'focus.datepicker', =>
+    return if @opts.inline
+    @input.on 'focus.datepicker', =>
       @show()
 
     $(document).on 'click.datepicker', (e) =>
-      return if @el.is e.target
-      return if $(e.target).parentsUntil(@picker).length
+      return if @input.is e.target
+      return if @picker.has(e.target).length
       return if @picker.is e.target
       @hide()
 
@@ -156,14 +162,16 @@ class Datepicker extends SimpleModule
       @hide() unless @opts.inline
 
   _selectDate: ->
-    @el.val @date.format(@opts.format)
-    @el.trigger('change').blur()
+    @el.val @date.format(@opts.valueFormat)
+    @input.val @date.format(@opts.displayFormat) if @input
+
     @trigger 'select', [@date]
     @hide() unless @opts.inline
 
   setDate: (date) ->
-    @date = if moment.isMoment(date) then date else moment(date, @opts.format)
-    @el.val @date.format(@opts.format)
+    @date = if moment.isMoment(date) then date else moment(date, @opts.valueFormat)
+    @el.val @date.format(@opts.valueFormat)
+    @input.val @date.format(@opts.displayFormat) if @input
 
     @view['year']?.trigger 'datechange', {year: @date.year()}
     @view['month']?.trigger 'datechange', {month: @date.month()+1}
@@ -180,11 +188,13 @@ class Datepicker extends SimpleModule
 
   getDate: ->
     if @el.val()
-      @date ||= moment(@el.val(), @opts.format)
+      @date ||= moment(@el.val(), @opts.valueFormat)
     else
       null
 
   show: ->
+    @_setPosition() unless @opts.inline
+
     @picker.show()
     @picker.addClass 'active'
     view = @opts.defaultView
@@ -211,9 +221,11 @@ class Datepicker extends SimpleModule
   destroy: ->
     @picker?.remove()
     @picker = null
-    @el.off '.datepicker'
-    $(document).off '.datepicker'
 
+    unless @opts.inline
+      @input.remove()
+      @el.show()
+      $(document).off '.datepicker'
 
 
 datepicker = (opts) ->
