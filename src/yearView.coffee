@@ -43,12 +43,14 @@ class YearView extends View
   _onDateChangeHandler: (event) ->
     @value = event.year
     newFirstYear = Math.floor(@value/10) * 10
+
+    @_refreshInput()
     if @firstYear is newFirstYear
-      @_refreshInput()
       @_refreshSelected()
     else
       @firstYear = newFirstYear
       @_reRenderPanel()
+
 
   select: (value, refreshInput, finished) ->
     newFirstYear = Math.floor(@value/10) * 10
