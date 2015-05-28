@@ -111,23 +111,27 @@ class DateView extends View
 
 
   _onInputHandler: ->
-    clearTimeout @timer if @timer
-    max = moment(@currentMonth).endOf('month').date()
+    max = moment(@currentMonth, 'YYYY-MM').endOf('month').date()
     @input.val(@input.val().substr(1)) while Number(@input.val()) > max
 
     @input.val(@input.val().substr(1)) if @input.val().length is 3 #remove leading zero
 
     value = @input.val()
-    if value.length is 1 and Number(value) > 3
-      @select(value, false, true)
-    else if value.length is 2 and Number(value) <= max
-      if value % 10 < 4
+    if value.length is 1
+      if Number(value) > 3
+        @select(value, false, true)
+      else if Number(value) isnt 0
         @timer = setTimeout =>
           @select(value, false, true)
           @timer = null
-        , 400
-      else
-        @select(value, false, true)
+        , 800
+    else if value.length is 2 and Number(value) <= max and Number(value) isnt 0
+      @select(value, false, true)
+
+  _onKeydownHandler: (e) ->
+    clearTimeout @timer if @timer
+
+    super(e)
 
   _handleAction: (action) ->
     tmpDate = moment(@currentMonth, 'YYYY-MM')
@@ -146,7 +150,7 @@ class DateView extends View
     @panel.addClass('active')
 
   _refreshInput: ->
-    date = moment(@value).date()
+    date = moment(@value, 'YYYY-MM-DD').date()
     @input.val date
 
   _onDateChangeHandler: (e) ->

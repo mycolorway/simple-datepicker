@@ -13,10 +13,21 @@ class MonthView extends View
   _onInputHandler: ->
     @input.val(@input.val().substr(1)) while Number(@input.val()) > 12
     value = @input.val()
-    if value.length is 2
+    if value.length is 2 and Number(value) isnt 0
       @select(value, false, true)
-    else if value.length is 1 and Number(value) > 2
-      @select(value, false, true)
+    else if value.length is 1
+      if Number(value) >= 2
+        @select(value, false, true)
+      else if Number(value) is 1
+        @timer = setTimeout =>
+          @select(value, false, true)
+          @timer = null
+        , 800
+
+  _onKeydownHandler: (e) ->
+    clearTimeout @timer if @timer
+
+    super(e)
 
   _onDateChangeHandler: (e) ->
     @value = e.month
