@@ -93,7 +93,7 @@ class DateView extends View
         # Create the cell
         row += """
             <td class='datepicker-day'>
-              <a href="javascript:;" class="#{c}" data-value="#{date.format('YYYY-MM-DD')}">
+              <a href="javascript:;" class="#{c} panel-item" data-value="#{date.format('YYYY-MM-DD')}">
                 #{n}
               </a>
             </td>

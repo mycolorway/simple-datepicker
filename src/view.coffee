@@ -90,19 +90,23 @@ class View extends SimpleModule
   _onInputHandler: ->
 
   _bindPanel: ->
-    @panel.on 'click', 'a', (e) =>
+    @panel.on 'click', 'a.panel-item', (e) =>
       @_onClickHandler(e)
+
+    @panel.on 'click', 'a.menu-item', (e) =>
+      e.preventDefault()
+      $target = $(e.currentTarget)
+
+      action = $target.data 'action'
+      @_handleAction(action)
 
   _onClickHandler: (e) ->
     e.preventDefault()
-
     $target = $(e.currentTarget)
+
     value = $target.data 'value'
-    if value
-      @select(value, true, true)
-    else
-      action = $target.data 'action'
-      @_handleAction(action)
+    @select(value, true, true)
+
 
   _handleAction: ->
 

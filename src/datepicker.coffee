@@ -237,4 +237,6 @@ class Datepicker extends SimpleModule
 datepicker = (opts) ->
   return new Datepicker opts
 
+datepicker.View = View;
+
 

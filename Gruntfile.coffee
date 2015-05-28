@@ -19,8 +19,8 @@ module.exports = (grunt) ->
           bare: true
         files:
           'lib/datepicker.js': [
-            'src/datepicker.coffee'
             'src/view.coffee'
+            'src/datepicker.coffee'
             'src/*.coffee'
           ]
       spec:
