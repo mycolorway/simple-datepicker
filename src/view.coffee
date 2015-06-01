@@ -45,7 +45,7 @@ class View extends SimpleModule
     @_refreshInput()
 
   _bindInput: ->
-    @input.off('focus').on 'focus', =>
+    @input.on 'focus', =>
       @panel.addClass 'active'
       @trigger 'showpanel',
         source: @name
@@ -56,8 +56,10 @@ class View extends SimpleModule
     @input.on 'input', (e) =>
       @_onInputHandler(e)
 
-    @input.on 'click mousedown', (e) =>
-      e.stopPropagation()
+    @input.on 'click', (e) =>
+      @input.focus().select()
+
+      false
 
   _onKeydownHandler: (e) ->
     key = e.which

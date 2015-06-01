@@ -70,9 +70,8 @@ class DateView extends View
 
         # If value is outside of bounds its likelym previous and next months
         if n >= 1 and n <= lastDate.date()
-
           # Test to see if it's today
-          c += (if (today.diff(date) is 0) then " today" else "")
+          c += ' today' if (today.isSame(date, 'day') is true)
 
           # Test against selected date
           c += (if (date.diff(@selectedDate) is 0) then " selected" else " ")  if @selectedDate
