@@ -35,4 +35,4 @@ class MonthView extends View
     @_refreshSelected()
 
 
-Datepicker.addView(MonthView)
+View.addView(MonthView)

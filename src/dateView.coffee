@@ -172,4 +172,4 @@ class DateView extends View
 
     super(value, refreshInput, finished)
 
-Datepicker.addView(DateView)
+View.addView(DateView)

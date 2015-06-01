@@ -60,4 +60,4 @@ class YearView extends View
 
     super(value, refreshInput, finished)
 
-Datepicker.addView(YearView)
+View.addView(YearView)

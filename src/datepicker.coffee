@@ -13,12 +13,6 @@ class Datepicker extends SimpleModule
         disableBefore: null
         disableAfter: null
 
-  # add constructor of view
-  @addView: (view) ->
-    unless @views
-      @views = []
-    @views[view::name] = view
-
   _init: ->
     @view = []
     @viewList = []
@@ -84,7 +78,7 @@ class Datepicker extends SimpleModule
             @date.format('YYYY-MM-DD')
 
         $.extend opt, @opts['viewOpts'][name] if @opts['viewOpts'][name]
-        @view[name] = new @constructor.views[name](opt)
+        @view[name] = new View::constructor.views[name](opt)
         @viewList.push name
         @_bindView(@view[name])
       else

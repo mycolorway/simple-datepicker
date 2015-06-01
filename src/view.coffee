@@ -15,6 +15,11 @@ class View extends SimpleModule
   _inputTpl: '<input class="input"/>'
   _panelTpl: '<div class="panel"></div>'
 
+  # add constructor of view
+  @addView: (view) ->
+    unless @views
+      @views = []
+    @views[view::name] = view
 
 
   _init: ->
