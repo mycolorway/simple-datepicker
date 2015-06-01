@@ -6,7 +6,7 @@ class MonthView extends View
   _renderPanel: ->
     el = ''
     for month in [1..12]
-      el += "<a class='panel-item' data-value='#{month}'>#{month}</a>"
+      el += "<a class='panel-item' data-value='#{month}'>#{String('00' + month).slice(-2)}</a>"
 
     $(@_panelTpl).html(el).addClass 'panel-month'
 
@@ -28,6 +28,9 @@ class MonthView extends View
     clearTimeout @timer if @timer
 
     super(e)
+
+  _refreshInput: ->
+    @input.val String('00' + @value).slice(-2)
 
   _onDateChangeHandler: (e) ->
     @value = e.month

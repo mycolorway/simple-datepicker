@@ -151,7 +151,7 @@ class DateView extends View
 
   _refreshInput: ->
     date = moment(@value, 'YYYY-MM-DD').date()
-    @input.val date
+    @input.val String('00' + date).slice(-2)
 
   _onDateChangeHandler: (e) ->
     newMonth = moment().year(e.year).month(e.month-1).format('YYYY-MM')
